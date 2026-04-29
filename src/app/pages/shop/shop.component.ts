@@ -1,7 +1,14 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, ViewportScroller } from '@angular/common';
 import { Component, computed, OnInit, signal } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { ShopEntry, ShopResponse } from '../../core/models/shop.model';
 import { ShopService } from '../../core/services/shop.service';
+
+interface ShopSection {
+  title: string;
+  entries: ShopEntry[];
+  type: 'br' | 'tracks' | 'cars';
+}
 
 @Component({
   selector: 'app-shop',
@@ -14,41 +21,98 @@ export class ShopComponent implements OnInit {
   shop = signal<ShopResponse | null>(null);
   loading = signal(true);
   error = signal(false);
-  activeTab = signal<'br' | 'tracks' | 'cars'>('br');
-  activeLayout = signal<string>('all');
+  showScrollTop = signal(false);
 
-  layouts = computed(() => {
+  sections = computed(() => {
     if (!this.shop()) return [];
-    const names = this.shop()!
-      .entries.filter((e) => e.brItems?.length && e.layout?.name)
-      .map((e) => e.layout!.name);
-    return ['all', ...new Set(names)];
+    const sections: ShopSection[] = [];
+    const entries = this.shop()!.entries;
+
+    const layoutGroups = new Map<string, ShopEntry[]>();
+    entries.forEach((entry) => {
+      if (entry.brItems?.length) {
+        const layoutName = entry.layout?.name ?? 'Other';
+        if (!layoutGroups.has(layoutName)) {
+          layoutGroups.set(layoutName, []);
+        }
+        layoutGroups.get(layoutName)!.push(entry);
+      }
+    });
+
+    layoutGroups.forEach((groupEntries, layoutName) => {
+      const sorted = groupEntries.sort((a, b) => {
+        const hasBannerA = a.banner ? 1 : 0;
+        const hasBannerB = b.banner ? 1 : 0;
+        if (hasBannerB !== hasBannerA) {
+          return hasBannerB - hasBannerA;
+        }
+
+        const priorityA = this.getItemTypePriority(a);
+        const priorityB = this.getItemTypePriority(b);
+        if (priorityA !== priorityB) {
+          return priorityA - priorityB;
+        }
+        return b.finalPrice - a.finalPrice;
+      });
+      sections.push({
+        title: layoutName,
+        entries: sorted,
+        type: 'br',
+      });
+    });
+
+    const trackEntries = entries
+      .filter((e) => e.tracks?.length && e.finalPrice <= 500)
+      .sort((a, b) => b.finalPrice - a.finalPrice);
+    if (trackEntries.length) {
+      sections.push({
+        title: 'Jam Tracks',
+        entries: trackEntries,
+        type: 'tracks',
+      });
+    }
+
+    const carEntries = entries
+      .filter((e) => e.cars?.length)
+      .sort((a, b) => b.finalPrice - a.finalPrice);
+    if (carEntries.length) {
+      sections.push({
+        title: 'Vehicle Cosmetics',
+        entries: carEntries,
+        type: 'cars',
+      });
+    }
+
+    return sections;
   });
 
-  brEntries = computed(() => {
-    if (!this.shop()) return [];
-    const entries = this.shop()!.entries.filter((e) => e.brItems?.length);
-    if (this.activeLayout() === 'all') return entries;
-    return entries.filter((e) => e.layout?.name === this.activeLayout());
-  });
-
-  trackEntries = computed(() => {
-    if (!this.shop()) return [];
-    return this.shop()!.entries.filter((e) => e.tracks?.length);
-  });
-
-  carEntries = computed(() => {
-    if (!this.shop()) return [];
-    return this.shop()!.entries.filter((e) => e.cars?.length);
-  });
-
-  constructor(private shopService: ShopService) {}
+  constructor(
+    private shopService: ShopService,
+    private route: ActivatedRoute,
+    private viewportScroller: ViewportScroller,
+  ) {
+    this.viewportScroller.setOffset([0, 100]);
+  }
 
   ngOnInit() {
+    if (typeof window !== 'undefined') {
+      window.addEventListener('scroll', () => {
+        this.showScrollTop.set(window.scrollY > 400);
+      });
+    }
+
     this.shopService.getShop().subscribe({
       next: (data) => {
         this.shop.set(data);
         this.loading.set(false);
+
+        this.route.fragment.subscribe((fragment) => {
+          if (fragment) {
+            setTimeout(() => {
+              this.viewportScroller.scrollToAnchor(fragment);
+            }, 100);
+          }
+        });
       },
       error: () => {
         this.error.set(true);
@@ -57,13 +121,26 @@ export class ShopComponent implements OnInit {
     });
   }
 
-  setTab(tab: 'br' | 'tracks' | 'cars') {
-    this.activeTab.set(tab);
-    this.activeLayout.set('all');
-  }
+  getItemTypePriority(entry: ShopEntry): number {
+    if (entry.bundle) return 0;
 
-  setLayout(layout: string) {
-    this.activeLayout.set(layout);
+    if (!entry.brItems?.length) return 999;
+
+    const types = entry.brItems.map((item) => item.type.value.toLowerCase());
+
+    const priorityMap: Record<string, number> = {
+      outfit: 1,
+      backpack: 2,
+      emote: 3,
+      pickaxe: 4,
+      glider: 5,
+      wrap: 6,
+      shoes: 7,
+      pet: 8,
+    };
+
+    const minPriority = Math.min(...types.map((t) => priorityMap[t] ?? 999));
+    return minPriority;
   }
 
   getEntryImage(entry: ShopEntry): string {
@@ -104,5 +181,20 @@ export class ShopComponent implements OnInit {
       month: 'long',
       day: 'numeric',
     });
+  }
+
+  getSectionId(section: ShopSection): string {
+    return section.title
+      .toLowerCase()
+      .replace(/\s+/g, '-')
+      .replace(/[^a-z0-9-]/g, '');
+  }
+
+  scrollToSection(sectionId: string) {
+    this.viewportScroller.scrollToAnchor(sectionId);
+  }
+
+  scrollToTop() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 }

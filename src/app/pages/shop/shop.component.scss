@@ -1,10 +1,144 @@
-.shop-card {
-  background-color: #1a1a2e;
+.pills-nav-container {
+  background: linear-gradient(180deg, #0d0d0d 0%, #0d0d0d 90%, transparent 100%);
+  padding: 1rem 0 1.5rem 0;
+  margin: 0 -1rem 1rem -1rem;
+}
+
+.pills-nav {
+  display: flex;
+  gap: 0.6rem;
+  overflow-x: auto;
+  padding: 0.5rem 1rem;
+  scrollbar-width: thin;
+  scrollbar-color: #ffc107 transparent;
+
+  &::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 3px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: linear-gradient(90deg, #ffc107 0%, #ffca28 100%);
+    border-radius: 3px;
+
+    &:hover {
+      background: linear-gradient(90deg, #ffca28 0%, #ffd54f 100%);
+    }
+  }
+}
+
+.pill-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.2rem;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  border: 2px solid transparent;
+  border-radius: 50px;
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 600;
+  white-space: nowrap;
   cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 
   &:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+    background: linear-gradient(135deg, #ffc107 0%, #ffca28 100%);
+    color: #0d0d0d;
+    border-color: #ffc107;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(255, 193, 7, 0.4);
+  }
+
+  i {
+    font-size: 1rem;
+  }
+
+  .pill-badge {
+    background-color: rgba(255, 255, 255, 0.2);
+    padding: 0.2rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 700;
+  }
+
+  &:hover .pill-badge {
+    background-color: rgba(0, 0, 0, 0.2);
+  }
+}
+
+.shop-card {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border-radius: 8px;
+  overflow: hidden;
+
+  &:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 8px 25px rgba(255, 193, 7, 0.3), 0 0 15px rgba(255, 193, 7, 0.1);
+  }
+
+  img {
+    transition: transform 0.3s ease;
+  }
+
+  &:hover img {
+    transform: scale(1.05);
+  }
+}
+
+.scroll-top-btn {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ffc107 0%, #ffca28 100%);
+  border: none;
+  color: #0d0d0d;
+  font-size: 1.5rem;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(255, 193, 7, 0.5);
+  z-index: 1000;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    transform: translateY(-5px) scale(1.1);
+    box-shadow: 0 6px 25px rgba(255, 193, 7, 0.7);
+  }
+
+  &:active {
+    transform: translateY(-3px) scale(1.05);
+  }
+}
+
+.section-header {
+  scroll-margin-top: 100px;
+
+  h3 {
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    position: relative;
+    padding-bottom: 12px;
+
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 60px;
+      height: 3px;
+      background: linear-gradient(90deg, #ffc107 0%, transparent 100%);
+    }
   }
 }

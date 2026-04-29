@@ -1,5 +1,7 @@
-<div class="container py-4">
-  <h2 class="text-white fw-bold mb-4"><i class="bi bi-map me-2"></i>Battle Royale Map</h2>
+<div class="page-container py-4 px-3 px-md-4">
+  <div class="page-header mb-4">
+    <h2 class="text-white fw-bold mb-0"><i class="bi bi-map me-2"></i>Battle Royale Map</h2>
+  </div>
 
   @if (loading()) {
     <div class="d-flex justify-content-center py-5">
@@ -14,18 +16,8 @@
   @if (mapData()) {
     <div class="row g-4">
       <div class="col-12 col-lg-8">
-        <div #mapContainer class="map-wrapper position-relative" (click)="clearSelection()">
+        <div class="map-wrapper position-relative">
           <img [src]="mapData()!.images.pois" alt="Fortnite Map" class="img-fluid w-100 map-img" />
-          @for (poi of mapData()!.pois; track poi.id) {
-            <button
-              class="poi-dot"
-              [style.left]="getPoiPosition(poi).left"
-              [style.top]="getPoiPosition(poi).top"
-              [class.active]="selectedPoi()?.id === poi.id"
-              (click)="selectPoi(poi, $event)"
-              [title]="poi.name"
-            ></button>
-          }
         </div>
       </div>
 
@@ -52,8 +44,8 @@
         } @else {
           <div class="card bg-dark border-secondary text-secondary">
             <div class="card-body text-center py-5">
-              <i class="bi bi-cursor fs-1 d-block mb-2"></i>
-              <p class="mb-0">Click a point on the map to see POI info</p>
+              <i class="bi bi-geo-alt fs-1 d-block mb-2"></i>
+              <p class="mb-0">Select a location to view details</p>
             </div>
           </div>
         }
