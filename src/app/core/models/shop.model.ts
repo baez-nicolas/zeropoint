@@ -15,6 +15,26 @@ export interface ShopBrItem {
   images: ShopItemImage;
 }
 
+export interface ShopTrack {
+  id: string;
+  title: string;
+  artist: string;
+  releaseYear: number;
+  bpm: number;
+  duration: number;
+  albumArt: string;
+  difficulty?: Record<string, number>;
+}
+
+export interface ShopCarItem {
+  id: string;
+  name: string;
+  description: string;
+  type: { value: string; displayValue: string };
+  rarity: { value: string; displayValue: string };
+  images: { small?: string; large?: string };
+}
+
 export interface ShopEntryLayout {
   id: string;
   name: string;
@@ -31,6 +51,12 @@ export interface ShopEntryRenderImage {
   image: string;
 }
 
+export interface ShopEntryBanner {
+  value: string;
+  intensity: string;
+  backendValue: string;
+}
+
 export interface ShopEntry {
   regularPrice: number;
   finalPrice: number;
@@ -41,7 +67,10 @@ export interface ShopEntry {
   tileSize: string;
   layout?: ShopEntryLayout;
   bundle?: ShopEntryBundle;
+  banner?: ShopEntryBanner;
   brItems?: ShopBrItem[];
+  tracks?: ShopTrack[];
+  cars?: ShopCarItem[];
   newDisplayAsset?: { renderImages: ShopEntryRenderImage[] };
 }
 

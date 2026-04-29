@@ -14,21 +14,32 @@ export class ShopComponent implements OnInit {
   shop = signal<ShopResponse | null>(null);
   loading = signal(true);
   error = signal(false);
+  activeTab = signal<'br' | 'tracks' | 'cars'>('br');
   activeLayout = signal<string>('all');
 
   layouts = computed(() => {
     if (!this.shop()) return [];
     const names = this.shop()!
-      .entries.filter((e) => e.layout?.name)
+      .entries.filter((e) => e.brItems?.length && e.layout?.name)
       .map((e) => e.layout!.name);
     return ['all', ...new Set(names)];
   });
 
-  filteredEntries = computed(() => {
+  brEntries = computed(() => {
     if (!this.shop()) return [];
     const entries = this.shop()!.entries.filter((e) => e.brItems?.length);
     if (this.activeLayout() === 'all') return entries;
     return entries.filter((e) => e.layout?.name === this.activeLayout());
+  });
+
+  trackEntries = computed(() => {
+    if (!this.shop()) return [];
+    return this.shop()!.entries.filter((e) => e.tracks?.length);
+  });
+
+  carEntries = computed(() => {
+    if (!this.shop()) return [];
+    return this.shop()!.entries.filter((e) => e.cars?.length);
   });
 
   constructor(private shopService: ShopService) {}
@@ -44,6 +55,15 @@ export class ShopComponent implements OnInit {
         this.loading.set(false);
       },
     });
+  }
+
+  setTab(tab: 'br' | 'tracks' | 'cars') {
+    this.activeTab.set(tab);
+    this.activeLayout.set('all');
+  }
+
+  setLayout(layout: string) {
+    this.activeLayout.set(layout);
   }
 
   getEntryImage(entry: ShopEntry): string {
@@ -69,8 +89,10 @@ export class ShopComponent implements OnInit {
     return map[rarity] ?? '#555';
   }
 
-  setLayout(layout: string) {
-    this.activeLayout.set(layout);
+  formatDuration(seconds: number): string {
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    return `${m}:${s.toString().padStart(2, '0')}`;
   }
 
   getShopDate(): string {
