@@ -1,4 +1,4 @@
-<div class="page-container py-4 px-3 px-md-4">
+﻿<div class="page-container py-4 px-3 px-md-4">
   <div class="page-header mb-4">
     <h2 class="text-white fw-bold mb-0"><i class="bi bi-shop me-2"></i>Item Shop</h2>
     @if (shop()) {
@@ -57,6 +57,7 @@
               <div
                 class="card h-100 border-0 shop-card"
                 [style.border-bottom]="'3px solid ' + getRarityColor(entry)"
+                (click)="openModal(entry)"
               >
                 <img
                   [src]="getEntryImage(entry)"
@@ -118,7 +119,10 @@
         <div class="row g-2 mb-5">
           @for (entry of section.entries; track entry.offerId) {
             <div class="col-6 col-sm-4 col-md-3 col-lg-2">
-              <div class="card h-100 border-0 shop-card border-start border-4 border-info">
+              <div
+                class="card h-100 border-0 shop-card border-start border-4 border-info"
+                (click)="openModal(entry)"
+              >
                 <div class="d-flex">
                   <img
                     [src]="entry.tracks![0].albumArt"
@@ -170,7 +174,11 @@
         <div class="row g-2 mb-5">
           @for (entry of section.entries; track entry.offerId) {
             <div class="col-4 col-sm-3 col-md-2 col-lg-2 col-xl-1">
-              <div class="card h-100 border-0 shop-card" style="border-bottom: 3px solid #ff9800">
+              <div
+                class="card h-100 border-0 shop-card"
+                style="border-bottom: 3px solid #ff9800"
+                (click)="openModal(entry)"
+              >
                 <img
                   [src]="entry.cars![0].images.large ?? entry.cars![0].images.small"
                   [alt]="entry.cars![0].name"
@@ -210,3 +218,249 @@
     </button>
   }
 </div>
+
+@if (selectedEntry()) {
+  <div class="modal-overlay" [class.closing]="modalClosing()" (click)="closeModal()">
+    <div class="modal-panel" [class.closing]="modalClosing()" (click)="$event.stopPropagation()">
+      <button class="modal-close-btn" (click)="closeModal()"><i class="bi bi-x-lg"></i></button>
+
+      @if (selectedEntry()!.tracks?.length) {
+        <div class="modal-track">
+          <img
+            [src]="selectedEntry()!.tracks![0].albumArt"
+            [alt]="selectedEntry()!.tracks![0].title"
+            class="track-art"
+          />
+          <div class="modal-info">
+            <p class="modal-type-label"><i class="bi bi-music-note-beamed me-1"></i>Jam Track</p>
+            <h4 class="text-white fw-bold mb-0">{{ selectedEntry()!.tracks![0].title }}</h4>
+            <p class="text-secondary mb-2">{{ selectedEntry()!.tracks![0].artist }}</p>
+            @if (selectedEntry()!.tracks![0].album) {
+              <p class="text-secondary small mb-2">
+                <i class="bi bi-disc me-1"></i>{{ selectedEntry()!.tracks![0].album }}
+              </p>
+            }
+            <div class="d-flex gap-2 flex-wrap mb-3">
+              <span class="badge bg-dark border border-secondary"
+                ><i class="bi bi-calendar me-1"></i
+                >{{ selectedEntry()!.tracks![0].releaseYear }}</span
+              >
+              <span class="badge bg-dark border border-secondary"
+                ><i class="bi bi-music-note me-1"></i
+                >{{ selectedEntry()!.tracks![0].bpm }} BPM</span
+              >
+              <span class="badge bg-dark border border-secondary"
+                ><i class="bi bi-clock me-1"></i
+                >{{ formatDuration(selectedEntry()!.tracks![0].duration) }}</span
+              >
+            </div>
+            <p class="text-white small fw-bold mb-2">Difficulty</p>
+            <div class="difficulty-grid">
+              @for (
+                inst of [
+                  {
+                    label: 'Vocals',
+                    icon: 'bi-mic',
+                    val: selectedEntry()!.tracks![0].difficulty?.['vocals'] ?? 0,
+                  },
+                  {
+                    label: 'Guitar',
+                    icon: 'bi-music-note-list',
+                    val: selectedEntry()!.tracks![0].difficulty?.['guitar'] ?? 0,
+                  },
+                  {
+                    label: 'Bass',
+                    icon: 'bi-broadcast',
+                    val: selectedEntry()!.tracks![0].difficulty?.['bass'] ?? 0,
+                  },
+                  {
+                    label: 'Drums',
+                    icon: 'bi-vinyl',
+                    val: selectedEntry()!.tracks![0].difficulty?.['drums'] ?? 0,
+                  },
+                ];
+                track inst.label
+              ) {
+                <div class="diff-row">
+                  <span class="diff-label"
+                    ><i class="bi {{ inst.icon }} me-1"></i>{{ inst.label }}</span
+                  >
+                  <div class="diff-bar-track">
+                    @for (star of getDifficultyStars(inst.val); track star) {
+                      <div class="diff-bar-fill"></div>
+                    }
+                    @for (empty of getDifficultyStars(7 - inst.val); track empty) {
+                      <div class="diff-bar-empty"></div>
+                    }
+                  </div>
+                </div>
+              }
+            </div>
+            <div class="modal-price mt-3">
+              <img
+                src="https://fortnite-api.com/images/vbuck.png"
+                alt="vbuck"
+                width="18"
+                height="18"
+              />
+              <span class="text-warning fw-bold fs-5">{{
+                selectedEntry()!.finalPrice | number
+              }}</span>
+            </div>
+          </div>
+        </div>
+      }
+
+      @if (selectedEntry()!.cars?.length) {
+        <div class="modal-br">
+          <div class="modal-img-wrap">
+            <img
+              [src]="
+                selectedEntry()!.cars![0].images.large ?? selectedEntry()!.cars![0].images.small
+              "
+              [alt]="selectedEntry()!.cars![0].name"
+              class="modal-main-img"
+            />
+          </div>
+          <div class="modal-info">
+            <p class="modal-type-label">
+              <i class="bi bi-car-front-fill me-1"></i
+              >{{ selectedEntry()!.cars![0].type.displayValue }}
+            </p>
+            <h4 class="text-white fw-bold mb-1">{{ selectedEntry()!.cars![0].name }}</h4>
+            @if (selectedEntry()!.cars![0].description) {
+              <p class="text-secondary small mb-3">{{ selectedEntry()!.cars![0].description }}</p>
+            }
+            <span class="badge mb-3" style="background: #ff9800; color: #000">{{
+              selectedEntry()!.cars![0].rarity.displayValue
+            }}</span>
+            <div class="modal-price mt-2">
+              <img
+                src="https://fortnite-api.com/images/vbuck.png"
+                alt="vbuck"
+                width="18"
+                height="18"
+              />
+              <span class="text-warning fw-bold fs-5">{{
+                selectedEntry()!.finalPrice | number
+              }}</span>
+            </div>
+            <p class="text-secondary small mt-2">
+              <i class="bi bi-clock me-1"></i>{{ getOutDateLabel(selectedEntry()!.outDate) }}
+            </p>
+          </div>
+        </div>
+      }
+
+      @if (selectedEntry()!.brItems?.length) {
+        <div class="modal-br">
+          <div class="modal-img-wrap">
+            <img
+              [src]="getModalImage(selectedEntry()!)"
+              [alt]="selectedEntry()!.brItems![0].name"
+              class="modal-main-img"
+            />
+          </div>
+          <div class="modal-info">
+            @if (selectedEntry()!.bundle) {
+              <p class="modal-type-label"><i class="bi bi-box-seam me-1"></i>Bundle</p>
+              <h4 class="text-warning fw-bold mb-1">{{ selectedEntry()!.bundle!.name }}</h4>
+            } @else {
+              <p class="modal-type-label">
+                <i class="bi bi-tag me-1"></i>{{ selectedEntry()!.brItems![0].type.displayValue }}
+              </p>
+              <h4 class="text-white fw-bold mb-1">{{ selectedEntry()!.brItems![0].name }}</h4>
+            }
+
+            @if (!selectedEntry()!.bundle && selectedEntry()!.brItems![0].description) {
+              <p class="text-secondary small mb-2">
+                {{ selectedEntry()!.brItems![0].description }}
+              </p>
+            }
+
+            <div class="d-flex flex-wrap gap-2 mb-2">
+              <span class="badge" [style.background]="getRarityColor(selectedEntry()!)">
+                {{ selectedEntry()!.brItems![0].rarity.displayValue }}
+              </span>
+              @if (selectedEntry()!.brItems![0].series) {
+                <span class="badge bg-dark border border-secondary">{{
+                  selectedEntry()!.brItems![0].series!.value
+                }}</span>
+              }
+              @if (selectedEntry()!.banner) {
+                <span class="badge bg-danger">{{ selectedEntry()!.banner!.value }}</span>
+              }
+              @if (selectedEntry()!.giftable) {
+                <span class="badge bg-success"><i class="bi bi-gift me-1"></i>Giftable</span>
+              }
+            </div>
+
+            @if (selectedEntry()!.brItems![0].set) {
+              <p class="text-secondary small mb-1">
+                <i class="bi bi-collection me-1"></i>{{ selectedEntry()!.brItems![0].set!.text }}
+              </p>
+            }
+            @if (selectedEntry()!.brItems![0].introduction) {
+              <p class="text-secondary small mb-2">
+                <i class="bi bi-calendar-event me-1"></i
+                >{{ selectedEntry()!.brItems![0].introduction!.text }}
+              </p>
+            }
+
+            @if (selectedEntry()!.brItems!.length > 1) {
+              <p class="text-white small fw-bold mb-1">
+                Includes {{ selectedEntry()!.brItems!.length }} items:
+              </p>
+              <div class="modal-items-list mb-2">
+                @for (item of selectedEntry()!.brItems!; track item.id) {
+                  <div class="modal-item-row">
+                    <img
+                      [src]="item.images.smallIcon ?? item.images.icon"
+                      [alt]="item.name"
+                      width="36"
+                      height="36"
+                      style="border-radius: 4px; object-fit: cover"
+                    />
+                    <div>
+                      <p class="text-white mb-0 small fw-bold">{{ item.name }}</p>
+                      <p class="text-secondary mb-0" style="font-size: 0.7rem">
+                        {{ item.type.displayValue }}
+                      </p>
+                    </div>
+                  </div>
+                }
+              </div>
+            }
+
+            @if (!selectedEntry()!.bundle && selectedEntry()!.brItems![0].variants?.length) {
+              <p class="text-secondary small mb-2">
+                <i class="bi bi-palette me-1"></i
+                >{{ selectedEntry()!.brItems![0].variants!.length }} style(s) available
+              </p>
+            }
+
+            <div class="modal-price mt-2">
+              <img
+                src="https://fortnite-api.com/images/vbuck.png"
+                alt="vbuck"
+                width="18"
+                height="18"
+              />
+              @if (selectedEntry()!.regularPrice !== selectedEntry()!.finalPrice) {
+                <span class="text-secondary text-decoration-line-through me-2">{{
+                  selectedEntry()!.regularPrice | number
+                }}</span>
+              }
+              <span class="text-warning fw-bold fs-5">{{
+                selectedEntry()!.finalPrice | number
+              }}</span>
+            </div>
+            <p class="text-secondary small mt-1">
+              <i class="bi bi-clock me-1"></i>{{ getOutDateLabel(selectedEntry()!.outDate) }}
+            </p>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+}

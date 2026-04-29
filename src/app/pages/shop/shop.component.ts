@@ -22,6 +22,8 @@ export class ShopComponent implements OnInit {
   loading = signal(true);
   error = signal(false);
   showScrollTop = signal(false);
+  selectedEntry = signal<ShopEntry | null>(null);
+  modalClosing = signal(false);
 
   sections = computed(() => {
     if (!this.shop()) return [];
@@ -32,9 +34,7 @@ export class ShopComponent implements OnInit {
     entries.forEach((entry) => {
       if (entry.brItems?.length) {
         const layoutName = entry.layout?.name ?? 'Other';
-        if (!layoutGroups.has(layoutName)) {
-          layoutGroups.set(layoutName, []);
-        }
+        if (!layoutGroups.has(layoutName)) layoutGroups.set(layoutName, []);
         layoutGroups.get(layoutName)!.push(entry);
       }
     });
@@ -43,45 +43,26 @@ export class ShopComponent implements OnInit {
       const sorted = groupEntries.sort((a, b) => {
         const hasBannerA = a.banner ? 1 : 0;
         const hasBannerB = b.banner ? 1 : 0;
-        if (hasBannerB !== hasBannerA) {
-          return hasBannerB - hasBannerA;
-        }
-
+        if (hasBannerB !== hasBannerA) return hasBannerB - hasBannerA;
         const priorityA = this.getItemTypePriority(a);
         const priorityB = this.getItemTypePriority(b);
-        if (priorityA !== priorityB) {
-          return priorityA - priorityB;
-        }
+        if (priorityA !== priorityB) return priorityA - priorityB;
         return b.finalPrice - a.finalPrice;
       });
-      sections.push({
-        title: layoutName,
-        entries: sorted,
-        type: 'br',
-      });
+      sections.push({ title: layoutName, entries: sorted, type: 'br' });
     });
 
     const trackEntries = entries
       .filter((e) => e.tracks?.length && e.finalPrice <= 500)
       .sort((a, b) => b.finalPrice - a.finalPrice);
-    if (trackEntries.length) {
-      sections.push({
-        title: 'Jam Tracks',
-        entries: trackEntries,
-        type: 'tracks',
-      });
-    }
+    if (trackEntries.length)
+      sections.push({ title: 'Jam Tracks', entries: trackEntries, type: 'tracks' });
 
     const carEntries = entries
       .filter((e) => e.cars?.length)
       .sort((a, b) => b.finalPrice - a.finalPrice);
-    if (carEntries.length) {
-      sections.push({
-        title: 'Vehicle Cosmetics',
-        entries: carEntries,
-        type: 'cars',
-      });
-    }
+    if (carEntries.length)
+      sections.push({ title: 'Vehicle Cosmetics', entries: carEntries, type: 'cars' });
 
     return sections;
   });
@@ -105,12 +86,9 @@ export class ShopComponent implements OnInit {
       next: (data) => {
         this.shop.set(data);
         this.loading.set(false);
-
         this.route.fragment.subscribe((fragment) => {
           if (fragment) {
-            setTimeout(() => {
-              this.viewportScroller.scrollToAnchor(fragment);
-            }, 100);
+            setTimeout(() => this.viewportScroller.scrollToAnchor(fragment), 100);
           }
         });
       },
@@ -121,13 +99,23 @@ export class ShopComponent implements OnInit {
     });
   }
 
+  openModal(entry: ShopEntry) {
+    this.selectedEntry.set(entry);
+    this.modalClosing.set(false);
+  }
+
+  closeModal() {
+    this.modalClosing.set(true);
+    setTimeout(() => {
+      this.selectedEntry.set(null);
+      this.modalClosing.set(false);
+    }, 200);
+  }
+
   getItemTypePriority(entry: ShopEntry): number {
     if (entry.bundle) return 0;
-
     if (!entry.brItems?.length) return 999;
-
     const types = entry.brItems.map((item) => item.type.value.toLowerCase());
-
     const priorityMap: Record<string, number> = {
       outfit: 1,
       backpack: 2,
@@ -138,13 +126,20 @@ export class ShopComponent implements OnInit {
       shoes: 7,
       pet: 8,
     };
-
-    const minPriority = Math.min(...types.map((t) => priorityMap[t] ?? 999));
-    return minPriority;
+    return Math.min(...types.map((t) => priorityMap[t] ?? 999));
   }
 
   getEntryImage(entry: ShopEntry): string {
     if (entry.bundle?.image) return entry.bundle.image;
+    const render = entry.newDisplayAsset?.renderImages?.[0]?.image;
+    if (render) return render;
+    return entry.brItems?.[0]?.images?.icon ?? '';
+  }
+
+  getModalImage(entry: ShopEntry): string {
+    if (entry.bundle?.image) return entry.bundle.image;
+    const featured = entry.brItems?.[0]?.images?.featured;
+    if (featured) return featured;
     const render = entry.newDisplayAsset?.renderImages?.[0]?.image;
     if (render) return render;
     return entry.brItems?.[0]?.images?.icon ?? '';
@@ -164,6 +159,20 @@ export class ShopComponent implements OnInit {
       starwars: '#000000',
     };
     return map[rarity] ?? '#555';
+  }
+
+  getOutDateLabel(outDate: string): string {
+    const out = new Date(outDate);
+    const now = new Date();
+    const diffMs = out.getTime() - now.getTime();
+    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+    const diffDays = Math.floor(diffHours / 24);
+    if (diffHours < 24) return `Leaves in ${diffHours}h`;
+    return `Leaves in ${diffDays}d`;
+  }
+
+  getDifficultyStars(value: number): number[] {
+    return Array.from({ length: Math.min(value, 7) }, (_, i) => i);
   }
 
   formatDuration(seconds: number): string {

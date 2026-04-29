@@ -12,6 +12,8 @@ export interface ShopBrItem {
   rarity: { value: string; displayValue: string };
   series?: { value: string; colors: string[] };
   set?: { value: string; text: string };
+  introduction?: { text: string };
+  variants?: any[];
   images: ShopItemImage;
 }
 
@@ -19,6 +21,7 @@ export interface ShopTrack {
   id: string;
   title: string;
   artist: string;
+  album?: string;
   releaseYear: number;
   bpm: number;
   duration: number;
