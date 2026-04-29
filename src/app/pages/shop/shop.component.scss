@@ -1,0 +1,10 @@
+.shop-card {
+  background-color: #1a1a2e;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+  }
+}

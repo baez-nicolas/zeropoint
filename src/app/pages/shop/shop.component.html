@@ -1,3 +1,75 @@
-<div class="container">
-  <h1>Shop</h1>
+<div class="container-fluid py-4 px-3 px-md-4">
+  <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap gap-2">
+    <h2 class="text-white fw-bold mb-0"><i class="bi bi-shop me-2"></i>Item Shop</h2>
+    @if (shop()) {
+      <span class="badge bg-secondary fs-6">{{ getShopDate() }}</span>
+    }
+  </div>
+
+  @if (loading()) {
+    <div class="d-flex justify-content-center py-5">
+      <div class="spinner-border text-warning" role="status"></div>
+    </div>
+  }
+
+  @if (error()) {
+    <div class="alert alert-danger">Error loading shop. Please try again.</div>
+  }
+
+  @if (shop()) {
+    <div class="d-flex gap-2 flex-wrap mb-4">
+      @for (layout of layouts(); track layout) {
+        <button
+          class="btn btn-sm"
+          [class.btn-warning]="activeLayout() === layout"
+          [class.btn-outline-secondary]="activeLayout() !== layout"
+          (click)="setLayout(layout)"
+        >
+          {{ layout === 'all' ? 'All' : layout }}
+        </button>
+      }
+    </div>
+
+    <div class="row g-3">
+      @for (entry of filteredEntries(); track entry.offerId) {
+        <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+          <div
+            class="card h-100 border-0 shop-card"
+            [style.border-bottom]="'3px solid ' + getRarityColor(entry)"
+          >
+            <img
+              [src]="getEntryImage(entry)"
+              [alt]="entry.brItems?.[0]?.name ?? 'item'"
+              class="card-img-top"
+              style="aspect-ratio: 1/1; object-fit: cover"
+            />
+            <div class="card-body p-2">
+              @if (entry.bundle) {
+                <span class="badge bg-warning text-dark mb-1 d-block text-truncate">{{
+                  entry.bundle.name
+                }}</span>
+              }
+              @if (!entry.bundle) {
+                <p class="card-text text-white small text-truncate mb-1">
+                  {{ entry.brItems?.[0]?.name }}
+                </p>
+              }
+              <div class="d-flex align-items-center gap-1">
+                <img
+                  src="https://fortnite-api.com/images/vbuck.png"
+                  alt="vbuck"
+                  width="14"
+                  height="14"
+                />
+                <span class="text-warning small fw-bold">{{ entry.finalPrice | number }}</span>
+              </div>
+              @if (entry.brItems && entry.brItems.length > 1) {
+                <span class="badge bg-secondary mt-1">+{{ entry.brItems.length - 1 }} items</span>
+              }
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  }
 </div>
