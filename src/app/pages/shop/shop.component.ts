@@ -1,5 +1,5 @@
 import { CommonModule, ViewportScroller } from '@angular/common';
-import { Component, computed, OnInit, signal } from '@angular/core';
+import { Component, computed, OnDestroy, OnInit, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ShopEntry, ShopResponse } from '../../core/models/shop.model';
 import { ShopService } from '../../core/services/shop.service';
@@ -17,13 +17,16 @@ interface ShopSection {
   templateUrl: './shop.component.html',
   styleUrls: ['./shop.component.scss'],
 })
-export class ShopComponent implements OnInit {
+export class ShopComponent implements OnInit, OnDestroy {
   shop = signal<ShopResponse | null>(null);
   loading = signal(true);
   error = signal(false);
   showScrollTop = signal(false);
   selectedEntry = signal<ShopEntry | null>(null);
   modalClosing = signal(false);
+  countdown = signal<string>('');
+
+  private countdownInterval?: ReturnType<typeof setInterval>;
 
   sections = computed(() => {
     if (!this.shop()) return [];
@@ -97,6 +100,16 @@ export class ShopComponent implements OnInit {
         this.loading.set(false);
       },
     });
+
+    // Iniciar countdown
+    this.updateCountdown();
+    this.countdownInterval = setInterval(() => this.updateCountdown(), 1000);
+  }
+
+  ngOnDestroy() {
+    if (this.countdownInterval) {
+      clearInterval(this.countdownInterval);
+    }
   }
 
   openModal(entry: ShopEntry) {
@@ -205,5 +218,50 @@ export class ShopComponent implements OnInit {
 
   scrollToTop() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  private updateCountdown() {
+    const now = new Date();
+    const nextReset = this.getNextResetTime(now);
+    const diff = nextReset.getTime() - now.getTime();
+
+    if (diff <= 0) {
+      this.countdown.set('Actualizando...');
+      return;
+    }
+
+    const hours = Math.floor(diff / (1000 * 60 * 60));
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+    this.countdown.set(
+      `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`,
+    );
+  }
+
+  private getNextResetTime(now: Date): Date {
+    // Hora Argentina (UTC-3): 21:00 = 00:00 UTC del día siguiente
+    const resetHourUTC = 0; // 21:00 Argentina = 00:00 UTC
+    const nowUTC = new Date(now.toISOString());
+
+    // Crear fecha de reset para hoy a las 00:00 UTC
+    const todayReset = new Date(
+      Date.UTC(
+        nowUTC.getUTCFullYear(),
+        nowUTC.getUTCMonth(),
+        nowUTC.getUTCDate(),
+        resetHourUTC,
+        0,
+        0,
+        0,
+      ),
+    );
+
+    // Si ya pasó el reset de hoy, usar el de mañana
+    if (nowUTC.getTime() >= todayReset.getTime()) {
+      return new Date(todayReset.getTime() + 24 * 60 * 60 * 1000);
+    }
+
+    return todayReset;
   }
 }

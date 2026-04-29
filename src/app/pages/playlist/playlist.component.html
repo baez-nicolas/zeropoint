@@ -1,0 +1,151 @@
+<div class="page-container py-4 px-3 px-md-4">
+  <div class="page-header mb-4">
+    <h2 class="text-white fw-bold mb-0">
+      <i class="bi bi-collection-play me-2 text-warning"></i>Playlists
+    </h2>
+    <p class="text-secondary mt-1 mb-0">Algunos de los modos de juego disponibles en Fortnite</p>
+  </div>
+
+  @if (loading()) {
+    <div class="d-flex justify-content-center py-5">
+      <div class="spinner-border text-warning" role="status"></div>
+    </div>
+  }
+
+  @if (error()) {
+    <div class="alert alert-danger">Error al cargar las playlists. Intentá de nuevo.</div>
+  }
+
+  @if (!loading() && !error()) {
+    <div class="filters-row mb-4 d-flex flex-wrap gap-3 align-items-center">
+      <div class="search-wrap">
+        <i class="bi bi-search search-icon text-secondary"></i>
+        <input
+          type="text"
+          class="form-control search-input"
+          placeholder="Buscar playlist..."
+          [value]="search()"
+          (input)="onSearch($event)"
+        />
+      </div>
+      <select class="form-select gametype-select" (change)="onGameTypeChange($event)">
+        <option value="all">Todos los modos</option>
+        @for (gt of gameTypes; track gt) {
+          <option [value]="gt">{{ gt }}</option>
+        }
+      </select>
+      <span class="text-secondary small ms-auto">{{ filtered.length }} playlists</span>
+    </div>
+
+    <div class="row g-4">
+      @for (group of filtered; track group.baseName) {
+        <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
+          <div class="playlist-card h-100" (click)="openModal(group)">
+            <div class="playlist-img-wrap">
+              <img [src]="group.images!.showcase" [alt]="group.baseName" class="playlist-img" />
+              <div class="playlist-badges">
+                @if (group.isNoBuild) {
+                  <span class="badge-nobuild">Zero Build</span>
+                }
+                @if (group.isTournament) {
+                  <span class="badge-tournament"><i class="bi bi-trophy-fill"></i> Torneo</span>
+                }
+                @if (group.variants.length > 1) {
+                  <span class="badge-variants">{{ group.variants.length }} modos</span>
+                }
+              </div>
+              <div class="playlist-gametype">{{ formatGameType(group.gameType) }}</div>
+            </div>
+            <div class="playlist-body">
+              <h5 class="playlist-name">{{ group.baseName }}</h5>
+              @if (group.description) {
+                <p class="playlist-desc">{{ group.description }}</p>
+              }
+              <div class="playlist-meta">
+                @for (variant of group.variants; track variant.id) {
+                  <span class="meta-chip">
+                    <i class="bi bi-people-fill"></i> {{ getTeamLabel(variant) }}
+                  </span>
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+
+    @if (filtered.length === 0) {
+      <div class="empty-state text-center py-5">
+        <i class="bi bi-search text-secondary" style="font-size: 3rem"></i>
+        <p class="text-secondary mt-3">No se encontraron playlists con ese criterio.</p>
+      </div>
+    }
+  }
+
+  <!-- Modal -->
+  @if (selectedPlaylist()) {
+    <div class="modal-overlay" [class.closing]="modalClosing()" (click)="closeModal()">
+      <div class="modal-panel" [class.closing]="modalClosing()" (click)="$event.stopPropagation()">
+        <button class="modal-close-btn" (click)="closeModal()">
+          <i class="bi bi-x-lg"></i>
+        </button>
+
+        <div class="modal-header-section">
+          <img
+            [src]="selectedPlaylist()!.images!.showcase"
+            [alt]="selectedPlaylist()!.baseName"
+            class="modal-showcase-img"
+          />
+          <h3 class="modal-title">{{ selectedPlaylist()!.baseName }}</h3>
+          @if (selectedPlaylist()!.description) {
+            <p class="modal-description">{{ selectedPlaylist()!.description }}</p>
+          }
+          <div class="modal-badges-row">
+            @if (selectedPlaylist()!.isNoBuild) {
+              <span class="badge-nobuild">Zero Build</span>
+            }
+            @if (selectedPlaylist()!.isTournament) {
+              <span class="badge-tournament"><i class="bi bi-trophy-fill"></i> Torneo</span>
+            }
+            <span class="badge-gametype">{{ formatGameType(selectedPlaylist()!.gameType) }}</span>
+          </div>
+        </div>
+
+        <div class="modal-variants-section">
+          <h5 class="variants-title"><i class="bi bi-people-fill me-2"></i>Modos disponibles</h5>
+          <div class="variants-list">
+            @for (variant of selectedPlaylist()!.variants; track variant.id) {
+              <div class="variant-card">
+                <div class="variant-icon">
+                  @if (variant.maxTeamSize === 1) {
+                    <i class="bi bi-person-fill"></i>
+                  } @else {
+                    <i class="bi bi-people-fill"></i>
+                  }
+                </div>
+                <div class="variant-info">
+                  <div class="variant-label">{{ getTeamLabel(variant) }}</div>
+                  <div class="variant-details">
+                    <span class="detail-item">
+                      <i class="bi bi-person-fill"></i> Max {{ variant.maxPlayers }}
+                    </span>
+                    @if (variant.maxTeams > 1) {
+                      <span class="detail-item">
+                        <i class="bi bi-flag-fill"></i> {{ variant.maxTeams }} equipos
+                      </span>
+                    }
+                    @if (variant.ratingType) {
+                      <span class="detail-item detail-item--rating">
+                        <i class="bi bi-bar-chart-fill"></i> {{ variant.ratingType }}
+                      </span>
+                    }
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+</div>

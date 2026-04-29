@@ -1,9 +1,16 @@
 ﻿<div class="page-container py-4 px-3 px-md-4">
   <div class="page-header mb-4">
     <h2 class="text-white fw-bold mb-0"><i class="bi bi-shop me-2"></i>Item Shop</h2>
-    @if (shop()) {
-      <span class="badge bg-secondary fs-6">{{ getShopDate() }}</span>
-    }
+    <div class="d-flex flex-wrap gap-2 align-items-center">
+      @if (shop()) {
+        <span class="badge bg-secondary fs-6">{{ getShopDate() }}</span>
+        @if (countdown()) {
+          <span class="badge bg-warning text-dark fs-6">
+            <i class="bi bi-clock-fill me-1"></i>{{ countdown() }}
+          </span>
+        }
+      }
+    </div>
   </div>
 
   @if (loading()) {
