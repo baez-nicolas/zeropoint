@@ -1,0 +1,54 @@
+.map-wrapper {
+  border: 2px solid #333;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #000;
+}
+
+.map-img {
+  display: block;
+}
+
+.poi-dot {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background-color: #facc15;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+  padding: 0;
+  transition: transform 0.15s ease, background-color 0.15s ease;
+
+  &:hover {
+    transform: translate(-50%, -50%) scale(1.6);
+    background-color: #fff;
+  }
+
+  &.active {
+    background-color: #f97316;
+    transform: translate(-50%, -50%) scale(1.8);
+    border-color: #fff;
+  }
+}
+
+.poi-list {
+  max-height: 400px;
+  overflow-y: auto;
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+  &::-webkit-scrollbar-track {
+    background: #1a1a1a;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: #555;
+    border-radius: 4px;
+  }
+}
+
+.poi-list-item {
+  font-size: 0.75rem;
+}

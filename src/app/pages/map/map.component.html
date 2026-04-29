@@ -1,3 +1,81 @@
-<div class="container">
-  <h1>Map</h1>
+<div class="container py-4">
+  <h2 class="text-white fw-bold mb-4"><i class="bi bi-map me-2"></i>Battle Royale Map</h2>
+
+  @if (loading()) {
+    <div class="d-flex justify-content-center py-5">
+      <div class="spinner-border text-warning" role="status"></div>
+    </div>
+  }
+
+  @if (error()) {
+    <div class="alert alert-danger">Error loading map. Please try again.</div>
+  }
+
+  @if (mapData()) {
+    <div class="row g-4">
+      <div class="col-12 col-lg-8">
+        <div #mapContainer class="map-wrapper position-relative" (click)="clearSelection()">
+          <img [src]="mapData()!.images.pois" alt="Fortnite Map" class="img-fluid w-100 map-img" />
+          @for (poi of mapData()!.pois; track poi.id) {
+            <button
+              class="poi-dot"
+              [style.left]="getPoiPosition(poi).left"
+              [style.top]="getPoiPosition(poi).top"
+              [class.active]="selectedPoi()?.id === poi.id"
+              (click)="selectPoi(poi, $event)"
+              [title]="poi.name"
+            ></button>
+          }
+        </div>
+      </div>
+
+      <div class="col-12 col-lg-4">
+        @if (selectedPoi()) {
+          <div class="card bg-dark border-warning text-white">
+            <div class="card-body">
+              <h5 class="card-title text-warning">
+                <i class="bi bi-geo-alt-fill me-2"></i>{{ selectedPoi()!.name }}
+              </h5>
+              <hr class="border-secondary" />
+              <p class="mb-1 small text-secondary">Coordinates</p>
+              <p class="mb-1">
+                X: <span class="text-info">{{ selectedPoi()!.location.x | number: '1.0-0' }}</span>
+              </p>
+              <p class="mb-1">
+                Y: <span class="text-info">{{ selectedPoi()!.location.y | number: '1.0-0' }}</span>
+              </p>
+              <p class="mb-0">
+                Z: <span class="text-info">{{ selectedPoi()!.location.z | number: '1.0-0' }}</span>
+              </p>
+            </div>
+          </div>
+        } @else {
+          <div class="card bg-dark border-secondary text-secondary">
+            <div class="card-body text-center py-5">
+              <i class="bi bi-cursor fs-1 d-block mb-2"></i>
+              <p class="mb-0">Click a point on the map to see POI info</p>
+            </div>
+          </div>
+        }
+
+        <div class="mt-3">
+          <p class="text-secondary small mb-2">
+            <i class="bi bi-geo-alt me-1"></i>{{ mapData()!.pois.length }} locations on this map
+          </p>
+          <div class="poi-list">
+            @for (poi of mapData()!.pois; track poi.id) {
+              <button
+                class="btn btn-sm w-100 text-start mb-1 poi-list-item"
+                [class.btn-warning]="selectedPoi()?.id === poi.id"
+                [class.btn-outline-secondary]="selectedPoi()?.id !== poi.id"
+                (click)="selectedPoi.set(poi)"
+              >
+                {{ poi.name }}
+              </button>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  }
 </div>
