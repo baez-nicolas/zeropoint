@@ -1,15 +1,21 @@
-export interface MapData {
-  id: string;
-  name: string;
-  image: string;
-  pois: POI[];
+export interface MapLocation {
+  x: number;
+  y: number;
+  z: number;
 }
 
-export interface POI {
+export interface MapPoi {
   id: string;
   name: string;
-  location: {
-    x: number;
-    y: number;
-  };
+  location: MapLocation;
+}
+
+export interface MapImages {
+  blank: string;
+  pois: string;
+}
+
+export interface MapData {
+  images: MapImages;
+  pois: MapPoi[];
 }
