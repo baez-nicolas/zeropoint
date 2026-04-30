@@ -19,6 +19,9 @@ export class HomeComponent implements OnInit {
   featuredItems = signal<ShopEntry[]>([]);
   today = signal<string>('');
   loading = signal<boolean>(true);
+  selectedNews = signal<NewsMotd | null>(null);
+  selectedShopItem = signal<ShopEntry | null>(null);
+  modalClosing = signal(false);
 
   constructor(
     private newsService: NewsService,
@@ -92,7 +95,51 @@ export class HomeComponent implements OnInit {
       legendary: '#ff9800',
       marvel: '#ed1c24',
       icon: '#00bcd4',
+      dc: '#0d47a1',
+      starwars: '#000000',
     };
     return map[rarity] ?? '#555';
+  }
+
+  openNewsModal(newsItem: NewsMotd) {
+    this.selectedNews.set(newsItem);
+    this.modalClosing.set(false);
+  }
+
+  openShopModal(shopItem: ShopEntry) {
+    this.selectedShopItem.set(shopItem);
+    this.modalClosing.set(false);
+  }
+
+  closeModal() {
+    this.modalClosing.set(true);
+    setTimeout(() => {
+      this.selectedNews.set(null);
+      this.selectedShopItem.set(null);
+      this.modalClosing.set(false);
+    }, 200);
+  }
+
+  getNewsImage(newsItem: NewsMotd): string {
+    return newsItem.image;
+  }
+
+  getModalImage(entry: ShopEntry): string {
+    if (entry.bundle?.image) return entry.bundle.image;
+    const featured = entry.brItems?.[0]?.images?.featured;
+    if (featured) return featured;
+    const render = entry.newDisplayAsset?.renderImages?.[0]?.image;
+    if (render) return render;
+    return entry.brItems?.[0]?.images?.icon ?? '';
+  }
+
+  getOutDateLabel(outDate: string): string {
+    const out = new Date(outDate);
+    const now = new Date();
+    const diffMs = out.getTime() - now.getTime();
+    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+    const diffDays = Math.floor(diffHours / 24);
+    if (diffHours < 24) return `Leaves in ${diffHours}h`;
+    return `Leaves in ${diffDays}d`;
   }
 }

@@ -35,7 +35,10 @@
       <div class="row g-3 mb-5">
         @for (motd of latestNews(); track motd.id) {
           <div class="col-12 col-md-4">
-            <div class="card bg-dark border-secondary text-white h-100">
+            <div
+              class="card bg-dark border-secondary text-white h-100 news-card"
+              (click)="openNewsModal(motd)"
+            >
               <img
                 [src]="motd.tileImage"
                 [alt]="motd.title"
@@ -63,8 +66,9 @@
         @for (entry of featuredItems(); track entry.offerId) {
           <div class="col-6 col-sm-4 col-md-2">
             <div
-              class="card bg-dark border-0 h-100"
+              class="card bg-dark border-0 h-100 shop-card"
               [style.border-bottom]="'3px solid ' + getRarityColor(entry)"
+              (click)="openShopModal(entry)"
             >
               <img
                 [src]="getEntryImage(entry)"
@@ -89,5 +93,143 @@
         }
       </div>
     }
+  </div>
+}
+
+@if (selectedNews()) {
+  <div class="modal-overlay" [class.closing]="modalClosing()" (click)="closeModal()">
+    <div class="modal-panel" [class.closing]="modalClosing()" (click)="$event.stopPropagation()">
+      <button class="modal-close-btn" (click)="closeModal()">
+        <i class="bi bi-x-lg"></i>
+      </button>
+
+      <div class="modal-header-section">
+        <img
+          [src]="getNewsImage(selectedNews()!)"
+          [alt]="selectedNews()!.title"
+          class="modal-news-img"
+        />
+        <h3 class="modal-title">{{ selectedNews()!.title }}</h3>
+        <p class="modal-description">{{ selectedNews()!.body }}</p>
+      </div>
+    </div>
+  </div>
+}
+
+@if (selectedShopItem()) {
+  <div class="modal-overlay" [class.closing]="modalClosing()" (click)="closeModal()">
+    <div class="modal-panel" [class.closing]="modalClosing()" (click)="$event.stopPropagation()">
+      <button class="modal-close-btn" (click)="closeModal()">
+        <i class="bi bi-x-lg"></i>
+      </button>
+
+      <div class="modal-br">
+        <div class="modal-img-wrap">
+          <img
+            [src]="getModalImage(selectedShopItem()!)"
+            [alt]="selectedShopItem()!.brItems![0].name"
+            class="modal-main-img"
+          />
+        </div>
+        <div class="modal-info">
+          @if (selectedShopItem()!.bundle) {
+            <p class="modal-type-label"><i class="bi bi-box-seam me-1"></i>Bundle</p>
+            <h4 class="text-warning fw-bold mb-1">{{ selectedShopItem()!.bundle!.name }}</h4>
+          } @else {
+            <p class="modal-type-label">
+              <i class="bi bi-tag me-1"></i>{{ selectedShopItem()!.brItems![0].type.displayValue }}
+            </p>
+            <h4 class="text-white fw-bold mb-1">{{ selectedShopItem()!.brItems![0].name }}</h4>
+          }
+
+          @if (!selectedShopItem()!.bundle && selectedShopItem()!.brItems![0].description) {
+            <p class="text-secondary small mb-2">
+              {{ selectedShopItem()!.brItems![0].description }}
+            </p>
+          }
+
+          <div class="d-flex flex-wrap gap-2 mb-2">
+            <span class="badge" [style.background]="getRarityColor(selectedShopItem()!)">
+              {{ selectedShopItem()!.brItems![0].rarity.displayValue }}
+            </span>
+            @if (selectedShopItem()!.brItems![0].series) {
+              <span class="badge bg-dark border border-secondary">{{
+                selectedShopItem()!.brItems![0].series!.value
+              }}</span>
+            }
+            @if (selectedShopItem()!.banner) {
+              <span class="badge bg-danger">{{ selectedShopItem()!.banner!.value }}</span>
+            }
+            @if (selectedShopItem()!.giftable) {
+              <span class="badge bg-success"><i class="bi bi-gift me-1"></i>Giftable</span>
+            }
+          </div>
+
+          @if (selectedShopItem()!.brItems![0].set) {
+            <p class="text-secondary small mb-1">
+              <i class="bi bi-collection me-1"></i>{{ selectedShopItem()!.brItems![0].set!.text }}
+            </p>
+          }
+          @if (selectedShopItem()!.brItems![0].introduction) {
+            <p class="text-secondary small mb-2">
+              <i class="bi bi-calendar-event me-1"></i
+              >{{ selectedShopItem()!.brItems![0].introduction!.text }}
+            </p>
+          }
+
+          @if (selectedShopItem()!.brItems!.length > 1) {
+            <p class="text-white small fw-bold mb-1">
+              Includes {{ selectedShopItem()!.brItems!.length }} items:
+            </p>
+            <div class="modal-items-list mb-2">
+              @for (item of selectedShopItem()!.brItems!; track item.id) {
+                <div class="modal-item-row">
+                  <img
+                    [src]="item.images.smallIcon ?? item.images.icon"
+                    [alt]="item.name"
+                    width="36"
+                    height="36"
+                    style="border-radius: 4px; object-fit: cover"
+                  />
+                  <div>
+                    <p class="text-white mb-0 small fw-bold">{{ item.name }}</p>
+                    <p class="text-secondary mb-0" style="font-size: 0.7rem">
+                      {{ item.type.displayValue }}
+                    </p>
+                  </div>
+                </div>
+              }
+            </div>
+          }
+
+          @if (!selectedShopItem()!.bundle && selectedShopItem()!.brItems![0].variants?.length) {
+            <p class="text-secondary small mb-2">
+              <i class="bi bi-palette me-1"></i
+              >{{ selectedShopItem()!.brItems![0].variants!.length }} style(s) available
+            </p>
+          }
+
+          <div class="modal-price mt-2">
+            <img
+              src="https://fortnite-api.com/images/vbuck.png"
+              alt="vbuck"
+              width="18"
+              height="18"
+            />
+            @if (selectedShopItem()!.regularPrice !== selectedShopItem()!.finalPrice) {
+              <span class="text-secondary text-decoration-line-through me-2">{{
+                selectedShopItem()!.regularPrice | number
+              }}</span>
+            }
+            <span class="text-warning fw-bold fs-5">{{
+              selectedShopItem()!.finalPrice | number
+            }}</span>
+          </div>
+          <p class="text-secondary small mt-1">
+            <i class="bi bi-clock me-1"></i>{{ getOutDateLabel(selectedShopItem()!.outDate) }}
+          </p>
+        </div>
+      </div>
+    </div>
   </div>
 }

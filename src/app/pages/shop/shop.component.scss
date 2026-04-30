@@ -1,7 +1,100 @@
-﻿.pills-nav-container {
+.pills-nav-container {
   background: linear-gradient(180deg, #0d0d0d 0%, #0d0d0d 90%, transparent 100%);
   padding: 1rem 0 1.5rem 0;
   margin: 0 -1rem 1rem -1rem;
+}
+
+.section-wrapper {
+  transition: all 0.3s ease-out;
+  border-radius: 12px;
+  padding: 0.5rem;
+  margin: 0 -0.5rem 0.5rem -0.5rem;
+  border: 2px solid transparent;
+
+  &.section-highlighted {
+    animation: highlightPulse 4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
+}
+
+@keyframes highlightPulse {
+  0% {
+    background: linear-gradient(135deg, rgba(255, 193, 7, 0.18) 0%, rgba(255, 193, 7, 0.22) 50%, rgba(255, 193, 7, 0.18) 100%);
+    box-shadow: 0 0 40px 10px rgba(255, 193, 7, 0.4), inset 0 0 30px rgba(255, 193, 7, 0.2);
+    border-color: rgba(255, 193, 7, 0.8);
+    transform: scale(1.005);
+  }
+  15% {
+    background: linear-gradient(135deg, rgba(255, 193, 7, 0.2) 0%, rgba(255, 193, 7, 0.24) 50%, rgba(255, 193, 7, 0.2) 100%);
+    box-shadow: 0 0 45px 12px rgba(255, 193, 7, 0.42), inset 0 0 32px rgba(255, 193, 7, 0.21);
+    border-color: rgba(255, 193, 7, 0.85);
+    transform: scale(1.006);
+  }
+  30% {
+    background: linear-gradient(135deg, rgba(255, 193, 7, 0.18) 0%, rgba(255, 193, 7, 0.22) 50%, rgba(255, 193, 7, 0.18) 100%);
+    box-shadow: 0 0 40px 10px rgba(255, 193, 7, 0.4), inset 0 0 30px rgba(255, 193, 7, 0.2);
+    border-color: rgba(255, 193, 7, 0.8);
+    transform: scale(1.004);
+  }
+  45% {
+    background: linear-gradient(135deg, rgba(255, 193, 7, 0.2) 0%, rgba(255, 193, 7, 0.24) 50%, rgba(255, 193, 7, 0.2) 100%);
+    box-shadow: 0 0 45px 12px rgba(255, 193, 7, 0.42), inset 0 0 32px rgba(255, 193, 7, 0.21);
+    border-color: rgba(255, 193, 7, 0.85);
+    transform: scale(1.005);
+  }
+  60% {
+    background: linear-gradient(135deg, rgba(255, 193, 7, 0.18) 0%, rgba(255, 193, 7, 0.22) 50%, rgba(255, 193, 7, 0.18) 100%);
+    box-shadow: 0 0 40px 10px rgba(255, 193, 7, 0.4), inset 0 0 30px rgba(255, 193, 7, 0.2);
+    border-color: rgba(255, 193, 7, 0.8);
+    transform: scale(1.003);
+  }
+  70% {
+    background: linear-gradient(135deg, rgba(255, 193, 7, 0.14) 0%, rgba(255, 193, 7, 0.17) 50%, rgba(255, 193, 7, 0.14) 100%);
+    box-shadow: 0 0 32px 8px rgba(255, 193, 7, 0.3), inset 0 0 24px rgba(255, 193, 7, 0.15);
+    border-color: rgba(255, 193, 7, 0.65);
+    transform: scale(1.002);
+  }
+  77% {
+    background: linear-gradient(135deg, rgba(255, 193, 7, 0.10) 0%, rgba(255, 193, 7, 0.13) 50%, rgba(255, 193, 7, 0.10) 100%);
+    box-shadow: 0 0 25px 6px rgba(255, 193, 7, 0.22), inset 0 0 18px rgba(255, 193, 7, 0.11);
+    border-color: rgba(255, 193, 7, 0.5);
+    transform: scale(1.001);
+  }
+  83% {
+    background: linear-gradient(135deg, rgba(255, 193, 7, 0.07) 0%, rgba(255, 193, 7, 0.09) 50%, rgba(255, 193, 7, 0.07) 100%);
+    box-shadow: 0 0 18px 4px rgba(255, 193, 7, 0.16), inset 0 0 13px rgba(255, 193, 7, 0.08);
+    border-color: rgba(255, 193, 7, 0.38);
+    transform: scale(1);
+  }
+  88% {
+    background: linear-gradient(135deg, rgba(255, 193, 7, 0.05) 0%, rgba(255, 193, 7, 0.06) 50%, rgba(255, 193, 7, 0.05) 100%);
+    box-shadow: 0 0 12px 3px rgba(255, 193, 7, 0.11), inset 0 0 9px rgba(255, 193, 7, 0.055);
+    border-color: rgba(255, 193, 7, 0.27);
+    transform: scale(1);
+  }
+  92% {
+    background: linear-gradient(135deg, rgba(255, 193, 7, 0.03) 0%, rgba(255, 193, 7, 0.04) 50%, rgba(255, 193, 7, 0.03) 100%);
+    box-shadow: 0 0 8px 2px rgba(255, 193, 7, 0.07), inset 0 0 6px rgba(255, 193, 7, 0.035);
+    border-color: rgba(255, 193, 7, 0.18);
+    transform: scale(1);
+  }
+  95% {
+    background: linear-gradient(135deg, rgba(255, 193, 7, 0.018) 0%, rgba(255, 193, 7, 0.022) 50%, rgba(255, 193, 7, 0.018) 100%);
+    box-shadow: 0 0 5px 1px rgba(255, 193, 7, 0.045), inset 0 0 4px rgba(255, 193, 7, 0.02);
+    border-color: rgba(255, 193, 7, 0.11);
+    transform: scale(1);
+  }
+  97.5% {
+    background: linear-gradient(135deg, rgba(255, 193, 7, 0.008) 0%, rgba(255, 193, 7, 0.01) 50%, rgba(255, 193, 7, 0.008) 100%);
+    box-shadow: 0 0 2px 0.5px rgba(255, 193, 7, 0.02), inset 0 0 2px rgba(255, 193, 7, 0.01);
+    border-color: rgba(255, 193, 7, 0.05);
+    transform: scale(1);
+  }
+  100% {
+    background: transparent;
+    box-shadow: 0 0 0 0 rgba(255, 193, 7, 0), inset 0 0 0 rgba(255, 193, 7, 0);
+    border-color: transparent;
+    transform: scale(1);
+  }
 }
 
 .pills-nav {

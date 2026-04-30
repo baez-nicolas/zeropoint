@@ -26,8 +26,10 @@ export class ShopComponent implements OnInit, OnDestroy {
   selectedEntry = signal<ShopEntry | null>(null);
   modalClosing = signal(false);
   countdown = signal<string>('');
+  highlightedSection = signal<string | null>(null);
 
   private countdownInterval?: ReturnType<typeof setInterval>;
+  private highlightTimeout?: ReturnType<typeof setTimeout>;
 
   sections = computed(() => {
     if (!this.shop()) return [];
@@ -114,6 +116,9 @@ export class ShopComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     if (this.countdownInterval) {
       clearInterval(this.countdownInterval);
+    }
+    if (this.highlightTimeout) {
+      clearTimeout(this.highlightTimeout);
     }
   }
 
@@ -219,6 +224,16 @@ export class ShopComponent implements OnInit, OnDestroy {
 
   scrollToSection(sectionId: string) {
     this.viewportScroller.scrollToAnchor(sectionId);
+
+    if (this.highlightTimeout) {
+      clearTimeout(this.highlightTimeout);
+    }
+
+    this.highlightedSection.set(sectionId);
+
+    this.highlightTimeout = setTimeout(() => {
+      this.highlightedSection.set(null);
+    }, 2000);
   }
 
   scrollToTop() {

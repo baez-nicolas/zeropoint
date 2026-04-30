@@ -43,127 +43,179 @@
     </div>
 
     @for (section of sections(); track section.title) {
-      <div class="section-header mb-3 mt-5" [id]="getSectionId(section)">
-        <h3 class="text-white fw-bold border-bottom border-warning pb-2 mb-0">
-          @if (section.type === 'tracks') {
-            <i class="bi bi-music-note-beamed me-2"></i>
-          } @else if (section.type === 'cars') {
-            <i class="bi bi-car-front-fill me-2"></i>
-          } @else {
-            <i class="bi bi-grid-3x3-gap-fill me-2"></i>
-          }
-          {{ section.title }}
-          <span class="badge bg-secondary ms-2">{{ section.entries.length }}</span>
-        </h3>
-      </div>
+      <div
+        class="section-wrapper"
+        [id]="getSectionId(section)"
+        [class.section-highlighted]="highlightedSection() === getSectionId(section)"
+      >
+        <div class="section-header mb-3 mt-3">
+          <h3 class="text-white fw-bold border-bottom border-warning pb-2 mb-0">
+            @if (section.type === 'tracks') {
+              <i class="bi bi-music-note-beamed me-2"></i>
+            } @else if (section.type === 'cars') {
+              <i class="bi bi-car-front-fill me-2"></i>
+            } @else {
+              <i class="bi bi-grid-3x3-gap-fill me-2"></i>
+            }
+            {{ section.title }}
+            <span class="badge bg-secondary ms-2">{{ section.entries.length }}</span>
+          </h3>
+        </div>
 
-      @if (section.type === 'br') {
-        <div class="row g-2 mb-5">
-          @for (entry of section.entries; track entry.offerId) {
-            <div class="col-4 col-sm-3 col-md-2 col-lg-2 col-xl-1">
-              <div
-                class="card h-100 border-0 shop-card"
-                [style.border-bottom]="'3px solid ' + getRarityColor(entry)"
-                (click)="openModal(entry)"
-              >
-                <img
-                  [src]="getEntryImage(entry)"
-                  [alt]="entry.brItems?.[0]?.name ?? 'item'"
-                  class="card-img-top"
-                  style="aspect-ratio: 1/1; object-fit: cover"
-                />
-                <div class="card-body p-1">
-                  @if (entry.banner) {
-                    <span
-                      class="badge bg-danger mb-1 d-block text-truncate"
-                      style="font-size: 0.65rem"
-                      >{{ entry.banner.value }}</span
-                    >
-                  }
-                  @if (entry.bundle) {
-                    <p
-                      class="card-text text-warning text-truncate mb-1 fw-bold"
-                      style="font-size: 0.7rem"
-                    >
-                      {{ entry.bundle.name }}
-                    </p>
-                  } @else {
-                    <p class="card-text text-white text-truncate mb-1" style="font-size: 0.7rem">
-                      {{ entry.brItems?.[0]?.name }}
-                    </p>
-                  }
-                  <div class="d-flex align-items-center gap-1">
-                    <img
-                      src="https://fortnite-api.com/images/vbuck.png"
-                      alt="vbuck"
-                      width="12"
-                      height="12"
-                    />
-                    @if (entry.regularPrice !== entry.finalPrice) {
+        @if (section.type === 'br') {
+          <div class="row g-2 mb-3">
+            @for (entry of section.entries; track entry.offerId) {
+              <div class="col-4 col-sm-3 col-md-2 col-lg-2 col-xl-1">
+                <div
+                  class="card h-100 border-0 shop-card"
+                  [style.border-bottom]="'3px solid ' + getRarityColor(entry)"
+                  (click)="openModal(entry)"
+                >
+                  <img
+                    [src]="getEntryImage(entry)"
+                    [alt]="entry.brItems?.[0]?.name ?? 'item'"
+                    class="card-img-top"
+                    style="aspect-ratio: 1/1; object-fit: cover"
+                  />
+                  <div class="card-body p-1">
+                    @if (entry.banner) {
                       <span
-                        class="text-secondary text-decoration-line-through me-1"
+                        class="badge bg-danger mb-1 d-block text-truncate"
                         style="font-size: 0.65rem"
-                        >{{ entry.regularPrice | number }}</span
+                        >{{ entry.banner.value }}</span
                       >
                     }
-                    <span class="text-warning fw-bold" style="font-size: 0.7rem">{{
-                      entry.finalPrice | number
-                    }}</span>
-                  </div>
-                  @if (entry.brItems && entry.brItems.length > 1) {
-                    <span class="badge bg-secondary mt-1" style="font-size: 0.6rem"
-                      >+{{ entry.brItems.length - 1 }} items</span
-                    >
-                  }
-                </div>
-              </div>
-            </div>
-          }
-        </div>
-      }
-
-      @if (section.type === 'tracks') {
-        <div class="row g-2 mb-5">
-          @for (entry of section.entries; track entry.offerId) {
-            <div class="col-6 col-sm-4 col-md-3 col-lg-2">
-              <div
-                class="card h-100 border-0 shop-card border-start border-4 border-info"
-                (click)="openModal(entry)"
-              >
-                <div class="d-flex">
-                  <img
-                    [src]="entry.tracks![0].albumArt"
-                    [alt]="entry.tracks![0].title"
-                    style="
-                      width: 70px;
-                      height: 70px;
-                      object-fit: cover;
-                      flex-shrink: 0;
-                      border-radius: 4px;
-                    "
-                  />
-                  <div class="card-body p-1 overflow-hidden">
-                    <p class="text-white fw-bold text-truncate mb-0" style="font-size: 0.7rem">
-                      {{ entry.tracks![0].title }}
-                    </p>
-                    <p class="text-secondary text-truncate mb-1" style="font-size: 0.65rem">
-                      {{ entry.tracks![0].artist }}
-                    </p>
-                    <div class="d-flex gap-1 flex-wrap mb-1">
-                      <span class="badge bg-dark border border-secondary" style="font-size: 0.6rem">
-                        <i class="bi bi-music-note me-1"></i>{{ entry.tracks![0].bpm }}
-                      </span>
-                      <span class="badge bg-dark border border-secondary" style="font-size: 0.6rem">
-                        <i class="bi bi-clock me-1"></i
-                        >{{ formatDuration(entry.tracks![0].duration) }}
-                      </span>
-                    </div>
+                    @if (entry.bundle) {
+                      <p
+                        class="card-text text-warning text-truncate mb-1 fw-bold"
+                        style="font-size: 0.7rem"
+                      >
+                        {{ entry.bundle.name }}
+                      </p>
+                    } @else {
+                      <p class="card-text text-white text-truncate mb-1" style="font-size: 0.7rem">
+                        {{ entry.brItems?.[0]?.name }}
+                      </p>
+                    }
                     <div class="d-flex align-items-center gap-1">
                       <img
                         src="https://fortnite-api.com/images/vbuck.png"
                         alt="vbuck"
-                        width="10"
-                        height="10"
+                        width="12"
+                        height="12"
+                      />
+                      @if (entry.regularPrice !== entry.finalPrice) {
+                        <span
+                          class="text-secondary text-decoration-line-through me-1"
+                          style="font-size: 0.65rem"
+                          >{{ entry.regularPrice | number }}</span
+                        >
+                      }
+                      <span class="text-warning fw-bold" style="font-size: 0.7rem">{{
+                        entry.finalPrice | number
+                      }}</span>
+                    </div>
+                    @if (entry.brItems && entry.brItems.length > 1) {
+                      <span class="badge bg-secondary mt-1" style="font-size: 0.6rem"
+                        >+{{ entry.brItems.length - 1 }} items</span
+                      >
+                    }
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        }
+
+        @if (section.type === 'tracks') {
+          <div class="row g-2 mb-3">
+            @for (entry of section.entries; track entry.offerId) {
+              <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+                <div
+                  class="card h-100 border-0 shop-card border-start border-4 border-info"
+                  (click)="openModal(entry)"
+                >
+                  <div class="d-flex">
+                    <img
+                      [src]="entry.tracks![0].albumArt"
+                      [alt]="entry.tracks![0].title"
+                      style="
+                        width: 70px;
+                        height: 70px;
+                        object-fit: cover;
+                        flex-shrink: 0;
+                        border-radius: 4px;
+                      "
+                    />
+                    <div class="card-body p-1 overflow-hidden">
+                      <p class="text-white fw-bold text-truncate mb-0" style="font-size: 0.7rem">
+                        {{ entry.tracks![0].title }}
+                      </p>
+                      <p class="text-secondary text-truncate mb-1" style="font-size: 0.65rem">
+                        {{ entry.tracks![0].artist }}
+                      </p>
+                      <div class="d-flex gap-1 flex-wrap mb-1">
+                        <span
+                          class="badge bg-dark border border-secondary"
+                          style="font-size: 0.6rem"
+                        >
+                          <i class="bi bi-music-note me-1"></i>{{ entry.tracks![0].bpm }}
+                        </span>
+                        <span
+                          class="badge bg-dark border border-secondary"
+                          style="font-size: 0.6rem"
+                        >
+                          <i class="bi bi-clock me-1"></i
+                          >{{ formatDuration(entry.tracks![0].duration) }}
+                        </span>
+                      </div>
+                      <div class="d-flex align-items-center gap-1">
+                        <img
+                          src="https://fortnite-api.com/images/vbuck.png"
+                          alt="vbuck"
+                          width="10"
+                          height="10"
+                        />
+                        <span class="text-warning fw-bold" style="font-size: 0.7rem">{{
+                          entry.finalPrice | number
+                        }}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        }
+
+        @if (section.type === 'cars') {
+          <div class="row g-2 mb-3">
+            @for (entry of section.entries; track entry.offerId) {
+              <div class="col-4 col-sm-3 col-md-2 col-lg-2 col-xl-1">
+                <div
+                  class="card h-100 border-0 shop-card"
+                  style="border-bottom: 3px solid #ff9800"
+                  (click)="openModal(entry)"
+                >
+                  <img
+                    [src]="entry.cars![0].images.large ?? entry.cars![0].images.small"
+                    [alt]="entry.cars![0].name"
+                    class="card-img-top"
+                    style="aspect-ratio: 1/1; object-fit: cover"
+                  />
+                  <div class="card-body p-1">
+                    <p class="text-white text-truncate mb-0" style="font-size: 0.7rem">
+                      {{ entry.cars![0].name }}
+                    </p>
+                    <p class="text-secondary mb-1" style="font-size: 0.6rem">
+                      {{ entry.cars![0].type.displayValue }}
+                    </p>
+                    <div class="d-flex align-items-center gap-1">
+                      <img
+                        src="https://fortnite-api.com/images/vbuck.png"
+                        alt="vbuck"
+                        width="12"
+                        height="12"
                       />
                       <span class="text-warning fw-bold" style="font-size: 0.7rem">{{
                         entry.finalPrice | number
@@ -172,50 +224,10 @@
                   </div>
                 </div>
               </div>
-            </div>
-          }
-        </div>
-      }
-
-      @if (section.type === 'cars') {
-        <div class="row g-2 mb-5">
-          @for (entry of section.entries; track entry.offerId) {
-            <div class="col-4 col-sm-3 col-md-2 col-lg-2 col-xl-1">
-              <div
-                class="card h-100 border-0 shop-card"
-                style="border-bottom: 3px solid #ff9800"
-                (click)="openModal(entry)"
-              >
-                <img
-                  [src]="entry.cars![0].images.large ?? entry.cars![0].images.small"
-                  [alt]="entry.cars![0].name"
-                  class="card-img-top"
-                  style="aspect-ratio: 1/1; object-fit: cover"
-                />
-                <div class="card-body p-1">
-                  <p class="text-white text-truncate mb-0" style="font-size: 0.7rem">
-                    {{ entry.cars![0].name }}
-                  </p>
-                  <p class="text-secondary mb-1" style="font-size: 0.6rem">
-                    {{ entry.cars![0].type.displayValue }}
-                  </p>
-                  <div class="d-flex align-items-center gap-1">
-                    <img
-                      src="https://fortnite-api.com/images/vbuck.png"
-                      alt="vbuck"
-                      width="12"
-                      height="12"
-                    />
-                    <span class="text-warning fw-bold" style="font-size: 0.7rem">{{
-                      entry.finalPrice | number
-                    }}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          }
-        </div>
-      }
+            }
+          </div>
+        }
+      </div>
     }
   }
 

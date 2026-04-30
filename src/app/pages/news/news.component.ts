@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, signal } from '@angular/core';
-import { NewsResponse } from '../../core/models/news.model';
+import { NewsMotd, NewsResponse, NewsStwMessage } from '../../core/models/news.model';
 import { NewsService } from '../../core/services/news.service';
 import { PageLoadingService } from '../../core/services/page-loading.service';
 
@@ -16,6 +16,8 @@ export class NewsComponent implements OnInit {
   loading = signal(true);
   error = signal(false);
   activeTab = signal<'br' | 'stw'>('br');
+  selectedNews = signal<NewsMotd | NewsStwMessage | null>(null);
+  modalClosing = signal(false);
 
   constructor(
     private newsService: NewsService,
@@ -41,5 +43,25 @@ export class NewsComponent implements OnInit {
 
   setTab(tab: 'br' | 'stw') {
     this.activeTab.set(tab);
+  }
+
+  openModal(newsItem: NewsMotd | NewsStwMessage) {
+    this.selectedNews.set(newsItem);
+    this.modalClosing.set(false);
+  }
+
+  closeModal() {
+    this.modalClosing.set(true);
+    setTimeout(() => {
+      this.selectedNews.set(null);
+      this.modalClosing.set(false);
+    }, 200);
+  }
+
+  getNewsImage(newsItem: NewsMotd | NewsStwMessage): string {
+    if ('image' in newsItem && 'tileImage' in newsItem) {
+      return newsItem.image;
+    }
+    return (newsItem as NewsStwMessage).image;
   }
 }

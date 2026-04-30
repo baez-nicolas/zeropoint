@@ -32,7 +32,10 @@
         @for (motd of news()!.br.motds; track motd.id) {
           @if (!motd.hidden) {
             <div class="col-12 col-md-6 col-lg-4">
-              <div class="card bg-dark text-white h-100 border-secondary">
+              <div
+                class="card bg-dark text-white h-100 border-secondary news-card"
+                (click)="openModal(motd)"
+              >
                 <img
                   [src]="motd.tileImage"
                   [alt]="motd.title"
@@ -54,7 +57,10 @@
       <div class="row g-4">
         @for (msg of news()!.stw.messages; track msg.title) {
           <div class="col-12 col-md-6 col-lg-4">
-            <div class="card bg-dark text-white h-100 border-secondary">
+            <div
+              class="card bg-dark text-white h-100 border-secondary news-card"
+              (click)="openModal(msg)"
+            >
               <img
                 [src]="msg.image"
                 [alt]="msg.title"
@@ -72,3 +78,23 @@
     }
   }
 </div>
+
+@if (selectedNews()) {
+  <div class="modal-overlay" [class.closing]="modalClosing()" (click)="closeModal()">
+    <div class="modal-panel" [class.closing]="modalClosing()" (click)="$event.stopPropagation()">
+      <button class="modal-close-btn" (click)="closeModal()">
+        <i class="bi bi-x-lg"></i>
+      </button>
+
+      <div class="modal-header-section">
+        <img
+          [src]="getNewsImage(selectedNews()!)"
+          [alt]="selectedNews()!.title"
+          class="modal-news-img"
+        />
+        <h3 class="modal-title">{{ selectedNews()!.title }}</h3>
+        <p class="modal-description">{{ selectedNews()!.body }}</p>
+      </div>
+    </div>
+  </div>
+}
