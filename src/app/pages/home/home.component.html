@@ -17,69 +17,77 @@
   </div>
 </div>
 
-<div class="container pb-5">
-  @if (latestNews().length) {
-    <div class="d-flex align-items-center justify-content-between mb-3">
-      <h4 class="text-white fw-bold mb-0">
-        <i class="bi bi-newspaper me-2 text-warning"></i>Latest News
-      </h4>
-      <a routerLink="/news" class="btn btn-sm btn-outline-warning">See all</a>
-    </div>
-    <div class="row g-3 mb-5">
-      @for (motd of latestNews(); track motd.id) {
-        <div class="col-12 col-md-4">
-          <div class="card bg-dark border-secondary text-white h-100">
-            <img
-              [src]="motd.tileImage"
-              [alt]="motd.title"
-              class="card-img-top"
-              style="height: 180px; object-fit: cover"
-            />
-            <div class="card-body">
-              <h6 class="card-title text-warning">{{ motd.title }}</h6>
-              <p class="card-text text-secondary small">{{ motd.body }}</p>
-            </div>
-          </div>
-        </div>
-      }
-    </div>
-  }
+@if (loading()) {
+  <div class="d-flex justify-content-center py-5">
+    <div class="spinner-border text-warning" role="status"></div>
+  </div>
+}
 
-  @if (featuredItems().length) {
-    <div class="d-flex align-items-center justify-content-between mb-3">
-      <h4 class="text-white fw-bold mb-0">
-        <i class="bi bi-shop me-2 text-warning"></i>Featured in Shop
-      </h4>
-      <a routerLink="/shop" class="btn btn-sm btn-outline-warning">See all</a>
-    </div>
-    <div class="row g-3">
-      @for (entry of featuredItems(); track entry.offerId) {
-        <div class="col-6 col-sm-4 col-md-2">
-          <div
-            class="card bg-dark border-0 h-100"
-            [style.border-bottom]="'3px solid ' + getRarityColor(entry)"
-          >
-            <img
-              [src]="getEntryImage(entry)"
-              [alt]="entry.brItems?.[0]?.name"
-              class="card-img-top"
-              style="aspect-ratio: 1/1; object-fit: cover"
-            />
-            <div class="card-body p-2">
-              <p class="text-white small text-truncate mb-1">{{ entry.brItems?.[0]?.name }}</p>
-              <div class="d-flex align-items-center gap-1">
-                <img
-                  src="https://fortnite-api.com/images/vbuck.png"
-                  alt="vbuck"
-                  width="12"
-                  height="12"
-                />
-                <span class="text-warning small fw-bold">{{ entry.finalPrice | number }}</span>
+@if (!loading()) {
+  <div class="container pb-5">
+    @if (latestNews().length) {
+      <div class="d-flex align-items-center justify-content-between mb-3">
+        <h4 class="text-white fw-bold mb-0">
+          <i class="bi bi-newspaper me-2 text-warning"></i>Latest News
+        </h4>
+        <a routerLink="/news" class="btn btn-sm btn-outline-warning">See all</a>
+      </div>
+      <div class="row g-3 mb-5">
+        @for (motd of latestNews(); track motd.id) {
+          <div class="col-12 col-md-4">
+            <div class="card bg-dark border-secondary text-white h-100">
+              <img
+                [src]="motd.tileImage"
+                [alt]="motd.title"
+                class="card-img-top"
+                style="height: 180px; object-fit: cover"
+              />
+              <div class="card-body">
+                <h6 class="card-title text-warning">{{ motd.title }}</h6>
+                <p class="card-text text-secondary small">{{ motd.body }}</p>
               </div>
             </div>
           </div>
-        </div>
-      }
-    </div>
-  }
-</div>
+        }
+      </div>
+    }
+
+    @if (featuredItems().length) {
+      <div class="d-flex align-items-center justify-content-between mb-3">
+        <h4 class="text-white fw-bold mb-0">
+          <i class="bi bi-shop me-2 text-warning"></i>Featured in Shop
+        </h4>
+        <a routerLink="/shop" class="btn btn-sm btn-outline-warning">See all</a>
+      </div>
+      <div class="row g-3">
+        @for (entry of featuredItems(); track entry.offerId) {
+          <div class="col-6 col-sm-4 col-md-2">
+            <div
+              class="card bg-dark border-0 h-100"
+              [style.border-bottom]="'3px solid ' + getRarityColor(entry)"
+            >
+              <img
+                [src]="getEntryImage(entry)"
+                [alt]="entry.brItems?.[0]?.name"
+                class="card-img-top"
+                style="aspect-ratio: 1/1; object-fit: cover"
+              />
+              <div class="card-body p-2">
+                <p class="text-white small text-truncate mb-1">{{ entry.brItems?.[0]?.name }}</p>
+                <div class="d-flex align-items-center gap-1">
+                  <img
+                    src="https://fortnite-api.com/images/vbuck.png"
+                    alt="vbuck"
+                    width="12"
+                    height="12"
+                  />
+                  <span class="text-warning small fw-bold">{{ entry.finalPrice | number }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </div>
+}

@@ -18,6 +18,7 @@ export class HomeComponent implements OnInit {
   latestNews = signal<NewsMotd[]>([]);
   featuredItems = signal<ShopEntry[]>([]);
   today = signal<string>('');
+  loading = signal<boolean>(true);
 
   constructor(
     private newsService: NewsService,
@@ -42,6 +43,7 @@ export class HomeComponent implements OnInit {
 
     const checkAllLoaded = () => {
       if (newsLoaded && shopLoaded) {
+        this.loading.set(false);
         this.pageLoadingService.setLoading(false);
       }
     };
