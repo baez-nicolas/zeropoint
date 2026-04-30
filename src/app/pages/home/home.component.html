@@ -166,6 +166,39 @@
         }
       </div>
     }
+
+    <div class="d-flex align-items-center justify-content-between mb-3 mt-5">
+      <h4 class="text-white fw-bold mb-0">
+        <i class="bi bi-shield-check me-2 text-warning"></i>Verify Creator Code
+      </h4>
+    </div>
+    <div class="creator-code-section">
+      <p class="text-secondary mb-3">Check if a Fortnite creator code is active and working</p>
+      <div class="creator-code-form">
+        <div class="input-group">
+          <input
+            type="text"
+            class="form-control creator-code-input"
+            placeholder="Enter creator code (e.g., thegrefg, rubius, ninja, tfue)"
+            [(ngModel)]="creatorCode"
+            (keyup.enter)="checkCreatorCode()"
+            [disabled]="checkingCode()"
+          />
+          <button
+            class="btn btn-warning creator-code-btn"
+            (click)="checkCreatorCode()"
+            [disabled]="checkingCode()"
+          >
+            @if (checkingCode()) {
+              <span class="spinner-border spinner-border-sm me-2"></span>
+              Checking...
+            } @else {
+              <i class="bi bi-search me-2"></i>Verify
+            }
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 }
 

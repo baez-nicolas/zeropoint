@@ -1,12 +1,15 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import Swal from 'sweetalert2';
 import { Banner } from '../../core/models/banner.model';
 import { Cosmetic } from '../../core/models/cosmetic.model';
 import { NewsMotd } from '../../core/models/news.model';
 import { ShopEntry } from '../../core/models/shop.model';
 import { BannerService } from '../../core/services/banner.service';
 import { CosmeticService } from '../../core/services/cosmetic.service';
+import { CreatorCodeService } from '../../core/services/creator-code.service';
 import { NewsService } from '../../core/services/news.service';
 import { PageLoadingService } from '../../core/services/page-loading.service';
 import { ShopService } from '../../core/services/shop.service';
@@ -14,7 +17,7 @@ import { ShopService } from '../../core/services/shop.service';
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, FormsModule],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
 })
@@ -30,12 +33,22 @@ export class HomeComponent implements OnInit {
   selectedBanner = signal<Banner | null>(null);
   selectedCosmetic = signal<Cosmetic | null>(null);
   modalClosing = signal(false);
+  private _creatorCode = signal<string>('');
+  checkingCode = signal<boolean>(false);
+
+  get creatorCode() {
+    return this._creatorCode();
+  }
+  set creatorCode(value: string) {
+    this._creatorCode.set(value);
+  }
 
   constructor(
     private newsService: NewsService,
     private shopService: ShopService,
     private bannerService: BannerService,
     private cosmeticService: CosmeticService,
+    private creatorCodeService: CreatorCodeService,
     private pageLoadingService: PageLoadingService,
   ) {}
 
@@ -215,5 +228,78 @@ export class HomeComponent implements OnInit {
   getCosmeticRarityClass(cosmetic: Cosmetic): string {
     const rarity = cosmetic.rarity?.value ?? '';
     return `rarity-${rarity}`;
+  }
+
+  checkCreatorCode() {
+    const code = this._creatorCode().trim();
+    if (!code) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Empty code',
+        text: 'Please enter a creator code',
+        background: '#1a1a1a',
+        color: '#fff',
+        confirmButtonColor: '#ffc107',
+      });
+      return;
+    }
+
+    this.checkingCode.set(true);
+    this.creatorCodeService.getCreatorCode(code).subscribe({
+      next: (response) => {
+        this.checkingCode.set(false);
+        if (response.data.status === 'ACTIVE') {
+          Swal.fire({
+            icon: 'success',
+            title: 'Creator code active!',
+            html: `
+              <p>Code: <strong>${response.data.code}</strong></p>
+              <p>Creator: <strong>${response.data.account.name}</strong></p>
+              <p>Status: <strong class="text-success">ACTIVE</strong></p>
+              ${response.data.verified ? '<p><i class="bi bi-patch-check-fill text-primary"></i> Verified</p>' : ''}
+            `,
+            background: '#1a1a1a',
+            color: '#fff',
+            confirmButtonColor: '#ffc107',
+          });
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Code inactive',
+            html: `
+              <p>The creator code <strong>${response.data.code}</strong> exists but is not active.</p>
+              <p>Status: <strong class="text-danger">${response.data.status}</strong></p>
+            `,
+            background: '#1a1a1a',
+            color: '#fff',
+            confirmButtonColor: '#ffc107',
+          });
+        }
+        this._creatorCode.set('');
+      },
+      error: (err) => {
+        this.checkingCode.set(false);
+        if (err.status === 404) {
+          Swal.fire({
+            icon: 'error',
+            title: 'Code not found',
+            text: `The creator code "${code}" does not exist.`,
+            background: '#1a1a1a',
+            color: '#fff',
+            confirmButtonColor: '#ffc107',
+          });
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'An error occurred while checking the creator code. Please try again.',
+            background: '#1a1a1a',
+            color: '#fff',
+            confirmButtonColor: '#ffc107',
+          });
+        }
+        this._creatorCode.set('');
+      },
+    });
   }
 }
