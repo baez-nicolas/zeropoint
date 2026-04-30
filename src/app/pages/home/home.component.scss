@@ -3,11 +3,67 @@
   background: linear-gradient(135deg, #0d0d0d 0%, #1a1a2e 50%, #0d0d0d 100%);
   border-bottom: 1px solid #222;
   padding: 2rem 1rem;
+
+  .text-secondary {
+    color: #b8b8b8 !important;
+  }
+}
+
+.hero-content {
+  position: relative;
+}
+
+.zeropoint-image-container {
+  position: absolute;
+  top: 65%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 0;
+  pointer-events: none;
+}
+
+.zeropoint-image {
+  width: 336px;
+  height: 336px;
+  object-fit: contain;
+  opacity: 0;
+  animation: zeropointAppear 1.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards,
+    zeropointBreathRotate 6s ease-in-out infinite;
+  animation-delay: 2.6s, 4.1s;
+  filter: drop-shadow(0 0 30px rgba(255, 193, 7, 0.25));
+}
+
+@keyframes zeropointAppear {
+  0% {
+    opacity: 0;
+    transform: scale(1);
+    filter: drop-shadow(0 0 0px rgba(255, 193, 7, 0));
+  }
+  100% {
+    opacity: 0.18;
+    transform: scale(1);
+    filter: drop-shadow(0 0 30px rgba(255, 193, 7, 0.25));
+  }
+}
+
+@keyframes zeropointBreathRotate {
+  0%, 100% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 30px rgba(255, 193, 7, 0.25));
+    opacity: 0.18;
+  }
+  50% {
+    transform: scale(1.2);
+    filter: drop-shadow(0 0 55px rgba(255, 193, 7, 0.4));
+    opacity: 0.22;
+  }
 }
 
 .title-animated {
   perspective: 1000px;
   display: inline-block;
+  position: relative;
+  z-index: 1;
 }
 
 .zero-text {
@@ -65,6 +121,8 @@
 .btn-animated {
   opacity: 0;
   animation: btnSlideUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  position: relative;
+  z-index: 1;
 }
 
 .btn-animated-1 {
@@ -82,6 +140,8 @@
 .text-animated {
   opacity: 0;
   animation: textFadeIn 0.5s ease-out forwards;
+  position: relative;
+  z-index: 1;
 }
 
 .text-animated-1 {
