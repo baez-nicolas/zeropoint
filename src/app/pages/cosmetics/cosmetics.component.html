@@ -1,7 +1,7 @@
 <div class="page-container py-4 px-3 px-md-4">
   <div class="page-header mb-4">
-    <h2 class="text-white fw-bold mb-0"><i class="bi bi-stars me-2 text-warning"></i>Cosmetics</h2>
-    <p class="text-secondary mt-1 mb-0">Todos los cosméticos de Fortnite Battle Royale</p>
+    <h2 class="text-white fw-bold mb-0"><i class="bi bi-stars me-2 text-white"></i>Cosmetics</h2>
+    <p class="text-secondary mt-1 mb-0">All Fortnite Battle Royale Cosmetics</p>
   </div>
 
   @if (loading()) {
@@ -11,7 +11,7 @@
   }
 
   @if (error()) {
-    <div class="alert alert-danger">Error al cargar los cosméticos. Intentá de nuevo.</div>
+    <div class="alert alert-danger">Error loading cosmetics. Please try again.</div>
   }
 
   @if (!loading() && !error()) {
@@ -23,14 +23,15 @@
             type="text"
             class="form-control search-input"
             placeholder="Search by name or set..."
-            [value]="search()"
-            (input)="onSearch($event)"
+            [(ngModel)]="search"
+            (ngModelChange)="saveFiltersToStorage()"
           />
         </div>
 
         <select
           class="form-select filter-select filter-select--sm"
-          (change)="onChapterChange($event)"
+          [(ngModel)]="selectedChapter"
+          (ngModelChange)="onChapterChangeValue($event)"
         >
           <option value="all">Chapter</option>
           @for (ch of chapters; track ch) {
@@ -40,8 +41,8 @@
 
         <select
           class="form-select filter-select filter-select--sm"
-          [value]="selectedSeason()"
-          (change)="onSeasonChange($event)"
+          [(ngModel)]="selectedSeason"
+          (ngModelChange)="onSeasonChangeValue($event)"
         >
           <option value="all">Season</option>
           @for (s of seasons; track s) {
@@ -49,47 +50,59 @@
           }
         </select>
 
-        <select class="form-select filter-select" (change)="onSeriesChange($event)">
-          <option value="all">Todas las series</option>
-          <option value="no-series">Sin Serie</option>
+        <select
+          class="form-select filter-select"
+          [(ngModel)]="selectedSeries"
+          (ngModelChange)="onSeriesChangeValue($event)"
+        >
+          <option value="all">All series</option>
+          <option value="no-series">No Series</option>
           @for (s of seriesList; track s) {
             <option [value]="s">{{ formatSeriesLabel(s) }}</option>
           }
         </select>
 
-        <select class="form-select filter-select" (change)="onTypeChange($event)">
-          <option value="all">Todos los tipos</option>
+        <select
+          class="form-select filter-select"
+          [(ngModel)]="selectedType"
+          (ngModelChange)="onTypeChangeValue($event)"
+        >
+          <option value="all">All types</option>
           @for (t of types; track t) {
             <option [value]="t">{{ formatTypeLabel(t) }}</option>
           }
         </select>
 
-        <select class="form-select filter-select filter-select--sm" (change)="onSortChange($event)">
-          <option value="default">Por defecto</option>
-          <option value="newest">Más recientes</option>
+        <select
+          class="form-select filter-select filter-select--sm"
+          [(ngModel)]="sortBy"
+          (ngModelChange)="onSortChangeValue($event)"
+        >
+          <option value="default">Default</option>
+          <option value="newest">Newest</option>
         </select>
 
         @if (hasActiveFilters()) {
           <button class="btn btn-outline-warning btn-sm clear-filters-btn" (click)="clearFilters()">
-            <i class="bi bi-x-circle me-1"></i>Limpiar filtros
+            <i class="bi bi-x-circle me-1"></i>Clear filters
           </button>
         }
       </div>
 
       <div class="d-flex align-items-center gap-3 flex-wrap">
         <span class="text-secondary small">
-          Mostrando <strong class="text-white">{{ filtered.length }}</strong>
+          Showing <strong class="text-white">{{ filtered.length }}</strong>
           @if (isLimitReached) {
-            de <strong class="text-warning">{{ totalFiltered }}</strong>
+            of <strong class="text-warning">{{ totalFiltered }}</strong>
           }
-          cosméticos
+          cosmetics
         </span>
         @if (isLimitReached) {
           <div class="limit-notice">
             <i class="bi bi-info-circle me-1"></i>
             <span
-              >Límite de <strong>{{ LIMIT }}</strong> cosméticos por motivos de rendimiento — usá
-              los filtros para acotar tu búsqueda.</span
+              >Limit of <strong>{{ LIMIT }}</strong> cosmetics for performance reasons — use filters
+              to narrow your search.</span
             >
           </div>
         }

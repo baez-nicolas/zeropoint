@@ -3,7 +3,7 @@
     <h2 class="text-white fw-bold mb-0">
       <i class="bi bi-shield-fill me-2 text-white"></i>Banners
     </h2>
-    <p class="text-secondary mt-1 mb-0">Banners de Fortnite para tu homebase</p>
+    <p class="text-secondary mt-1 mb-0">Fortnite Banners for your homebase</p>
   </div>
 
   @if (loading()) {
@@ -13,7 +13,7 @@
   }
 
   @if (error()) {
-    <div class="alert alert-danger">Error al cargar los banners. Intentá de nuevo.</div>
+    <div class="alert alert-danger">Error loading banners. Please try again.</div>
   }
 
   @if (!loading() && !error()) {
@@ -23,13 +23,17 @@
         <input
           type="text"
           class="form-control search-input"
-          placeholder="Buscar banner..."
-          [value]="search()"
-          (input)="onSearch($event)"
+          placeholder="Search banner..."
+          [(ngModel)]="search"
+          (ngModelChange)="saveFiltersToStorage()"
         />
       </div>
-      <select class="form-select category-select" (change)="onCategoryChange($event)">
-        <option value="all">Todas las categorías</option>
+      <select
+        class="form-select category-select"
+        [(ngModel)]="selectedCategory"
+        (ngModelChange)="onCategoryChangeValue($event)"
+      >
+        <option value="all">All categories</option>
         @for (cat of categories; track cat) {
           <option [value]="cat">{{ cat }}</option>
         }
@@ -37,7 +41,7 @@
 
       @if (hasActiveFilters()) {
         <button class="btn btn-outline-warning btn-sm clear-filters-btn" (click)="clearFilters()">
-          <i class="bi bi-x-circle me-1"></i>Limpiar filtros
+          <i class="bi bi-x-circle me-1"></i>Clear filters
         </button>
       }
 

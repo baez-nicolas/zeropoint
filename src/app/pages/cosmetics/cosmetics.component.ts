@@ -20,12 +20,54 @@ export class CosmeticsComponent implements OnInit {
   error = signal(false);
   showScrollTop = signal(false);
 
-  search = signal('');
-  selectedType = signal('all');
-  selectedSeries = signal('all');
-  selectedChapter = signal('all');
-  selectedSeason = signal('all');
-  sortBy = signal('default');
+  private _search = signal('');
+  private _selectedType = signal('all');
+  private _selectedSeries = signal('all');
+  private _selectedChapter = signal('all');
+  private _selectedSeason = signal('all');
+  private _sortBy = signal('default');
+
+  get search() {
+    return this._search();
+  }
+  set search(value: string) {
+    this._search.set(value);
+  }
+
+  get selectedType() {
+    return this._selectedType();
+  }
+  set selectedType(value: string) {
+    this._selectedType.set(value);
+  }
+
+  get selectedSeries() {
+    return this._selectedSeries();
+  }
+  set selectedSeries(value: string) {
+    this._selectedSeries.set(value);
+  }
+
+  get selectedChapter() {
+    return this._selectedChapter();
+  }
+  set selectedChapter(value: string) {
+    this._selectedChapter.set(value);
+  }
+
+  get selectedSeason() {
+    return this._selectedSeason();
+  }
+  set selectedSeason(value: string) {
+    this._selectedSeason.set(value);
+  }
+
+  get sortBy() {
+    return this._sortBy();
+  }
+  set sortBy(value: string) {
+    this._sortBy.set(value);
+  }
 
   selectedCosmetic = signal<Cosmetic | null>(null);
   modalClosing = signal(false);
@@ -34,12 +76,12 @@ export class CosmeticsComponent implements OnInit {
 
   hasActiveFilters = computed(() => {
     return (
-      this.search() !== '' ||
-      this.selectedType() !== 'all' ||
-      this.selectedSeries() !== 'all' ||
-      this.selectedChapter() !== 'all' ||
-      this.selectedSeason() !== 'all' ||
-      this.sortBy() !== 'default'
+      this._search() !== '' ||
+      this._selectedType() !== 'all' ||
+      this._selectedSeries() !== 'all' ||
+      this._selectedChapter() !== 'all' ||
+      this._selectedSeason() !== 'all' ||
+      this._sortBy() !== 'default'
     );
   });
 
@@ -49,6 +91,8 @@ export class CosmeticsComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.loadFiltersFromStorage();
+
     this.pageLoadingService.setLoading(true);
     this.cosmeticService.getCosmetics().subscribe({
       next: (data) => {
@@ -105,7 +149,7 @@ export class CosmeticsComponent implements OnInit {
   }
 
   get seasons(): string[] {
-    const chapter = this.selectedChapter();
+    const chapter = this.selectedChapter;
     let cosmetics = this.allCosmetics();
 
     if (chapter !== 'all') {
@@ -125,12 +169,12 @@ export class CosmeticsComponent implements OnInit {
   }
 
   get filtered(): Cosmetic[] {
-    const q = this.search().toLowerCase().trim();
-    const type = this.selectedType();
-    const series = this.selectedSeries();
-    const chapter = this.selectedChapter();
-    const season = this.selectedSeason();
-    const sortBy = this.sortBy();
+    const q = this._search().toLowerCase().trim();
+    const type = this._selectedType();
+    const series = this._selectedSeries();
+    const chapter = this._selectedChapter();
+    const season = this._selectedSeason();
+    const sortBy = this._sortBy();
 
     const noFilters =
       !q && type === 'all' && series === 'all' && chapter === 'all' && season === 'all';
@@ -186,12 +230,12 @@ export class CosmeticsComponent implements OnInit {
   }
 
   get totalFiltered(): number {
-    const q = this.search().toLowerCase().trim();
-    const type = this.selectedType();
-    const series = this.selectedSeries();
-    const chapter = this.selectedChapter();
-    const season = this.selectedSeason();
-    const sortBy = this.sortBy();
+    const q = this._search().toLowerCase().trim();
+    const type = this._selectedType();
+    const series = this._selectedSeries();
+    const chapter = this._selectedChapter();
+    const season = this._selectedSeason();
+    const sortBy = this.sortBy;
 
     const noFilters =
       !q && type === 'all' && series === 'all' && chapter === 'all' && season === 'all';
@@ -216,28 +260,60 @@ export class CosmeticsComponent implements OnInit {
   }
 
   onSearch(event: Event) {
-    this.search.set((event.target as HTMLInputElement).value);
+    this._search.set((event.target as HTMLInputElement).value);
+    this.saveFiltersToStorage();
   }
 
   onTypeChange(event: Event) {
-    this.selectedType.set((event.target as HTMLSelectElement).value);
+    this._selectedType.set((event.target as HTMLSelectElement).value);
+    this.saveFiltersToStorage();
   }
 
   onSeriesChange(event: Event) {
-    this.selectedSeries.set((event.target as HTMLSelectElement).value);
+    this._selectedSeries.set((event.target as HTMLSelectElement).value);
+    this.saveFiltersToStorage();
   }
 
   onChapterChange(event: Event) {
-    this.selectedChapter.set((event.target as HTMLSelectElement).value);
-    this.selectedSeason.set('all');
+    this._selectedChapter.set((event.target as HTMLSelectElement).value);
+    this._selectedSeason.set('all');
+    this.saveFiltersToStorage();
   }
 
   onSeasonChange(event: Event) {
-    this.selectedSeason.set((event.target as HTMLSelectElement).value);
+    this._selectedSeason.set((event.target as HTMLSelectElement).value);
+    this.saveFiltersToStorage();
   }
 
   onSortChange(event: Event) {
-    this.sortBy.set((event.target as HTMLSelectElement).value);
+    this._sortBy.set((event.target as HTMLSelectElement).value);
+    this.saveFiltersToStorage();
+  }
+
+  onChapterChangeValue(value: string) {
+    this._selectedChapter.set(value);
+    this._selectedSeason.set('all');
+    this.saveFiltersToStorage();
+  }
+
+  onSeasonChangeValue(value: string) {
+    this._selectedSeason.set(value);
+    this.saveFiltersToStorage();
+  }
+
+  onSeriesChangeValue(value: string) {
+    this._selectedSeries.set(value);
+    this.saveFiltersToStorage();
+  }
+
+  onTypeChangeValue(value: string) {
+    this._selectedType.set(value);
+    this.saveFiltersToStorage();
+  }
+
+  onSortChangeValue(value: string) {
+    this._sortBy.set(value);
+    this.saveFiltersToStorage();
   }
 
   openModal(c: Cosmetic) {
@@ -258,12 +334,42 @@ export class CosmeticsComponent implements OnInit {
   }
 
   clearFilters() {
-    this.search.set('');
-    this.selectedType.set('all');
-    this.selectedSeries.set('all');
-    this.selectedChapter.set('all');
-    this.selectedSeason.set('all');
-    this.sortBy.set('default');
+    this._search.set('');
+    this._selectedType.set('all');
+    this._selectedSeries.set('all');
+    this._selectedChapter.set('all');
+    this._selectedSeason.set('all');
+    this._sortBy.set('default');
+    this.saveFiltersToStorage();
+  }
+
+  private loadFiltersFromStorage() {
+    const saved = localStorage.getItem('cosmeticsFilters');
+    if (saved) {
+      try {
+        const filters = JSON.parse(saved);
+        this._search.set(filters.search || '');
+        this._selectedType.set(filters.type || 'all');
+        this._selectedSeries.set(filters.series || 'all');
+        this._selectedChapter.set(filters.chapter || 'all');
+        this._selectedSeason.set(filters.season || 'all');
+        this._sortBy.set(filters.sortBy || 'default');
+      } catch (e) {
+        console.error('Error loading filters from localStorage', e);
+      }
+    }
+  }
+
+  saveFiltersToStorage() {
+    const filters = {
+      search: this._search(),
+      type: this._selectedType(),
+      series: this._selectedSeries(),
+      chapter: this._selectedChapter(),
+      season: this._selectedSeason(),
+      sortBy: this._sortBy(),
+    };
+    localStorage.setItem('cosmeticsFilters', JSON.stringify(filters));
   }
 
   getImage(c: Cosmetic): string {

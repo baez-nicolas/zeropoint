@@ -3,7 +3,7 @@
     <h2 class="text-white fw-bold mb-0">
       <i class="bi bi-collection-play me-2 text-white"></i>Playlists
     </h2>
-    <p class="text-secondary mt-1 mb-0">Algunos de los modos de juego de la historia de Fortnite</p>
+    <p class="text-secondary mt-1 mb-0">Some of Fortnite's game modes throughout history</p>
   </div>
 
   @if (loading()) {
@@ -13,7 +13,7 @@
   }
 
   @if (error()) {
-    <div class="alert alert-danger">Error al cargar las playlists. Intentá de nuevo.</div>
+    <div class="alert alert-danger">Error loading playlists. Please try again.</div>
   }
 
   @if (!loading() && !error()) {
@@ -23,13 +23,17 @@
         <input
           type="text"
           class="form-control search-input"
-          placeholder="Buscar playlist..."
-          [value]="search()"
-          (input)="onSearch($event)"
+          placeholder="Search playlist..."
+          [(ngModel)]="search"
+          (ngModelChange)="saveFiltersToStorage()"
         />
       </div>
-      <select class="form-select gametype-select" (change)="onGameTypeChange($event)">
-        <option value="all">Todos los modos</option>
+      <select
+        class="form-select gametype-select"
+        [(ngModel)]="selectedGameType"
+        (ngModelChange)="onGameTypeChangeValue($event)"
+      >
+        <option value="all">All modes</option>
         @for (gt of gameTypes; track gt) {
           <option [value]="gt">{{ gt }}</option>
         }
@@ -37,7 +41,7 @@
 
       @if (hasActiveFilters()) {
         <button class="btn btn-outline-warning btn-sm clear-filters-btn" (click)="clearFilters()">
-          <i class="bi bi-x-circle me-1"></i>Limpiar filtros
+          <i class="bi bi-x-circle me-1"></i>Clear filters
         </button>
       }
 
@@ -55,10 +59,10 @@
                   <span class="badge-nobuild">Zero Build</span>
                 }
                 @if (group.isTournament) {
-                  <span class="badge-tournament"><i class="bi bi-trophy-fill"></i> Torneo</span>
+                  <span class="badge-tournament"><i class="bi bi-trophy-fill"></i> Tournament</span>
                 }
                 @if (group.variants.length > 1) {
-                  <span class="badge-variants">{{ group.variants.length }} modos</span>
+                  <span class="badge-variants">{{ group.variants.length }} modes</span>
                 }
               </div>
               <div class="playlist-gametype">{{ formatGameType(group.gameType) }}</div>
@@ -112,14 +116,14 @@
               <span class="badge-nobuild">Zero Build</span>
             }
             @if (selectedPlaylist()!.isTournament) {
-              <span class="badge-tournament"><i class="bi bi-trophy-fill"></i> Torneo</span>
+              <span class="badge-tournament"><i class="bi bi-trophy-fill"></i> Tournament</span>
             }
             <span class="badge-gametype">{{ formatGameType(selectedPlaylist()!.gameType) }}</span>
           </div>
         </div>
 
         <div class="modal-variants-section">
-          <h5 class="variants-title"><i class="bi bi-people-fill me-2"></i>Modos disponibles</h5>
+          <h5 class="variants-title"><i class="bi bi-people-fill me-2"></i>Available modes</h5>
           <div class="variants-list">
             @for (variant of selectedPlaylist()!.variants; track variant.id) {
               <div class="variant-card">

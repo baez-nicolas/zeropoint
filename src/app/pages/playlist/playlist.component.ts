@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, OnInit, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { Playlist } from '../../core/models/playlist.model';
 import { PageLoadingService } from '../../core/services/page-loading.service';
 import { PlaylistService } from '../../core/services/playlist.service';
@@ -17,7 +18,7 @@ export interface PlaylistGroup {
 @Component({
   selector: 'app-playlist',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './playlist.component.html',
   styleUrls: ['./playlist.component.scss'],
 })
@@ -25,13 +26,27 @@ export class PlaylistComponent implements OnInit {
   playlists = signal<Playlist[]>([]);
   loading = signal(true);
   error = signal(false);
-  search = signal('');
-  selectedGameType = signal('all');
+  private _search = signal('');
+  private _selectedGameType = signal('all');
   selectedPlaylist = signal<PlaylistGroup | null>(null);
   modalClosing = signal(false);
 
+  get search() {
+    return this._search();
+  }
+  set search(value: string) {
+    this._search.set(value);
+  }
+
+  get selectedGameType() {
+    return this._selectedGameType();
+  }
+  set selectedGameType(value: string) {
+    this._selectedGameType.set(value);
+  }
+
   hasActiveFilters = computed(() => {
-    return this.search() !== '' || this.selectedGameType() !== 'all';
+    return this._search() !== '' || this._selectedGameType() !== 'all';
   });
 
   constructor(
@@ -40,6 +55,8 @@ export class PlaylistComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.loadFiltersFromStorage();
+
     this.pageLoadingService.setLoading(true);
 
     this.playlistService.getPlaylists().subscribe({
@@ -62,8 +79,8 @@ export class PlaylistComponent implements OnInit {
   }
 
   get filtered(): PlaylistGroup[] {
-    const q = this.search().toLowerCase();
-    const gt = this.selectedGameType();
+    const q = this._search().toLowerCase();
+    const gt = this._selectedGameType();
 
     const filteredPlaylists = this.playlists().filter((p) => {
       const matchSearch =
@@ -148,11 +165,18 @@ export class PlaylistComponent implements OnInit {
   }
 
   onSearch(event: Event) {
-    this.search.set((event.target as HTMLInputElement).value);
+    this._search.set((event.target as HTMLInputElement).value);
+    this.saveFiltersToStorage();
   }
 
   onGameTypeChange(event: Event) {
-    this.selectedGameType.set((event.target as HTMLSelectElement).value);
+    this._selectedGameType.set((event.target as HTMLSelectElement).value);
+    this.saveFiltersToStorage();
+  }
+
+  onGameTypeChangeValue(value: string) {
+    this._selectedGameType.set(value);
+    this.saveFiltersToStorage();
   }
 
   getTeamLabel(p: Playlist): string {
@@ -185,7 +209,29 @@ export class PlaylistComponent implements OnInit {
   }
 
   clearFilters() {
-    this.search.set('');
-    this.selectedGameType.set('all');
+    this._search.set('');
+    this._selectedGameType.set('all');
+    this.saveFiltersToStorage();
+  }
+
+  private loadFiltersFromStorage() {
+    const saved = localStorage.getItem('playlistFilters');
+    if (saved) {
+      try {
+        const filters = JSON.parse(saved);
+        this._search.set(filters.search || '');
+        this._selectedGameType.set(filters.gameType || 'all');
+      } catch (e) {
+        console.error('Error loading filters from localStorage', e);
+      }
+    }
+  }
+
+  saveFiltersToStorage() {
+    const filters = {
+      search: this._search(),
+      gameType: this._selectedGameType(),
+    };
+    localStorage.setItem('playlistFilters', JSON.stringify(filters));
   }
 }
