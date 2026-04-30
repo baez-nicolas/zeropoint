@@ -93,6 +93,35 @@
         }
       </div>
     }
+
+    @if (featuredBanners().length) {
+      <div class="d-flex align-items-center justify-content-between mb-3 mt-5">
+        <h4 class="text-white fw-bold mb-0">
+          <i class="bi bi-shield-fill me-2 text-warning"></i>Featured Banners
+        </h4>
+        <a routerLink="/banners" class="btn btn-sm btn-outline-warning">See all</a>
+      </div>
+      <div class="row g-3">
+        @for (banner of featuredBanners(); track banner.id) {
+          <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+            <div class="banner-card" (click)="openBannerModal(banner)">
+              <div class="banner-img-wrap">
+                <img [src]="banner.images.icon" [alt]="banner.name" class="banner-img" />
+                <div class="banner-category-chip">{{ banner.category }}</div>
+              </div>
+              <div class="banner-body">
+                <p class="banner-name">{{ banner.devName }}</p>
+                @if (banner.fullUsageRights) {
+                  <span class="banner-rights"
+                    ><i class="bi bi-check-circle-fill me-1"></i>Full rights</span
+                  >
+                }
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    }
   </div>
 }
 
@@ -228,6 +257,52 @@
           <p class="text-secondary small mt-1">
             <i class="bi bi-clock me-1"></i>{{ getOutDateLabel(selectedShopItem()!.outDate) }}
           </p>
+        </div>
+      </div>
+    </div>
+  </div>
+}
+
+@if (selectedBanner()) {
+  <div class="modal-overlay" [class.closing]="modalClosing()" (click)="closeModal()">
+    <div class="modal-panel" [class.closing]="modalClosing()" (click)="$event.stopPropagation()">
+      <button class="modal-close-btn" (click)="closeModal()">
+        <i class="bi bi-x-lg"></i>
+      </button>
+
+      <div class="modal-header-section">
+        <img
+          [src]="selectedBanner()!.images.icon"
+          [alt]="selectedBanner()!.name"
+          class="modal-banner-img"
+        />
+        <h3 class="modal-title">{{ selectedBanner()!.devName }}</h3>
+        <p class="modal-description">{{ selectedBanner()!.description }}</p>
+        <div class="modal-badges-row">
+          <span class="badge-category">{{ selectedBanner()!.category }}</span>
+          @if (selectedBanner()!.fullUsageRights) {
+            <span class="badge-rights"
+              ><i class="bi bi-check-circle-fill me-1"></i>Full Usage Rights</span
+            >
+          }
+        </div>
+      </div>
+
+      <div class="modal-detail-section">
+        <div class="detail-row">
+          <span class="detail-label"><i class="bi bi-grid me-1"></i>Categoría</span>
+          <span class="detail-value">{{ selectedBanner()!.category }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label"><i class="bi bi-card-image me-1"></i>Preview</span>
+          <div class="preview-imgs">
+            <img [src]="selectedBanner()!.images.smallIcon" alt="small" class="preview-img" />
+            <img
+              [src]="selectedBanner()!.images.icon"
+              alt="icon"
+              class="preview-img preview-img--large"
+            />
+          </div>
         </div>
       </div>
     </div>

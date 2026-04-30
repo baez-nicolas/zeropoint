@@ -1,8 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { Banner } from '../../core/models/banner.model';
 import { NewsMotd } from '../../core/models/news.model';
 import { ShopEntry } from '../../core/models/shop.model';
+import { BannerService } from '../../core/services/banner.service';
 import { NewsService } from '../../core/services/news.service';
 import { PageLoadingService } from '../../core/services/page-loading.service';
 import { ShopService } from '../../core/services/shop.service';
@@ -17,15 +19,18 @@ import { ShopService } from '../../core/services/shop.service';
 export class HomeComponent implements OnInit {
   latestNews = signal<NewsMotd[]>([]);
   featuredItems = signal<ShopEntry[]>([]);
+  featuredBanners = signal<Banner[]>([]);
   today = signal<string>('');
   loading = signal<boolean>(true);
   selectedNews = signal<NewsMotd | null>(null);
   selectedShopItem = signal<ShopEntry | null>(null);
+  selectedBanner = signal<Banner | null>(null);
   modalClosing = signal(false);
 
   constructor(
     private newsService: NewsService,
     private shopService: ShopService,
+    private bannerService: BannerService,
     private pageLoadingService: PageLoadingService,
   ) {}
 
@@ -43,9 +48,10 @@ export class HomeComponent implements OnInit {
 
     let newsLoaded = false;
     let shopLoaded = false;
+    let bannersLoaded = false;
 
     const checkAllLoaded = () => {
-      if (newsLoaded && shopLoaded) {
+      if (newsLoaded && shopLoaded && bannersLoaded) {
         this.loading.set(false);
         this.pageLoadingService.setLoading(false);
       }
@@ -74,6 +80,21 @@ export class HomeComponent implements OnInit {
       },
       error: () => {
         shopLoaded = true;
+        checkAllLoaded();
+      },
+    });
+
+    this.bannerService.getBanners().subscribe({
+      next: (data) => {
+        const featured = data
+          .filter((b) => b.fullUsageRights || b.category === 'Other')
+          .slice(0, 8);
+        this.featuredBanners.set(featured);
+        bannersLoaded = true;
+        checkAllLoaded();
+      },
+      error: () => {
+        bannersLoaded = true;
         checkAllLoaded();
       },
     });
@@ -111,11 +132,17 @@ export class HomeComponent implements OnInit {
     this.modalClosing.set(false);
   }
 
+  openBannerModal(banner: Banner) {
+    this.selectedBanner.set(banner);
+    this.modalClosing.set(false);
+  }
+
   closeModal() {
     this.modalClosing.set(true);
     setTimeout(() => {
       this.selectedNews.set(null);
       this.selectedShopItem.set(null);
+      this.selectedBanner.set(null);
       this.modalClosing.set(false);
     }, 200);
   }
