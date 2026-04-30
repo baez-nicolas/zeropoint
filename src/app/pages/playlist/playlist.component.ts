@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, computed, OnInit, signal } from '@angular/core';
 import { Playlist } from '../../core/models/playlist.model';
 import { PageLoadingService } from '../../core/services/page-loading.service';
 import { PlaylistService } from '../../core/services/playlist.service';
@@ -29,6 +29,10 @@ export class PlaylistComponent implements OnInit {
   selectedGameType = signal('all');
   selectedPlaylist = signal<PlaylistGroup | null>(null);
   modalClosing = signal(false);
+
+  hasActiveFilters = computed(() => {
+    return this.search() !== '' || this.selectedGameType() !== 'all';
+  });
 
   constructor(
     private playlistService: PlaylistService,
@@ -178,5 +182,10 @@ export class PlaylistComponent implements OnInit {
       this.selectedPlaylist.set(null);
       this.modalClosing.set(false);
     }, 200);
+  }
+
+  clearFilters() {
+    this.search.set('');
+    this.selectedGameType.set('all');
   }
 }

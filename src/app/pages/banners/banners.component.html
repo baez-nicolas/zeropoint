@@ -34,6 +34,13 @@
           <option [value]="cat">{{ cat }}</option>
         }
       </select>
+
+      @if (hasActiveFilters()) {
+        <button class="btn btn-outline-warning btn-sm clear-filters-btn" (click)="clearFilters()">
+          <i class="bi bi-x-circle me-1"></i>Limpiar filtros
+        </button>
+      }
+
       <span class="text-secondary small ms-auto">{{ filtered.length }} banners</span>
     </div>
 

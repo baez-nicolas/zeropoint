@@ -2,9 +2,11 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Banner } from '../../core/models/banner.model';
+import { Cosmetic } from '../../core/models/cosmetic.model';
 import { NewsMotd } from '../../core/models/news.model';
 import { ShopEntry } from '../../core/models/shop.model';
 import { BannerService } from '../../core/services/banner.service';
+import { CosmeticService } from '../../core/services/cosmetic.service';
 import { NewsService } from '../../core/services/news.service';
 import { PageLoadingService } from '../../core/services/page-loading.service';
 import { ShopService } from '../../core/services/shop.service';
@@ -20,17 +22,20 @@ export class HomeComponent implements OnInit {
   latestNews = signal<NewsMotd[]>([]);
   featuredItems = signal<ShopEntry[]>([]);
   featuredBanners = signal<Banner[]>([]);
+  featuredCosmetics = signal<Cosmetic[]>([]);
   today = signal<string>('');
   loading = signal<boolean>(true);
   selectedNews = signal<NewsMotd | null>(null);
   selectedShopItem = signal<ShopEntry | null>(null);
   selectedBanner = signal<Banner | null>(null);
+  selectedCosmetic = signal<Cosmetic | null>(null);
   modalClosing = signal(false);
 
   constructor(
     private newsService: NewsService,
     private shopService: ShopService,
     private bannerService: BannerService,
+    private cosmeticService: CosmeticService,
     private pageLoadingService: PageLoadingService,
   ) {}
 
@@ -49,9 +54,10 @@ export class HomeComponent implements OnInit {
     let newsLoaded = false;
     let shopLoaded = false;
     let bannersLoaded = false;
+    let cosmeticsLoaded = false;
 
     const checkAllLoaded = () => {
-      if (newsLoaded && shopLoaded && bannersLoaded) {
+      if (newsLoaded && shopLoaded && bannersLoaded && cosmeticsLoaded) {
         this.loading.set(false);
         this.pageLoadingService.setLoading(false);
       }
@@ -98,6 +104,32 @@ export class HomeComponent implements OnInit {
         checkAllLoaded();
       },
     });
+
+    this.cosmeticService.getCosmetics().subscribe({
+      next: (data) => {
+        const featuredNames = [
+          'midoriya',
+          'optimus prime',
+          'ben tennyson',
+          'kratos',
+          'travis scott',
+          'green roots billie',
+          'messi',
+        ];
+        const featured = data.filter((c) => {
+          const nameValue = c.name.toLowerCase();
+          const isOutfit = c.type.value === 'outfit';
+          return isOutfit && featuredNames.some((fn) => nameValue.includes(fn));
+        });
+        this.featuredCosmetics.set(featured.slice(0, 8));
+        cosmeticsLoaded = true;
+        checkAllLoaded();
+      },
+      error: () => {
+        cosmeticsLoaded = true;
+        checkAllLoaded();
+      },
+    });
   }
 
   getEntryImage(entry: ShopEntry): string {
@@ -137,12 +169,18 @@ export class HomeComponent implements OnInit {
     this.modalClosing.set(false);
   }
 
+  openCosmeticModal(cosmetic: Cosmetic) {
+    this.selectedCosmetic.set(cosmetic);
+    this.modalClosing.set(false);
+  }
+
   closeModal() {
     this.modalClosing.set(true);
     setTimeout(() => {
       this.selectedNews.set(null);
       this.selectedShopItem.set(null);
       this.selectedBanner.set(null);
+      this.selectedCosmetic.set(null);
       this.modalClosing.set(false);
     }, 200);
   }
@@ -168,5 +206,14 @@ export class HomeComponent implements OnInit {
     const diffDays = Math.floor(diffHours / 24);
     if (diffHours < 24) return `Leaves in ${diffHours}h`;
     return `Leaves in ${diffDays}d`;
+  }
+
+  getCosmeticImage(cosmetic: Cosmetic): string {
+    return cosmetic.images.icon ?? '';
+  }
+
+  getCosmeticRarityClass(cosmetic: Cosmetic): string {
+    const rarity = cosmetic.rarity?.value ?? '';
+    return `rarity-${rarity}`;
   }
 }

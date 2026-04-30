@@ -1,0 +1,248 @@
+<div class="page-container py-4 px-3 px-md-4">
+  <div class="page-header mb-4">
+    <h2 class="text-white fw-bold mb-0"><i class="bi bi-stars me-2 text-warning"></i>Cosmetics</h2>
+    <p class="text-secondary mt-1 mb-0">Todos los cosméticos de Fortnite Battle Royale</p>
+  </div>
+
+  @if (loading()) {
+    <div class="d-flex justify-content-center py-5">
+      <div class="spinner-border text-warning" role="status"></div>
+    </div>
+  }
+
+  @if (error()) {
+    <div class="alert alert-danger">Error al cargar los cosméticos. Intentá de nuevo.</div>
+  }
+
+  @if (!loading() && !error()) {
+    <div class="filters-block mb-4">
+      <div class="filters-row d-flex flex-wrap gap-3 align-items-start mb-3">
+        <div class="search-wrap">
+          <i class="bi bi-search search-icon text-secondary"></i>
+          <input
+            type="text"
+            class="form-control search-input"
+            placeholder="Search by name or set..."
+            [value]="search()"
+            (input)="onSearch($event)"
+          />
+        </div>
+
+        <select
+          class="form-select filter-select filter-select--sm"
+          (change)="onChapterChange($event)"
+        >
+          <option value="all">Chapter</option>
+          @for (ch of chapters; track ch) {
+            <option [value]="ch">Ch. {{ ch }}</option>
+          }
+        </select>
+
+        <select
+          class="form-select filter-select filter-select--sm"
+          [value]="selectedSeason()"
+          (change)="onSeasonChange($event)"
+        >
+          <option value="all">Season</option>
+          @for (s of seasons; track s) {
+            <option [value]="s">S. {{ s }}</option>
+          }
+        </select>
+
+        <select class="form-select filter-select" (change)="onSeriesChange($event)">
+          <option value="all">Todas las series</option>
+          <option value="no-series">Sin Serie</option>
+          @for (s of seriesList; track s) {
+            <option [value]="s">{{ formatSeriesLabel(s) }}</option>
+          }
+        </select>
+
+        <select class="form-select filter-select" (change)="onTypeChange($event)">
+          <option value="all">Todos los tipos</option>
+          @for (t of types; track t) {
+            <option [value]="t">{{ formatTypeLabel(t) }}</option>
+          }
+        </select>
+
+        <select class="form-select filter-select filter-select--sm" (change)="onSortChange($event)">
+          <option value="default">Por defecto</option>
+          <option value="newest">Más recientes</option>
+        </select>
+
+        @if (hasActiveFilters()) {
+          <button class="btn btn-outline-warning btn-sm clear-filters-btn" (click)="clearFilters()">
+            <i class="bi bi-x-circle me-1"></i>Limpiar filtros
+          </button>
+        }
+      </div>
+
+      <div class="d-flex align-items-center gap-3 flex-wrap">
+        <span class="text-secondary small">
+          Mostrando <strong class="text-white">{{ filtered.length }}</strong>
+          @if (isLimitReached) {
+            de <strong class="text-warning">{{ totalFiltered }}</strong>
+          }
+          cosméticos
+        </span>
+        @if (isLimitReached) {
+          <div class="limit-notice">
+            <i class="bi bi-info-circle me-1"></i>
+            <span
+              >Límite de <strong>{{ LIMIT }}</strong> cosméticos por motivos de rendimiento — usá
+              los filtros para acotar tu búsqueda.</span
+            >
+          </div>
+        }
+      </div>
+    </div>
+
+    <div class="row g-3">
+      @for (item of filtered; track item.id) {
+        <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+          <div
+            class="cosmetic-card"
+            [ngClass]="getRarityClass(item.rarity?.value)"
+            (click)="openModal(item)"
+          >
+            <div class="cosmetic-img-wrap">
+              @if (getImage(item)) {
+                <img [src]="getImage(item)" [alt]="item.name" class="cosmetic-img" loading="lazy" />
+              } @else {
+                <div class="cosmetic-img-placeholder">
+                  <i class="bi bi-image text-secondary"></i>
+                </div>
+              }
+              <div class="cosmetic-type-chip">{{ formatTypeLabel(item.type.value) }}</div>
+              @if (item.series) {
+                <div
+                  class="cosmetic-series-dot"
+                  [title]="formatSeriesLabel(item.series.value)"
+                ></div>
+              }
+            </div>
+            <div class="cosmetic-body">
+              <p class="cosmetic-name">{{ item.name }}</p>
+              @if (item.rarity) {
+                <span class="cosmetic-rarity">{{ item.rarity.displayValue }}</span>
+              }
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+
+    @if (filtered.length === 0) {
+      <div class="empty-state text-center py-5">
+        <i class="bi bi-search text-secondary" style="font-size: 3rem"></i>
+        <p class="text-secondary mt-3">No se encontraron cosméticos con ese criterio.</p>
+      </div>
+    }
+  }
+</div>
+
+@if (selectedCosmetic()) {
+  <div class="modal-overlay" [class.closing]="modalClosing()" (click)="closeModal()">
+    <div class="modal-panel" [class.closing]="modalClosing()" (click)="$event.stopPropagation()">
+      <button class="modal-close-btn" (click)="closeModal()">
+        <i class="bi bi-x-lg"></i>
+      </button>
+
+      <div class="modal-header-section">
+        @if (getImage(selectedCosmetic()!)) {
+          <img
+            [src]="selectedCosmetic()!.images.featured || getImage(selectedCosmetic()!)"
+            [alt]="selectedCosmetic()!.name"
+            class="modal-cosmetic-img"
+          />
+        }
+        <h3 class="modal-title">{{ selectedCosmetic()!.name }}</h3>
+        @if (selectedCosmetic()!.description) {
+          <p class="modal-description">{{ selectedCosmetic()!.description }}</p>
+        }
+        <div class="modal-badges-row">
+          <span class="badge-type">{{ formatTypeLabel(selectedCosmetic()!.type.value) }}</span>
+          @if (selectedCosmetic()!.series) {
+            <span class="badge-series">{{
+              formatSeriesLabel(selectedCosmetic()!.series!.value)
+            }}</span>
+          } @else if (selectedCosmetic()!.rarity) {
+            <span
+              class="badge-rarity"
+              [ngClass]="getRarityClass(selectedCosmetic()!.rarity?.value)"
+            >
+              {{ selectedCosmetic()!.rarity!.displayValue }}
+            </span>
+          }
+        </div>
+      </div>
+
+      <div class="modal-detail-section">
+        @if (selectedCosmetic()!.set) {
+          <div class="detail-row">
+            <span class="detail-label"><i class="bi bi-collection me-1"></i>Set</span>
+            <span class="detail-value">{{ selectedCosmetic()!.set!.text }}</span>
+          </div>
+        }
+
+        @if (selectedCosmetic()!.introduction) {
+          <div class="detail-row">
+            <span class="detail-label"><i class="bi bi-calendar3 me-1"></i>Introducido</span>
+            <span class="detail-value">{{ selectedCosmetic()!.introduction!.text }}</span>
+          </div>
+        }
+
+        @if (selectedCosmetic()!.showcaseVideo) {
+          <div class="detail-row">
+            <span class="detail-label"><i class="bi bi-play-circle me-1"></i>Video</span>
+            <a
+              class="detail-value detail-link"
+              [href]="'https://www.youtube.com/watch?v=' + selectedCosmetic()!.showcaseVideo"
+              target="_blank"
+              rel="noopener"
+              (click)="$event.stopPropagation()"
+            >
+              Ver en YouTube <i class="bi bi-box-arrow-up-right ms-1"></i>
+            </a>
+          </div>
+        }
+
+        @if (selectedCosmetic()!.variants && selectedCosmetic()!.variants!.length > 0) {
+          <div class="detail-row detail-row--variants">
+            <span class="detail-label"><i class="bi bi-palette me-1"></i>Estilos</span>
+            <div class="variants-wrap">
+              @for (variant of selectedCosmetic()!.variants!; track variant.channel) {
+                <p class="variant-type">{{ variant.type }}</p>
+                <div class="variant-options">
+                  @for (opt of variant.options; track opt.tag) {
+                    <div class="variant-option">
+                      @if (opt.image) {
+                        <img
+                          [src]="opt.image"
+                          [alt]="opt.name"
+                          class="variant-img"
+                          loading="lazy"
+                        />
+                      }
+                      <span class="variant-name">{{ opt.name }}</span>
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+          </div>
+        }
+
+        <div class="detail-row">
+          <span class="detail-label"><i class="bi bi-clock me-1"></i>Añadido</span>
+          <span class="detail-value">{{ selectedCosmetic()!.added | date: 'dd/MM/yyyy' }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+}
+
+@if (showScrollTop()) {
+  <button class="scroll-top-btn" (click)="scrollToTop()" aria-label="Scroll to top">
+    <i class="bi bi-arrow-up"></i>
+  </button>
+}

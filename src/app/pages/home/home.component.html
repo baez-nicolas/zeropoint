@@ -129,6 +129,43 @@
         }
       </div>
     }
+
+    @if (featuredCosmetics().length) {
+      <div class="d-flex align-items-center justify-content-between mb-3 mt-5">
+        <h4 class="text-white fw-bold mb-0">
+          <i class="bi bi-stars me-2 text-warning"></i>Featured Cosmetics
+        </h4>
+        <a routerLink="/cosmetics" class="btn btn-sm btn-outline-warning">See all</a>
+      </div>
+      <div class="row g-3">
+        @for (cosmetic of featuredCosmetics(); track cosmetic.id) {
+          <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+            <div
+              class="cosmetic-card"
+              [ngClass]="getCosmeticRarityClass(cosmetic)"
+              (click)="openCosmeticModal(cosmetic)"
+            >
+              <div class="cosmetic-img-wrap">
+                <img
+                  [src]="getCosmeticImage(cosmetic)"
+                  [alt]="cosmetic.name"
+                  class="cosmetic-img"
+                />
+                @if (cosmetic.type) {
+                  <div class="cosmetic-type-chip">{{ cosmetic.type.displayValue }}</div>
+                }
+              </div>
+              <div class="cosmetic-body">
+                <p class="cosmetic-name">{{ cosmetic.name }}</p>
+                @if (cosmetic.rarity) {
+                  <span class="cosmetic-rarity">{{ cosmetic.rarity.displayValue }}</span>
+                }
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    }
   </div>
 }
 
@@ -310,6 +347,57 @@
               class="preview-img preview-img--large"
             />
           </div>
+        </div>
+      </div>
+    </div>
+  </div>
+}
+
+@if (selectedCosmetic()) {
+  <div class="modal-overlay" [class.closing]="modalClosing()" (click)="closeModal()">
+    <div class="modal-panel" [class.closing]="modalClosing()" (click)="$event.stopPropagation()">
+      <button class="modal-close-btn" (click)="closeModal()">
+        <i class="bi bi-x-lg"></i>
+      </button>
+
+      <div class="modal-br">
+        <div class="modal-img-wrap">
+          <img
+            [src]="selectedCosmetic()!.images.icon!"
+            [alt]="selectedCosmetic()!.name"
+            class="modal-main-img"
+          />
+        </div>
+        <div class="modal-info">
+          <p class="modal-type-label">
+            <i class="bi bi-tag me-1"></i>{{ selectedCosmetic()!.type.displayValue }}
+          </p>
+          <h4 class="text-white fw-bold mb-1">{{ selectedCosmetic()!.name }}</h4>
+
+          @if (selectedCosmetic()!.description) {
+            <p class="text-secondary small mb-2">{{ selectedCosmetic()!.description }}</p>
+          }
+
+          <div class="d-flex flex-wrap gap-2 mb-2">
+            @if (selectedCosmetic()!.series) {
+              <span class="badge bg-dark border border-secondary">{{
+                selectedCosmetic()!.series!.value
+              }}</span>
+            } @else if (selectedCosmetic()!.rarity) {
+              <span class="badge bg-primary">{{ selectedCosmetic()!.rarity!.displayValue }}</span>
+            }
+          </div>
+
+          @if (selectedCosmetic()!.set) {
+            <p class="text-secondary small mb-1">
+              <i class="bi bi-collection me-1"></i>{{ selectedCosmetic()!.set!.text }}
+            </p>
+          }
+          @if (selectedCosmetic()!.introduction) {
+            <p class="text-secondary small mb-2">
+              <i class="bi bi-calendar-event me-1"></i>{{ selectedCosmetic()!.introduction!.text }}
+            </p>
+          }
         </div>
       </div>
     </div>

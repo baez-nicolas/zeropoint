@@ -53,6 +53,31 @@
       color: #fff;
     }
   }
+
+  .clear-filters-btn {
+    animation: slideInFade 0.3s ease-out;
+    transition: all 0.2s ease;
+
+    &:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 12px rgba(255, 193, 7, 0.3);
+    }
+
+    &:active {
+      transform: scale(0.98);
+    }
+  }
+}
+
+@keyframes slideInFade {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 .playlist-card {

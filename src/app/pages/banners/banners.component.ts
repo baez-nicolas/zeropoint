@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, computed, OnInit, signal } from '@angular/core';
 import { Banner } from '../../core/models/banner.model';
 import { BannerService } from '../../core/services/banner.service';
 import { PageLoadingService } from '../../core/services/page-loading.service';
@@ -20,6 +20,10 @@ export class BannersComponent implements OnInit {
   selectedBanner = signal<Banner | null>(null);
   modalClosing = signal(false);
   showScrollTop = signal(false);
+
+  hasActiveFilters = computed(() => {
+    return this.search() !== '' || this.selectedCategory() !== 'all';
+  });
 
   constructor(
     private bannerService: BannerService,
@@ -88,5 +92,10 @@ export class BannersComponent implements OnInit {
 
   scrollToTop() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  clearFilters() {
+    this.search.set('');
+    this.selectedCategory.set('all');
   }
 }
