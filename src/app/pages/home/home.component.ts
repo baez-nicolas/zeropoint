@@ -4,6 +4,7 @@ import { RouterLink } from '@angular/router';
 import { NewsMotd } from '../../core/models/news.model';
 import { ShopEntry } from '../../core/models/shop.model';
 import { NewsService } from '../../core/services/news.service';
+import { PageLoadingService } from '../../core/services/page-loading.service';
 import { ShopService } from '../../core/services/shop.service';
 
 @Component({
@@ -21,9 +22,12 @@ export class HomeComponent implements OnInit {
   constructor(
     private newsService: NewsService,
     private shopService: ShopService,
+    private pageLoadingService: PageLoadingService,
   ) {}
 
   ngOnInit() {
+    this.pageLoadingService.setLoading(true);
+
     this.today.set(
       new Date().toLocaleDateString('en-US', {
         weekday: 'long',
@@ -33,9 +37,24 @@ export class HomeComponent implements OnInit {
       }),
     );
 
+    let newsLoaded = false;
+    let shopLoaded = false;
+
+    const checkAllLoaded = () => {
+      if (newsLoaded && shopLoaded) {
+        this.pageLoadingService.setLoading(false);
+      }
+    };
+
     this.newsService.getNews().subscribe({
       next: (data) => {
         this.latestNews.set(data.br.motds.filter((m) => !m.hidden).slice(0, 3));
+        newsLoaded = true;
+        checkAllLoaded();
+      },
+      error: () => {
+        newsLoaded = true;
+        checkAllLoaded();
       },
     });
 
@@ -45,6 +64,12 @@ export class HomeComponent implements OnInit {
           .filter((e) => e.brItems?.length && e.newDisplayAsset?.renderImages?.[0]?.image)
           .slice(0, 6);
         this.featuredItems.set(items);
+        shopLoaded = true;
+        checkAllLoaded();
+      },
+      error: () => {
+        shopLoaded = true;
+        checkAllLoaded();
       },
     });
   }

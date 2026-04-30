@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, signal } from '@angular/core';
 import { Playlist } from '../../core/models/playlist.model';
+import { PageLoadingService } from '../../core/services/page-loading.service';
 import { PlaylistService } from '../../core/services/playlist.service';
 
 export interface PlaylistGroup {
@@ -29,17 +30,24 @@ export class PlaylistComponent implements OnInit {
   selectedPlaylist = signal<PlaylistGroup | null>(null);
   modalClosing = signal(false);
 
-  constructor(private playlistService: PlaylistService) {}
+  constructor(
+    private playlistService: PlaylistService,
+    private pageLoadingService: PageLoadingService,
+  ) {}
 
   ngOnInit() {
+    this.pageLoadingService.setLoading(true);
+
     this.playlistService.getPlaylists().subscribe({
       next: (data) => {
         this.playlists.set(data);
         this.loading.set(false);
+        this.pageLoadingService.setLoading(false);
       },
       error: () => {
         this.error.set(true);
         this.loading.set(false);
+        this.pageLoadingService.setLoading(false);
       },
     });
   }
@@ -53,7 +61,6 @@ export class PlaylistComponent implements OnInit {
     const q = this.search().toLowerCase();
     const gt = this.selectedGameType();
 
-    // Filtrar primero
     const filteredPlaylists = this.playlists().filter((p) => {
       const matchSearch =
         !q || p.name.toLowerCase().includes(q) || (p.description ?? '').toLowerCase().includes(q);
@@ -61,7 +68,6 @@ export class PlaylistComponent implements OnInit {
       return matchSearch && matchType;
     });
 
-    // Agrupar por clave única (gameType + baseName)
     const groups = new Map<string, Playlist[]>();
 
     filteredPlaylists.forEach((p) => {
@@ -72,7 +78,6 @@ export class PlaylistComponent implements OnInit {
       groups.get(key)!.push(p);
     });
 
-    // Convertir a PlaylistGroup[]
     return Array.from(groups.entries()).map(([key, variants]) => {
       const first = variants[0];
       return {
@@ -91,18 +96,16 @@ export class PlaylistComponent implements OnInit {
     const name = playlist.name;
     const gt = playlist.gameType;
 
-    // Si el nombre es solo una variante (Solo, Duos, etc.), agrupar por gameType + isNoBuild
     if (/^(Solo|Duos?|Trios?|Squads?)$/i.test(name)) {
       const noBuild = this.isNoBuild(playlist) ? 'nobuild' : 'build';
       return `${gt}_${noBuild}_standard`;
     }
 
-    // Para otros nombres, limpiar y usar como clave base
     const baseName = name
-      .replace(/^(Midas Presents:|Season \d+:)\s*/i, '') // Remover prefijos
-      .replace(/\s*-\s*(Solo|Duos?|Trios?|Squads?|Late Game)$/i, '') // Remover sufijos
+      .replace(/^(Midas Presents:|Season \d+:)\s*/i, '')
+      .replace(/\s*-\s*(Solo|Duos?|Trios?|Squads?|Late Game)$/i, '')
       .replace(/\s*\((Solo|Duos?|Trios?|Squads?)\)$/i, '')
-      .replace(/\s*(Disarmed|Armed)$/i, '') // Remover variantes
+      .replace(/\s*(Disarmed|Armed)$/i, '')
       .trim()
       .toLowerCase();
 
@@ -110,17 +113,14 @@ export class PlaylistComponent implements OnInit {
   }
 
   getDisplayName(variants: Playlist[]): string {
-    // Encontrar el nombre más completo/largo
     const sorted = [...variants].sort((a, b) => b.name.length - a.name.length);
     let name = sorted[0].name;
 
-    // Limpiar sufijos de variantes
     name = name
       .replace(/\s*-\s*(Solo|Duos?|Trios?|Squads?|Late Game)$/i, '')
       .replace(/\s*\((Solo|Duos?|Trios?|Squads?)\)$/i, '')
       .trim();
 
-    // Si el nombre resultante está vacío o es solo una variante, usar nombre del modo
     if (!name || /^(Solo|Duos?|Trios?|Squads?)$/i.test(name)) {
       const first = variants[0];
       if (this.isNoBuild(first)) {
@@ -133,7 +133,6 @@ export class PlaylistComponent implements OnInit {
   }
 
   getBaseName(name: string): string {
-    // Remover sufijos como "- Solo", "- Duos", etc.
     return name
       .replace(/\s*-\s*(Solo|Duos?|Trios?|Squads?|Late Game)$/i, '')
       .replace(/\s*\((Solo|Duos?|Trios?|Squads?)\)$/i, '')

@@ -2,6 +2,7 @@ import { CommonModule, ViewportScroller } from '@angular/common';
 import { Component, computed, OnDestroy, OnInit, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ShopEntry, ShopResponse } from '../../core/models/shop.model';
+import { PageLoadingService } from '../../core/services/page-loading.service';
 import { ShopService } from '../../core/services/shop.service';
 
 interface ShopSection {
@@ -35,8 +36,8 @@ export class ShopComponent implements OnInit, OnDestroy {
 
     const layoutGroups = new Map<string, ShopEntry[]>();
     entries.forEach((entry) => {
-      if (entry.brItems?.length) {
-        const layoutName = entry.layout?.name ?? 'Other';
+      if (entry.brItems?.length && entry.layout?.name) {
+        const layoutName = entry.layout.name;
         if (!layoutGroups.has(layoutName)) layoutGroups.set(layoutName, []);
         layoutGroups.get(layoutName)!.push(entry);
       }
@@ -74,11 +75,14 @@ export class ShopComponent implements OnInit, OnDestroy {
     private shopService: ShopService,
     private route: ActivatedRoute,
     private viewportScroller: ViewportScroller,
+    private pageLoadingService: PageLoadingService,
   ) {
     this.viewportScroller.setOffset([0, 100]);
   }
 
   ngOnInit() {
+    this.pageLoadingService.setLoading(true);
+
     if (typeof window !== 'undefined') {
       window.addEventListener('scroll', () => {
         this.showScrollTop.set(window.scrollY > 400);
@@ -89,6 +93,7 @@ export class ShopComponent implements OnInit, OnDestroy {
       next: (data) => {
         this.shop.set(data);
         this.loading.set(false);
+        this.pageLoadingService.setLoading(false);
         this.route.fragment.subscribe((fragment) => {
           if (fragment) {
             setTimeout(() => this.viewportScroller.scrollToAnchor(fragment), 100);
@@ -98,10 +103,10 @@ export class ShopComponent implements OnInit, OnDestroy {
       error: () => {
         this.error.set(true);
         this.loading.set(false);
+        this.pageLoadingService.setLoading(false);
       },
     });
 
-    // Iniciar countdown
     this.updateCountdown();
     this.countdownInterval = setInterval(() => this.updateCountdown(), 1000);
   }
