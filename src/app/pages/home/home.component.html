@@ -1,16 +1,20 @@
 <div class="hero-banner d-flex align-items-center justify-content-center text-center mb-5">
   <div>
-    <h1 class="display-3 fw-bold text-white">ZERO<span class="text-warning">POINT</span></h1>
-    <p class="lead text-secondary mb-1">Your Fortnite hub — News, Shop & Map</p>
-    <p class="text-secondary small">{{ today() }}</p>
+    <h1 class="display-3 fw-bold text-white title-animated">
+      <span class="zero-text">ZERO</span><span class="point-text text-warning">POINT</span>
+    </h1>
+    <p class="lead text-secondary mb-1 text-animated text-animated-1">
+      Your Fortnite hub — News, Shop & Map
+    </p>
+    <p class="text-secondary small text-animated text-animated-2">{{ today() }}</p>
     <div class="d-flex gap-3 justify-content-center mt-3 flex-wrap">
-      <a routerLink="/news" class="btn btn-warning fw-bold px-4">
+      <a routerLink="/news" class="btn btn-warning fw-bold px-4 btn-animated btn-animated-1">
         <i class="bi bi-newspaper me-2"></i>News
       </a>
-      <a routerLink="/shop" class="btn btn-outline-light fw-bold px-4">
+      <a routerLink="/shop" class="btn btn-outline-light fw-bold px-4 btn-animated btn-animated-2">
         <i class="bi bi-shop me-2"></i>Shop
       </a>
-      <a routerLink="/map" class="btn btn-outline-light fw-bold px-4">
+      <a routerLink="/map" class="btn btn-outline-light fw-bold px-4 btn-animated btn-animated-3">
         <i class="bi bi-map me-2"></i>Map
       </a>
     </div>
