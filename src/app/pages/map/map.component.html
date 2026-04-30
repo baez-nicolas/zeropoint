@@ -23,7 +23,10 @@
 
       <div class="col-12 col-lg-4">
         @if (selectedPoi()) {
-          <div class="card bg-dark border-warning text-white">
+          <div
+            class="card bg-dark border-warning text-white poi-detail-card"
+            [class.poi-animating]="animatingPoiId() === selectedPoi()!.id"
+          >
             <div class="card-body">
               <h5 class="card-title text-warning">
                 <i class="bi bi-geo-alt-fill me-2"></i>{{ selectedPoi()!.name }}
@@ -60,7 +63,7 @@
                 class="btn btn-sm w-100 text-start mb-1 poi-list-item"
                 [class.btn-warning]="selectedPoi()?.id === poi.id"
                 [class.btn-outline-secondary]="selectedPoi()?.id !== poi.id"
-                (click)="selectedPoi.set(poi)"
+                (click)="selectPoi(poi)"
               >
                 {{ poi.name }}
               </button>
