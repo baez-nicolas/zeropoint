@@ -33,6 +33,7 @@ export class HomeComponent implements OnInit {
   selectedBanner = signal<Banner | null>(null);
   selectedCosmetic = signal<Cosmetic | null>(null);
   modalClosing = signal(false);
+  creatorCodeModalOpen = signal(false);
   private _creatorCode = signal<string>('');
   checkingCode = signal<boolean>(false);
 
@@ -229,7 +230,14 @@ export class HomeComponent implements OnInit {
     const rarity = cosmetic.rarity?.value ?? '';
     return `rarity-${rarity}`;
   }
+  openCreatorCodeModal() {
+    this.creatorCodeModalOpen.set(true);
+  }
 
+  closeCreatorCodeModal() {
+    this.creatorCodeModalOpen.set(false);
+    this._creatorCode.set('');
+  }
   checkCreatorCode() {
     const code = this._creatorCode().trim();
     if (!code) {
@@ -240,6 +248,9 @@ export class HomeComponent implements OnInit {
         background: '#1a1a1a',
         color: '#fff',
         confirmButtonColor: '#ffc107',
+        customClass: {
+          container: 'swal-high-z-index',
+        },
       });
       return;
     }
@@ -261,6 +272,9 @@ export class HomeComponent implements OnInit {
             background: '#1a1a1a',
             color: '#fff',
             confirmButtonColor: '#ffc107',
+            customClass: {
+              container: 'swal-high-z-index',
+            },
           });
         } else {
           Swal.fire({
@@ -273,6 +287,9 @@ export class HomeComponent implements OnInit {
             background: '#1a1a1a',
             color: '#fff',
             confirmButtonColor: '#ffc107',
+            customClass: {
+              container: 'swal-high-z-index',
+            },
           });
         }
         this._creatorCode.set('');
@@ -287,6 +304,9 @@ export class HomeComponent implements OnInit {
             background: '#1a1a1a',
             color: '#fff',
             confirmButtonColor: '#ffc107',
+            customClass: {
+              container: 'swal-high-z-index',
+            },
           });
         } else {
           Swal.fire({
@@ -296,6 +316,9 @@ export class HomeComponent implements OnInit {
             background: '#1a1a1a',
             color: '#fff',
             confirmButtonColor: '#ffc107',
+            customClass: {
+              container: 'swal-high-z-index',
+            },
           });
         }
         this._creatorCode.set('');

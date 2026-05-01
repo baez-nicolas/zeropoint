@@ -1,60 +1,99 @@
-<nav
-  class="navbar navbar-expand-lg navbar-dark"
-  style="background-color: #0a0a0a; border-bottom: 1px solid #222"
->
+<nav class="navbar navbar-dark" style="background-color: #0a0a0a; border-bottom: 1px solid #222">
   <div class="navbar-container">
-    <a class="navbar-brand fw-bold" routerLink="/"> ZERO<span class="text-warning">POINT</span> </a>
-    <button
-      class="navbar-toggler border-0"
-      type="button"
-      data-bs-toggle="collapse"
-      data-bs-target="#navbarNav"
-    >
-      <span class="navbar-toggler-icon"></span>
+    <button class="mobile-menu-btn d-lg-none" (click)="toggleMenu()" type="button">
+      <i class="bi bi-list"></i>
     </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav ms-auto gap-1">
-        <li class="nav-item">
-          <a
-            class="nav-link px-3"
-            routerLink="/"
-            routerLinkActive="active"
-            [routerLinkActiveOptions]="{ exact: true }"
-          >
-            <i class="bi bi-house me-1"></i>Home
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link px-3" routerLink="/news" routerLinkActive="active">
-            <i class="bi bi-newspaper me-1"></i>News
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link px-3" routerLink="/shop" routerLinkActive="active">
-            <i class="bi bi-shop me-1"></i>Shop
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link px-3" routerLink="/map" routerLinkActive="active">
-            <i class="bi bi-map me-1"></i>Map
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link px-3" routerLink="/playlists" routerLinkActive="active">
-            <i class="bi bi-collection-play me-1"></i>Playlists
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link px-3" routerLink="/banners" routerLinkActive="active">
-            <i class="bi bi-shield-fill me-1"></i>Banners
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link px-3" routerLink="/cosmetics" routerLinkActive="active">
-            <i class="bi bi-stars me-1"></i>Cosmetics
-          </a>
-        </li>
-      </ul>
-    </div>
+
+    <a class="navbar-brand fw-bold" routerLink="/" (click)="closeMenu()">
+      ZERO<span class="text-warning">POINT</span>
+    </a>
+
+    <div class="mobile-spacer d-lg-none"></div>
+
+    <ul class="navbar-nav desktop-nav d-none d-lg-flex">
+      <li class="nav-item">
+        <a
+          class="nav-link px-3"
+          routerLink="/"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
+        >
+          <i class="bi bi-house me-1"></i>Home
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link px-3" routerLink="/news" routerLinkActive="active">
+          <i class="bi bi-newspaper me-1"></i>News
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link px-3" routerLink="/shop" routerLinkActive="active">
+          <i class="bi bi-shop me-1"></i>Shop
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link px-3" routerLink="/map" routerLinkActive="active">
+          <i class="bi bi-map me-1"></i>Map
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link px-3" routerLink="/playlists" routerLinkActive="active">
+          <i class="bi bi-collection-play me-1"></i>Playlists
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link px-3" routerLink="/banners" routerLinkActive="active">
+          <i class="bi bi-shield-fill me-1"></i>Banners
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link px-3" routerLink="/cosmetics" routerLinkActive="active">
+          <i class="bi bi-stars me-1"></i>Cosmetics
+        </a>
+      </li>
+    </ul>
   </div>
 </nav>
+
+@if (menuOpen()) {
+  <div class="mobile-overlay" (click)="closeMenu()"></div>
+}
+
+<aside class="mobile-sidebar" [class.open]="menuOpen()">
+  <div class="sidebar-header">
+    <span class="sidebar-brand">ZERO<span class="text-warning">POINT</span></span>
+    <button class="close-btn" (click)="closeMenu()" type="button">
+      <i class="bi bi-x-lg"></i>
+    </button>
+  </div>
+
+  <nav class="sidebar-nav">
+    <a
+      class="sidebar-link"
+      routerLink="/"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"
+      (click)="closeMenu()"
+    >
+      <i class="bi bi-house me-2"></i>Home
+    </a>
+    <a class="sidebar-link" routerLink="/news" routerLinkActive="active" (click)="closeMenu()">
+      <i class="bi bi-newspaper me-2"></i>News
+    </a>
+    <a class="sidebar-link" routerLink="/shop" routerLinkActive="active" (click)="closeMenu()">
+      <i class="bi bi-shop me-2"></i>Shop
+    </a>
+    <a class="sidebar-link" routerLink="/map" routerLinkActive="active" (click)="closeMenu()">
+      <i class="bi bi-map me-2"></i>Map
+    </a>
+    <a class="sidebar-link" routerLink="/playlists" routerLinkActive="active" (click)="closeMenu()">
+      <i class="bi bi-collection-play me-2"></i>Playlists
+    </a>
+    <a class="sidebar-link" routerLink="/banners" routerLinkActive="active" (click)="closeMenu()">
+      <i class="bi bi-shield-fill me-2"></i>Banners
+    </a>
+    <a class="sidebar-link" routerLink="/cosmetics" routerLinkActive="active" (click)="closeMenu()">
+      <i class="bi bi-stars me-2"></i>Cosmetics
+    </a>
+  </nav>
+</aside>

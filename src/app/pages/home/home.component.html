@@ -39,26 +39,23 @@
         </h4>
         <a routerLink="/news" class="btn btn-sm btn-outline-warning">See all</a>
       </div>
-      <div class="row g-3 mb-5">
-        @for (motd of latestNews(); track motd.id) {
-          <div class="col-12 col-md-4">
-            <div
-              class="card bg-dark border-secondary text-white h-100 news-card"
-              (click)="openNewsModal(motd)"
-            >
-              <img
-                [src]="motd.tileImage"
-                [alt]="motd.title"
-                class="card-img-top"
-                style="height: 180px; object-fit: cover"
-              />
-              <div class="card-body">
-                <h6 class="card-title text-warning">{{ motd.title }}</h6>
-                <p class="card-text text-secondary small">{{ motd.body }}</p>
+      <div class="news-scroll-container mb-5">
+        <div class="news-scroll-content">
+          @for (motd of latestNews(); track motd.id) {
+            <div class="news-item">
+              <div
+                class="card bg-dark border-secondary text-white h-100 news-card"
+                (click)="openNewsModal(motd)"
+              >
+                <img [src]="motd.tileImage" [alt]="motd.title" class="card-img-top" />
+                <div class="card-body">
+                  <h6 class="card-title text-warning">{{ motd.title }}</h6>
+                  <p class="card-text text-secondary small d-none d-md-block">{{ motd.body }}</p>
+                </div>
               </div>
             </div>
-          </div>
-        }
+          }
+        </div>
       </div>
     }
 
@@ -69,35 +66,37 @@
         </h4>
         <a routerLink="/shop" class="btn btn-sm btn-outline-warning">See all</a>
       </div>
-      <div class="row g-3">
-        @for (entry of featuredItems(); track entry.offerId) {
-          <div class="col-6 col-sm-4 col-md-2">
-            <div
-              class="card bg-dark border-0 h-100 shop-card"
-              [style.border-bottom]="'3px solid ' + getRarityColor(entry)"
-              (click)="openShopModal(entry)"
-            >
-              <img
-                [src]="getEntryImage(entry)"
-                [alt]="entry.brItems?.[0]?.name"
-                class="card-img-top"
-                style="aspect-ratio: 1/1; object-fit: cover"
-              />
-              <div class="card-body p-2">
-                <p class="text-white small text-truncate mb-1">{{ entry.brItems?.[0]?.name }}</p>
-                <div class="d-flex align-items-center gap-1">
-                  <img
-                    src="https://fortnite-api.com/images/vbuck.png"
-                    alt="vbuck"
-                    width="12"
-                    height="12"
-                  />
-                  <span class="text-warning small fw-bold">{{ entry.finalPrice | number }}</span>
+      <div class="shop-scroll-container">
+        <div class="shop-scroll-content">
+          @for (entry of featuredItems(); track entry.offerId) {
+            <div class="shop-item">
+              <div
+                class="card bg-dark border-0 h-100 shop-card"
+                [style.border-bottom]="'3px solid ' + getRarityColor(entry)"
+                (click)="openShopModal(entry)"
+              >
+                <img
+                  [src]="getEntryImage(entry)"
+                  [alt]="entry.brItems?.[0]?.name"
+                  class="card-img-top"
+                  style="aspect-ratio: 1/1; object-fit: cover"
+                />
+                <div class="card-body p-2">
+                  <p class="text-white small text-truncate mb-1">{{ entry.brItems?.[0]?.name }}</p>
+                  <div class="d-none d-md-flex align-items-center gap-1">
+                    <img
+                      src="https://fortnite-api.com/images/vbuck.png"
+                      alt="vbuck"
+                      width="12"
+                      height="12"
+                    />
+                    <span class="text-warning small fw-bold">{{ entry.finalPrice | number }}</span>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        }
+          }
+        </div>
       </div>
     }
 
@@ -108,25 +107,27 @@
         </h4>
         <a routerLink="/banners" class="btn btn-sm btn-outline-warning">See all</a>
       </div>
-      <div class="row g-3">
-        @for (banner of featuredBanners(); track banner.id) {
-          <div class="col-6 col-sm-4 col-md-3 col-lg-2">
-            <div class="banner-card" (click)="openBannerModal(banner)">
-              <div class="banner-img-wrap">
-                <img [src]="banner.images.icon" [alt]="banner.name" class="banner-img" />
-                <div class="banner-category-chip">{{ banner.category }}</div>
-              </div>
-              <div class="banner-body">
-                <p class="banner-name">{{ banner.devName }}</p>
-                @if (banner.fullUsageRights) {
-                  <span class="banner-rights"
-                    ><i class="bi bi-check-circle-fill me-1"></i>Full rights</span
-                  >
-                }
+      <div class="banner-scroll-container">
+        <div class="banner-scroll-content">
+          @for (banner of featuredBanners(); track banner.id) {
+            <div class="banner-item">
+              <div class="banner-card" (click)="openBannerModal(banner)">
+                <div class="banner-img-wrap">
+                  <img [src]="banner.images.icon" [alt]="banner.name" class="banner-img" />
+                  <div class="banner-category-chip d-none d-md-block">{{ banner.category }}</div>
+                </div>
+                <div class="banner-body">
+                  <p class="banner-name">{{ banner.devName }}</p>
+                  @if (banner.fullUsageRights) {
+                    <span class="banner-rights d-none d-md-inline-flex"
+                      ><i class="bi bi-check-circle-fill me-1"></i>Full rights</span
+                    >
+                  }
+                </div>
               </div>
             </div>
-          </div>
-        }
+          }
+        </div>
       </div>
     }
 
@@ -137,33 +138,39 @@
         </h4>
         <a routerLink="/cosmetics" class="btn btn-sm btn-outline-warning">See all</a>
       </div>
-      <div class="row g-3">
-        @for (cosmetic of featuredCosmetics(); track cosmetic.id) {
-          <div class="col-6 col-sm-4 col-md-3 col-lg-2">
-            <div
-              class="cosmetic-card"
-              [ngClass]="getCosmeticRarityClass(cosmetic)"
-              (click)="openCosmeticModal(cosmetic)"
-            >
-              <div class="cosmetic-img-wrap">
-                <img
-                  [src]="getCosmeticImage(cosmetic)"
-                  [alt]="cosmetic.name"
-                  class="cosmetic-img"
-                />
-                @if (cosmetic.type) {
-                  <div class="cosmetic-type-chip">{{ cosmetic.type.displayValue }}</div>
-                }
-              </div>
-              <div class="cosmetic-body">
-                <p class="cosmetic-name">{{ cosmetic.name }}</p>
-                @if (cosmetic.rarity) {
-                  <span class="cosmetic-rarity">{{ cosmetic.rarity.displayValue }}</span>
-                }
+      <div class="cosmetic-scroll-container">
+        <div class="cosmetic-scroll-content">
+          @for (cosmetic of featuredCosmetics(); track cosmetic.id) {
+            <div class="cosmetic-item">
+              <div
+                class="cosmetic-card"
+                [ngClass]="getCosmeticRarityClass(cosmetic)"
+                (click)="openCosmeticModal(cosmetic)"
+              >
+                <div class="cosmetic-img-wrap">
+                  <img
+                    [src]="getCosmeticImage(cosmetic)"
+                    [alt]="cosmetic.name"
+                    class="cosmetic-img"
+                  />
+                  @if (cosmetic.type) {
+                    <div class="cosmetic-type-chip d-none d-md-block">
+                      {{ cosmetic.type.displayValue }}
+                    </div>
+                  }
+                </div>
+                <div class="cosmetic-body">
+                  <p class="cosmetic-name">{{ cosmetic.name }}</p>
+                  @if (cosmetic.rarity) {
+                    <span class="cosmetic-rarity d-none d-md-block">{{
+                      cosmetic.rarity.displayValue
+                    }}</span>
+                  }
+                </div>
               </div>
             </div>
-          </div>
-        }
+          }
+        </div>
       </div>
     }
 
@@ -172,7 +179,14 @@
         <i class="bi bi-shield-check me-2 text-warning"></i>Verify Creator Code
       </h4>
     </div>
-    <div class="creator-code-section">
+
+    <div class="d-md-none">
+      <button class="btn btn-warning w-100 py-3" (click)="openCreatorCodeModal()">
+        <i class="bi bi-shield-check me-2"></i>Verify Creator Code
+      </button>
+    </div>
+
+    <div class="creator-code-section d-none d-md-block">
       <p class="text-secondary mb-3">Check if a Fortnite creator code is active and working</p>
       <div class="creator-code-form">
         <div class="input-group">
@@ -431,6 +445,56 @@
               <i class="bi bi-calendar-event me-1"></i>{{ selectedCosmetic()!.introduction!.text }}
             </p>
           }
+        </div>
+      </div>
+    </div>
+  </div>
+}
+
+@if (creatorCodeModalOpen()) {
+  <div class="modal-overlay" (click)="closeCreatorCodeModal()">
+    <div class="modal-panel" (click)="$event.stopPropagation()">
+      <button class="modal-close-btn" (click)="closeCreatorCodeModal()">
+        <i class="bi bi-x-lg"></i>
+      </button>
+
+      <div class="modal-header-section">
+        <h3 class="modal-title">
+          <i class="bi bi-shield-check me-2 d-none d-sm-inline"></i>Verify Creator Code
+        </h3>
+        <p class="text-secondary mb-3">Check if a Fortnite creator code is active and working</p>
+
+        <div class="creator-code-form">
+          <div class="input-group mb-3">
+            <input
+              type="text"
+              class="form-control creator-code-input d-none d-sm-block"
+              placeholder="Enter creator code (e.g., thegrefg, rubius)"
+              [(ngModel)]="creatorCode"
+              (keyup.enter)="checkCreatorCode()"
+              [disabled]="checkingCode()"
+            />
+            <input
+              type="text"
+              class="form-control creator-code-input d-block d-sm-none"
+              placeholder="Creator code (e.g., thegrefg)"
+              [(ngModel)]="creatorCode"
+              (keyup.enter)="checkCreatorCode()"
+              [disabled]="checkingCode()"
+            />
+          </div>
+          <button
+            class="btn btn-warning w-100 py-2"
+            (click)="checkCreatorCode()"
+            [disabled]="checkingCode()"
+          >
+            @if (checkingCode()) {
+              <span class="spinner-border spinner-border-sm me-2"></span>
+              Checking...
+            } @else {
+              <i class="bi bi-search me-2"></i>Verify Code
+            }
+          </button>
         </div>
       </div>
     </div>

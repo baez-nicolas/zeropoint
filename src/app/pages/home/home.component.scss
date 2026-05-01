@@ -188,6 +188,83 @@
   }
 }
 
+.news-scroll-container {
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: #ffc107 #1a1a1a;
+
+  &::-webkit-scrollbar {
+    height: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #1a1a1a;
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #ffc107;
+    border-radius: 4px;
+
+    &:hover {
+      background: #ffca28;
+    }
+  }
+}
+
+.news-scroll-content {
+  display: flex;
+  gap: 1rem;
+  padding-bottom: 0.5rem;
+
+  @media (min-width: 768px) {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.news-item {
+  flex: 0 0 30%;
+  max-width: 30%;
+
+  @media (min-width: 768px) {
+    flex: 1;
+    max-width: 100%;
+  }
+
+  .card-img-top {
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    width: 100%;
+
+    @media (min-width: 768px) {
+      height: 180px;
+      aspect-ratio: auto;
+    }
+  }
+
+  .card-body {
+    padding: 0.75rem;
+
+    @media (min-width: 768px) {
+      padding: 1rem;
+    }
+  }
+
+  .card-title {
+    font-size: 0.75rem;
+    line-height: 1.2;
+    margin-bottom: 0.25rem;
+
+    @media (min-width: 768px) {
+      font-size: 1rem;
+      margin-bottom: 0.5rem;
+    }
+  }
+}
+
 .shop-card {
   cursor: pointer;
   transition: all 0.3s ease;
@@ -195,6 +272,59 @@
   &:hover {
     transform: translateY(-5px);
     box-shadow: 0 8px 20px rgba(255, 193, 7, 0.3);
+  }
+
+  .card-body {
+    @media (max-width: 767.98px) {
+      padding: 0.5rem 0.5rem 0.25rem !important;
+    }
+  }
+}
+
+.shop-scroll-container {
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: #ffc107 #1a1a1a;
+
+  &::-webkit-scrollbar {
+    height: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #1a1a1a;
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #ffc107;
+    border-radius: 4px;
+
+    &:hover {
+      background: #ffca28;
+    }
+  }
+}
+
+.shop-scroll-content {
+  display: flex;
+  gap: 0.75rem;
+  padding-bottom: 0.5rem;
+
+  @media (min-width: 768px) {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+  }
+}
+
+.shop-item {
+  flex: 0 0 23%;
+  max-width: 23%;
+
+  @media (min-width: 768px) {
+    flex: 1;
+    max-width: 100%;
   }
 }
 
@@ -417,6 +547,53 @@
   }
 }
 
+.banner-scroll-container {
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: #ffc107 #1a1a1a;
+
+  &::-webkit-scrollbar {
+    height: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #1a1a1a;
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #ffc107;
+    border-radius: 4px;
+
+    &:hover {
+      background: #ffca28;
+    }
+  }
+}
+
+.banner-scroll-content {
+  display: flex;
+  gap: 0.75rem;
+  padding-bottom: 0.5rem;
+
+  @media (min-width: 768px) {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+  }
+}
+
+.banner-item {
+  flex: 0 0 23%;
+  max-width: 23%;
+
+  @media (min-width: 768px) {
+    flex: 1;
+    max-width: 100%;
+  }
+}
+
 .banner-card {
   background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
   border-radius: 12px;
@@ -474,6 +651,10 @@
   display: flex;
   flex-direction: column;
   gap: 3px;
+
+  @media (max-width: 767.98px) {
+    padding: 0.4rem 0.5rem 0.3rem;
+  }
 }
 
 .banner-name {
@@ -589,6 +770,53 @@
   }
 }
 
+.cosmetic-scroll-container {
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: #ffc107 #1a1a1a;
+
+  &::-webkit-scrollbar {
+    height: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #1a1a1a;
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #ffc107;
+    border-radius: 4px;
+
+    &:hover {
+      background: #ffca28;
+    }
+  }
+}
+
+.cosmetic-scroll-content {
+  display: flex;
+  gap: 0.75rem;
+  padding-bottom: 0.5rem;
+
+  @media (min-width: 768px) {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+  }
+}
+
+.cosmetic-item {
+  flex: 0 0 23%;
+  max-width: 23%;
+
+  @media (min-width: 768px) {
+    flex: 1;
+    max-width: 100%;
+  }
+}
+
 .cosmetic-card {
   background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
   border-radius: 12px;
@@ -646,6 +874,10 @@
     display: flex;
     flex-direction: column;
     gap: 3px;
+
+    @media (max-width: 767.98px) {
+      padding: 0.4rem 0.5rem 0.3rem;
+    }
   }
 
   .cosmetic-name {
