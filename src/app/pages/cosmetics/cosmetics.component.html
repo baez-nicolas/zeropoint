@@ -16,7 +16,11 @@
 
   @if (!loading() && !error()) {
     <div class="filters-block mb-4">
-      <div class="filters-row d-flex flex-wrap gap-3 align-items-start mb-3">
+      <div
+        class="filters-row d-flex flex-wrap gap-3 align-items-start"
+        [class.mb-2]="selectedType !== 'vehicles'"
+        [class.mb-3]="selectedType === 'vehicles'"
+      >
         <div class="search-wrap">
           <i class="bi bi-search search-icon text-secondary"></i>
           <input
@@ -32,6 +36,7 @@
           class="form-select filter-select filter-select--sm"
           [(ngModel)]="selectedChapter"
           (ngModelChange)="onChapterChangeValue($event)"
+          [disabled]="selectedType === 'vehicles'"
         >
           <option value="all">Chapter</option>
           @for (ch of chapters; track ch) {
@@ -43,6 +48,7 @@
           class="form-select filter-select filter-select--sm"
           [(ngModel)]="selectedSeason"
           (ngModelChange)="onSeasonChangeValue($event)"
+          [disabled]="selectedType === 'vehicles'"
         >
           <option value="all">Season</option>
           @for (s of seasons; track s) {
@@ -54,6 +60,7 @@
           class="form-select filter-select"
           [(ngModel)]="selectedSeries"
           (ngModelChange)="onSeriesChangeValue($event)"
+          [disabled]="selectedType === 'vehicles'"
         >
           <option value="all">All series</option>
           <option value="no-series">No Series</option>
@@ -83,11 +90,32 @@
         </select>
 
         @if (hasActiveFilters()) {
-          <button class="btn btn-outline-warning btn-sm clear-filters-btn" (click)="clearFilters()">
+          <button
+            class="btn btn-outline-warning btn-sm clear-filters-btn slideInFade"
+            (click)="clearFilters()"
+          >
             <i class="bi bi-x-circle me-1"></i>Clear filters
           </button>
         }
       </div>
+
+      @if (selectedType === 'vehicles') {
+        <div class="vehicle-filter-row" @slideDown>
+          <div class="vehicle-filter-content">
+            <i class="bi bi-car-front-fill me-2 text-warning"></i>
+            <select
+              class="form-select filter-select"
+              [(ngModel)]="selectedVehicleType"
+              (ngModelChange)="onVehicleTypeChangeValue($event)"
+            >
+              <option value="all">All vehicle types</option>
+              @for (vt of vehicleTypes; track vt) {
+                <option [value]="vt">{{ formatVehicleTypeLabel(vt) }}</option>
+              }
+            </select>
+          </div>
+        </div>
+      }
 
       <div class="d-flex align-items-center gap-3 flex-wrap">
         <span class="text-secondary small">
@@ -118,15 +146,20 @@
             (click)="openModal(item)"
           >
             <div class="cosmetic-img-wrap">
-              @if (getImage(item)) {
-                <img [src]="getImage(item)" [alt]="item.name" class="cosmetic-img" loading="lazy" />
+              @if (getItemImage(item)) {
+                <img
+                  [src]="getItemImage(item)"
+                  [alt]="item.name"
+                  class="cosmetic-img"
+                  loading="lazy"
+                />
               } @else {
                 <div class="cosmetic-img-placeholder">
                   <i class="bi bi-image text-secondary"></i>
                 </div>
               }
               <div class="cosmetic-type-chip">{{ formatTypeLabel(item.type.value) }}</div>
-              @if (item.series) {
+              @if (!isVehicleCosmetic(item) && item.series) {
                 <div
                   class="cosmetic-series-dot"
                   [title]="formatSeriesLabel(item.series.value)"
@@ -161,9 +194,9 @@
       </button>
 
       <div class="modal-header-section">
-        @if (getImage(selectedCosmetic()!)) {
+        @if (getItemImage(selectedCosmetic()!)) {
           <img
-            [src]="selectedCosmetic()!.images.featured || getImage(selectedCosmetic()!)"
+            [src]="getSelectedCosmeticFeaturedImage() || getItemImage(selectedCosmetic()!)"
             [alt]="selectedCosmetic()!.name"
             class="modal-cosmetic-img"
           />
@@ -173,10 +206,14 @@
           <p class="modal-description">{{ selectedCosmetic()!.description }}</p>
         }
         <div class="modal-badges-row">
-          <span class="badge-type">{{ formatTypeLabel(selectedCosmetic()!.type.value) }}</span>
-          @if (selectedCosmetic()!.series) {
+          <span class="badge-type">{{
+            isVehicleCosmetic(selectedCosmetic()!)
+              ? formatVehicleTypeLabel(selectedCosmetic()!.type.value)
+              : formatTypeLabel(selectedCosmetic()!.type.value)
+          }}</span>
+          @if (getSelectedCosmeticSeries()) {
             <span class="badge-series">{{
-              formatSeriesLabel(selectedCosmetic()!.series!.value)
+              formatSeriesLabel(getSelectedCosmeticSeries()!.value)
             }}</span>
           } @else if (selectedCosmetic()!.rarity) {
             <span
@@ -190,26 +227,26 @@
       </div>
 
       <div class="modal-detail-section">
-        @if (selectedCosmetic()!.set) {
+        @if (getSelectedCosmeticSet()) {
           <div class="detail-row">
             <span class="detail-label"><i class="bi bi-collection me-1"></i>Set</span>
-            <span class="detail-value">{{ selectedCosmetic()!.set!.text }}</span>
+            <span class="detail-value">{{ getSelectedCosmeticSet()!.text }}</span>
           </div>
         }
 
-        @if (selectedCosmetic()!.introduction) {
+        @if (getSelectedCosmeticIntroduction()) {
           <div class="detail-row">
             <span class="detail-label"><i class="bi bi-calendar3 me-1"></i>Introducido</span>
-            <span class="detail-value">{{ selectedCosmetic()!.introduction!.text }}</span>
+            <span class="detail-value">{{ getSelectedCosmeticIntroduction()!.text }}</span>
           </div>
         }
 
-        @if (selectedCosmetic()!.showcaseVideo) {
+        @if (getSelectedCosmeticShowcaseVideo()) {
           <div class="detail-row">
             <span class="detail-label"><i class="bi bi-play-circle me-1"></i>Video</span>
             <a
               class="detail-value detail-link"
-              [href]="'https://www.youtube.com/watch?v=' + selectedCosmetic()!.showcaseVideo"
+              [href]="'https://www.youtube.com/watch?v=' + getSelectedCosmeticShowcaseVideo()"
               target="_blank"
               rel="noopener"
               (click)="$event.stopPropagation()"
@@ -219,11 +256,11 @@
           </div>
         }
 
-        @if (selectedCosmetic()!.variants && selectedCosmetic()!.variants!.length > 0) {
+        @if (getSelectedCosmeticVariants().length > 0) {
           <div class="detail-row detail-row--variants">
             <span class="detail-label"><i class="bi bi-palette me-1"></i>Estilos</span>
             <div class="variants-wrap">
-              @for (variant of selectedCosmetic()!.variants!; track variant.channel) {
+              @for (variant of getSelectedCosmeticVariants(); track variant.channel) {
                 <p class="variant-type">{{ variant.type }}</p>
                 <div class="variant-options">
                   @for (opt of variant.options; track opt.tag) {

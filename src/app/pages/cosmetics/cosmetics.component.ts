@@ -1,9 +1,12 @@
+import { animate, style, transition, trigger } from '@angular/animations';
 import { CommonModule } from '@angular/common';
 import { Component, computed, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Cosmetic } from '../../core/models/cosmetic.model';
+import { Cosmetic, CosmeticSeries } from '../../core/models/cosmetic.model';
+import { VehicleCosmetic } from '../../core/models/vehicle-cosmetic.model';
 import { CosmeticService } from '../../core/services/cosmetic.service';
 import { PageLoadingService } from '../../core/services/page-loading.service';
+import { VehicleCosmeticService } from '../../core/services/vehicle-cosmetic.service';
 
 const COSMETIC_ITEM_LIMIT = 500;
 
@@ -13,15 +16,29 @@ const COSMETIC_ITEM_LIMIT = 500;
   imports: [CommonModule, FormsModule],
   templateUrl: './cosmetics.component.html',
   styleUrls: ['./cosmetics.component.scss'],
+  animations: [
+    trigger('slideDown', [
+      transition(':enter', [
+        style({ opacity: 0, height: 0, overflow: 'hidden' }),
+        animate('300ms ease-out', style({ opacity: 1, height: '*' })),
+      ]),
+      transition(':leave', [
+        style({ opacity: 1, height: '*', overflow: 'hidden' }),
+        animate('300ms ease-in', style({ opacity: 0, height: 0 })),
+      ]),
+    ]),
+  ],
 })
 export class CosmeticsComponent implements OnInit {
   allCosmetics = signal<Cosmetic[]>([]);
+  allVehicleCosmetics = signal<VehicleCosmetic[]>([]);
   loading = signal(true);
   error = signal(false);
   showScrollTop = signal(false);
 
   private _search = signal('');
   private _selectedType = signal('all');
+  private _selectedVehicleType = signal('all');
   private _selectedSeries = signal('all');
   private _selectedChapter = signal('all');
   private _selectedSeason = signal('all');
@@ -39,6 +56,13 @@ export class CosmeticsComponent implements OnInit {
   }
   set selectedType(value: string) {
     this._selectedType.set(value);
+  }
+
+  get selectedVehicleType() {
+    return this._selectedVehicleType();
+  }
+  set selectedVehicleType(value: string) {
+    this._selectedVehicleType.set(value);
   }
 
   get selectedSeries() {
@@ -69,7 +93,7 @@ export class CosmeticsComponent implements OnInit {
     this._sortBy.set(value);
   }
 
-  selectedCosmetic = signal<Cosmetic | null>(null);
+  selectedCosmetic = signal<Cosmetic | VehicleCosmetic | null>(null);
   modalClosing = signal(false);
 
   readonly LIMIT = COSMETIC_ITEM_LIMIT;
@@ -78,6 +102,7 @@ export class CosmeticsComponent implements OnInit {
     return (
       this._search() !== '' ||
       this._selectedType() !== 'all' ||
+      this._selectedVehicleType() !== 'all' ||
       this._selectedSeries() !== 'all' ||
       this._selectedChapter() !== 'all' ||
       this._selectedSeason() !== 'all' ||
@@ -87,6 +112,7 @@ export class CosmeticsComponent implements OnInit {
 
   constructor(
     private cosmeticService: CosmeticService,
+    private vehicleCosmeticService: VehicleCosmeticService,
     private pageLoadingService: PageLoadingService,
   ) {}
 
@@ -94,6 +120,17 @@ export class CosmeticsComponent implements OnInit {
     this.loadFiltersFromStorage();
 
     this.pageLoadingService.setLoading(true);
+
+    let cosmeticsLoaded = false;
+    let vehiclesLoaded = false;
+
+    const checkAllLoaded = () => {
+      if (cosmeticsLoaded && vehiclesLoaded) {
+        this.loading.set(false);
+        this.pageLoadingService.setLoading(false);
+      }
+    };
+
     this.cosmeticService.getCosmetics().subscribe({
       next: (data) => {
         const filtered = data.filter((c) => {
@@ -103,13 +140,25 @@ export class CosmeticsComponent implements OnInit {
           );
         });
         this.allCosmetics.set(filtered);
-        this.loading.set(false);
-        this.pageLoadingService.setLoading(false);
+        cosmeticsLoaded = true;
+        checkAllLoaded();
       },
       error: () => {
         this.error.set(true);
-        this.loading.set(false);
-        this.pageLoadingService.setLoading(false);
+        cosmeticsLoaded = true;
+        checkAllLoaded();
+      },
+    });
+
+    this.vehicleCosmeticService.getVehicleCosmetics().subscribe({
+      next: (data) => {
+        this.allVehicleCosmetics.set(data);
+        vehiclesLoaded = true;
+        checkAllLoaded();
+      },
+      error: () => {
+        vehiclesLoaded = true;
+        checkAllLoaded();
       },
     });
 
@@ -119,13 +168,26 @@ export class CosmeticsComponent implements OnInit {
   }
 
   get types(): string[] {
-    return [
+    const regularTypes = [
       ...new Set(
         this.allCosmetics()
           .map((c) => c.type?.value)
-          .filter(Boolean),
+          .filter((type) => type && type !== 'pet'),
       ),
     ].sort();
+    return [...regularTypes, 'vehicles'];
+  }
+
+  get vehicleTypes(): string[] {
+    const typeOrder = ['body', 'wheel', 'drifttrail', 'decal'];
+    const availableTypes = [
+      ...new Set(
+        this.allVehicleCosmetics()
+          .map((v) => v.type?.value)
+          .filter(Boolean) as string[],
+      ),
+    ];
+    return typeOrder.filter((type) => availableTypes.includes(type));
   }
 
   get seriesList(): string[] {
@@ -168,31 +230,79 @@ export class CosmeticsComponent implements OnInit {
     });
   }
 
-  get filtered(): Cosmetic[] {
+  get filtered(): (Cosmetic | VehicleCosmetic)[] {
     const q = this._search().toLowerCase().trim();
     const type = this._selectedType();
+    const vehicleType = this._selectedVehicleType();
     const series = this._selectedSeries();
     const chapter = this._selectedChapter();
     const season = this._selectedSeason();
     const sortBy = this._sortBy();
 
-    const noFilters =
-      !q && type === 'all' && series === 'all' && chapter === 'all' && season === 'all';
+    if (type === 'vehicles') {
+      return this.allVehicleCosmetics()
+        .filter((v) => {
+          if (!v.name || !v.type || !v.rarity || !v.images) return false;
+          if (v.name.toLowerCase() === 'null') return false;
+          if (!v.description || v.description.toLowerCase() === 'null') return false;
+          if (q && !v.name?.toLowerCase().includes(q)) return false;
+          if (vehicleType !== 'all' && v.type?.value !== vehicleType) return false;
+          return true;
+        })
+        .sort((a, b) => {
+          const typeOrder = ['body', 'wheel', 'drifttrail', 'decal'];
+          const aIndex = typeOrder.indexOf(a.type?.value || '');
+          const bIndex = typeOrder.indexOf(b.type?.value || '');
 
-    return this.allCosmetics()
-      .filter((c) => {
-        if (q) {
-          const nameMatch = c.name?.toLowerCase().includes(q);
-          const setMatch = c.set?.value?.toLowerCase().includes(q);
-          if (!nameMatch && !setMatch) return false;
-        }
-        if (type !== 'all' && c.type?.value !== type) return false;
-        if (series === 'no-series' && c.series) return false;
-        if (series !== 'all' && series !== 'no-series' && c.series?.value !== series) return false;
-        if (chapter !== 'all' && c.introduction?.chapter !== chapter) return false;
-        if (season !== 'all' && c.introduction?.season !== season) return false;
+          if (aIndex !== bIndex) {
+            return aIndex - bIndex;
+          }
+
+          if (sortBy === 'newest') {
+            return new Date(b.added).getTime() - new Date(a.added).getTime();
+          }
+
+          return (a.name || '').localeCompare(b.name || '');
+        })
+        .slice(0, this.LIMIT);
+    }
+
+    const filteredCosmetics = this.allCosmetics().filter((c) => {
+      if (c.type?.value === 'pet') return false;
+      if (q) {
+        const nameMatch = c.name?.toLowerCase().includes(q);
+        const setMatch = c.set?.value?.toLowerCase().includes(q);
+        if (!nameMatch && !setMatch) return false;
+      }
+      if (type !== 'all' && type !== 'vehicles' && c.type?.value !== type) return false;
+      if (series === 'no-series' && c.series) return false;
+      if (series !== 'all' && series !== 'no-series' && c.series?.value !== series) return false;
+      if (chapter !== 'all' && c.introduction?.chapter !== chapter) return false;
+      if (season !== 'all' && c.introduction?.season !== season) return false;
+      return true;
+    });
+
+    if (type === 'all' && chapter === 'all' && season === 'all' && series === 'all' && !q) {
+      const filteredVehicles = this.allVehicleCosmetics().filter((v) => {
+        if (!v.name || !v.type || !v.rarity || !v.images) return false;
+        if (v.name.toLowerCase() === 'null') return false;
+        if (!v.description || v.description.toLowerCase() === 'null') return false;
         return true;
-      })
+      });
+
+      return [...filteredCosmetics, ...filteredVehicles]
+        .sort((a, b) => {
+          if (sortBy === 'newest') {
+            const dateA = new Date(a.added).getTime();
+            const dateB = new Date(b.added).getTime();
+            return dateB - dateA;
+          }
+          return (a.name || '').localeCompare(b.name || '');
+        })
+        .slice(0, this.LIMIT);
+    }
+
+    return filteredCosmetics
       .sort((a, b) => {
         if (sortBy === 'newest') {
           const dateA = new Date(a.added).getTime();
@@ -232,27 +342,49 @@ export class CosmeticsComponent implements OnInit {
   get totalFiltered(): number {
     const q = this._search().toLowerCase().trim();
     const type = this._selectedType();
+    const vehicleType = this._selectedVehicleType();
     const series = this._selectedSeries();
     const chapter = this._selectedChapter();
     const season = this._selectedSeason();
-    const sortBy = this.sortBy;
 
-    const noFilters =
-      !q && type === 'all' && series === 'all' && chapter === 'all' && season === 'all';
+    if (type === 'vehicles') {
+      return this.allVehicleCosmetics().filter((v) => {
+        if (!v.name || !v.type || !v.rarity || !v.images) return false;
+        if (v.name.toLowerCase() === 'null') return false;
+        if (!v.description || v.description.toLowerCase() === 'null') return false;
+        if (q && !v.name?.toLowerCase().includes(q)) return false;
+        if (vehicleType !== 'all' && v.type?.value !== vehicleType) return false;
+        return true;
+      }).length;
+    }
 
-    return this.allCosmetics().filter((c) => {
+    const cosmeticsCount = this.allCosmetics().filter((c) => {
+      if (c.type?.value === 'pet') return false;
       if (q) {
         const nameMatch = c.name?.toLowerCase().includes(q);
         const setMatch = c.set?.value?.toLowerCase().includes(q);
         if (!nameMatch && !setMatch) return false;
       }
-      if (type !== 'all' && c.type?.value !== type) return false;
+      if (type !== 'all' && type !== 'vehicles' && c.type?.value !== type) return false;
       if (series === 'no-series' && c.series) return false;
       if (series !== 'all' && series !== 'no-series' && c.series?.value !== series) return false;
       if (chapter !== 'all' && c.introduction?.chapter !== chapter) return false;
       if (season !== 'all' && c.introduction?.season !== season) return false;
       return true;
     }).length;
+
+    if (type === 'all' && chapter === 'all' && season === 'all' && series === 'all' && !q) {
+      const vehiclesCount = this.allVehicleCosmetics().filter((v) => {
+        if (!v.name || !v.type || !v.rarity || !v.images) return false;
+        if (v.name.toLowerCase() === 'null') return false;
+        if (!v.description || v.description.toLowerCase() === 'null') return false;
+        return true;
+      }).length;
+
+      return cosmeticsCount + vehiclesCount;
+    }
+
+    return cosmeticsCount;
   }
 
   get isLimitReached(): boolean {
@@ -308,6 +440,18 @@ export class CosmeticsComponent implements OnInit {
 
   onTypeChangeValue(value: string) {
     this._selectedType.set(value);
+    if (value !== 'vehicles') {
+      this._selectedVehicleType.set('all');
+    } else {
+      this._selectedChapter.set('all');
+      this._selectedSeason.set('all');
+      this._selectedSeries.set('all');
+    }
+    this.saveFiltersToStorage();
+  }
+
+  onVehicleTypeChangeValue(value: string) {
+    this._selectedVehicleType.set(value);
     this.saveFiltersToStorage();
   }
 
@@ -316,7 +460,7 @@ export class CosmeticsComponent implements OnInit {
     this.saveFiltersToStorage();
   }
 
-  openModal(c: Cosmetic) {
+  openModal(c: Cosmetic | VehicleCosmetic) {
     this.selectedCosmetic.set(c);
     this.modalClosing.set(false);
   }
@@ -336,6 +480,7 @@ export class CosmeticsComponent implements OnInit {
   clearFilters() {
     this._search.set('');
     this._selectedType.set('all');
+    this._selectedVehicleType.set('all');
     this._selectedSeries.set('all');
     this._selectedChapter.set('all');
     this._selectedSeason.set('all');
@@ -350,6 +495,7 @@ export class CosmeticsComponent implements OnInit {
         const filters = JSON.parse(saved);
         this._search.set(filters.search || '');
         this._selectedType.set(filters.type || 'all');
+        this._selectedVehicleType.set(filters.vehicleType || 'all');
         this._selectedSeries.set(filters.series || 'all');
         this._selectedChapter.set(filters.chapter || 'all');
         this._selectedSeason.set(filters.season || 'all');
@@ -364,6 +510,7 @@ export class CosmeticsComponent implements OnInit {
     const filters = {
       search: this._search(),
       type: this._selectedType(),
+      vehicleType: this._selectedVehicleType(),
       series: this._selectedSeries(),
       chapter: this._selectedChapter(),
       season: this._selectedSeason(),
@@ -411,6 +558,11 @@ export class CosmeticsComponent implements OnInit {
       petcarrier: 'Pet Carrier',
       toy: 'Toy',
       banner: 'Banner',
+      vehicles: 'Vehicles',
+      body: 'Body',
+      wheel: 'Wheels',
+      drifttrail: 'Trail',
+      decal: 'Decal',
     };
 
     const mapped = map[value.toLowerCase()];
@@ -430,5 +582,71 @@ export class CosmeticsComponent implements OnInit {
       .split(' ')
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
       .join(' ');
+  }
+
+  isVehicleCosmetic(item: Cosmetic | VehicleCosmetic | null): item is VehicleCosmetic {
+    return item !== null && 'vehicleId' in item;
+  }
+
+  getVehicleImage(v: VehicleCosmetic): string {
+    return v.images?.small || v.images?.large || '';
+  }
+
+  getItemImage(item: Cosmetic | VehicleCosmetic): string {
+    if (this.isVehicleCosmetic(item)) {
+      return this.getVehicleImage(item);
+    }
+    return this.getImage(item);
+  }
+
+  formatVehicleTypeLabel(value: string): string {
+    const map: Record<string, string> = {
+      body: 'Body',
+      wheel: 'Wheels',
+      drifttrail: 'Trail',
+      decal: 'Decal',
+    };
+    return map[value.toLowerCase()] || value;
+  }
+
+  getSelectedCosmeticFeaturedImage(): string | null {
+    const selected = this.selectedCosmetic();
+    if (!selected || this.isVehicleCosmetic(selected)) return null;
+    return (selected as Cosmetic).images?.featured || null;
+  }
+
+  getSelectedCosmeticSet(): { value: string; text: string; backendValue: string } | null {
+    const selected = this.selectedCosmetic();
+    if (!selected || this.isVehicleCosmetic(selected)) return null;
+    return (selected as Cosmetic).set || null;
+  }
+
+  getSelectedCosmeticIntroduction(): {
+    chapter: string;
+    season: string;
+    text: string;
+    backendValue: number;
+  } | null {
+    const selected = this.selectedCosmetic();
+    if (!selected || this.isVehicleCosmetic(selected)) return null;
+    return (selected as Cosmetic).introduction || null;
+  }
+
+  getSelectedCosmeticShowcaseVideo(): string | null {
+    const selected = this.selectedCosmetic();
+    if (!selected || this.isVehicleCosmetic(selected)) return null;
+    return (selected as Cosmetic).showcaseVideo || null;
+  }
+
+  getSelectedCosmeticVariants(): any[] {
+    const selected = this.selectedCosmetic();
+    if (!selected || this.isVehicleCosmetic(selected)) return [];
+    return (selected as Cosmetic).variants || [];
+  }
+
+  getSelectedCosmeticSeries(): CosmeticSeries | null {
+    const selected = this.selectedCosmetic();
+    if (!selected || this.isVehicleCosmetic(selected)) return null;
+    return (selected as Cosmetic).series || null;
   }
 }
