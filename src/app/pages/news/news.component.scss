@@ -1,3 +1,14 @@
+.page-header {
+  @media (max-width: 767.98px) {
+    justify-content: center !important;
+
+    h2 {
+      width: 100%;
+      text-align: center;
+    }
+  }
+}
+
 .news-card {
   cursor: pointer;
   transition: all 0.3s ease;
@@ -6,6 +17,30 @@
     transform: translateY(-5px);
     box-shadow: 0 8px 20px rgba(255, 193, 7, 0.3);
     border-color: rgba(255, 193, 7, 0.5) !important;
+  }
+
+  .card-body {
+    @media (max-width: 767.98px) {
+      padding: 0.75rem;
+    }
+  }
+
+  .card-title {
+    @media (max-width: 767.98px) {
+      font-size: 0.9rem;
+      line-height: 1.2;
+    }
+  }
+}
+
+.news-img {
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  width: 100%;
+
+  @media (min-width: 768px) {
+    height: 200px;
+    aspect-ratio: auto;
   }
 }
 

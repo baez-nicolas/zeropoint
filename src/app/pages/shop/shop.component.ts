@@ -27,6 +27,8 @@ export class ShopComponent implements OnInit, OnDestroy {
   modalClosing = signal(false);
   countdown = signal<string>('');
   highlightedSection = signal<string | null>(null);
+  filtersModalOpen = signal(false);
+  filtersModalClosing = signal(false);
 
   private countdownInterval?: ReturnType<typeof setInterval>;
   private highlightTimeout?: ReturnType<typeof setTimeout>;
@@ -135,6 +137,19 @@ export class ShopComponent implements OnInit, OnDestroy {
     }, 200);
   }
 
+  openFiltersModal() {
+    this.filtersModalOpen.set(true);
+    this.filtersModalClosing.set(false);
+  }
+
+  closeFiltersModal() {
+    this.filtersModalClosing.set(true);
+    setTimeout(() => {
+      this.filtersModalOpen.set(false);
+      this.filtersModalClosing.set(false);
+    }, 300);
+  }
+
   getItemTypePriority(entry: ShopEntry): number {
     if (entry.bundle) return 0;
     if (!entry.brItems?.length) return 999;
@@ -223,6 +238,10 @@ export class ShopComponent implements OnInit, OnDestroy {
   }
 
   scrollToSection(sectionId: string) {
+    if (this.filtersModalOpen()) {
+      this.closeFiltersModal();
+    }
+
     this.viewportScroller.scrollToAnchor(sectionId);
 
     if (this.highlightTimeout) {

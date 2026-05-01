@@ -1,7 +1,10 @@
 ﻿<div class="page-container py-4 px-3 px-md-4">
   <div class="page-header mb-4">
-    <h2 class="text-white fw-bold mb-0"><i class="bi bi-shop me-2"></i>Item Shop</h2>
-    <div class="d-flex flex-wrap gap-2 align-items-center">
+    <h2 class="text-white fw-bold mb-0">
+      <i class="bi bi-shop me-2 d-none d-md-inline"></i
+      ><span class="d-block d-md-inline text-center text-md-start w-100 w-md-auto">Item Shop</span>
+    </h2>
+    <div class="d-none d-md-flex flex-wrap gap-2 align-items-center">
       @if (shop()) {
         <span class="badge bg-secondary fs-6">{{ getShopDate() }}</span>
         @if (countdown()) {
@@ -11,6 +14,22 @@
         }
       }
     </div>
+  </div>
+
+  <div class="d-md-none mobile-info-section mb-3">
+    @if (shop()) {
+      <div class="text-center">
+        <div class="badge bg-secondary fs-6 mb-2 d-block">{{ getShopDate() }}</div>
+        @if (countdown()) {
+          <div class="badge bg-warning text-dark fs-6 d-block">
+            <i class="bi bi-clock-fill me-1"></i>{{ countdown() }}
+          </div>
+        }
+        <button class="btn btn-warning mt-3 w-100" (click)="openFiltersModal()">
+          <i class="bi bi-funnel-fill me-2"></i>Filters
+        </button>
+      </div>
+    }
   </div>
 
   @if (loading()) {
@@ -24,7 +43,7 @@
   }
 
   @if (shop()) {
-    <div class="pills-nav-container">
+    <div class="pills-nav-container d-none d-md-block">
       <div class="pills-nav">
         @for (section of sections(); track $index) {
           <button class="pill-btn" (click)="scrollToSection(getSectionId(section, $index))">
@@ -58,14 +77,16 @@
               <i class="bi bi-grid-3x3-gap-fill me-2"></i>
             }
             {{ section.title }}
-            <span class="badge bg-secondary ms-2">{{ section.entries.length }}</span>
+            <span class="badge bg-secondary ms-2 section-count-badge">{{
+              section.entries.length
+            }}</span>
           </h3>
         </div>
 
         @if (section.type === 'br') {
           <div class="row g-2 mb-3">
             @for (entry of section.entries; track entry.offerId) {
-              <div class="col-4 col-sm-3 col-md-2 col-lg-2 col-xl-1">
+              <div class="col-3 col-sm-3 col-md-2 col-lg-2 col-xl-1">
                 <div
                   class="card h-100 border-0 shop-card"
                   [style.border-bottom]="'3px solid ' + getRarityColor(entry)"
@@ -80,38 +101,42 @@
                   <div class="card-body p-1">
                     @if (entry.banner) {
                       <span
-                        class="badge bg-danger mb-1 d-block text-truncate"
+                        class="badge bg-danger mb-1 d-none d-md-block text-truncate"
                         style="font-size: 0.65rem"
                         >{{ entry.banner.value }}</span
                       >
                     }
                     @if (entry.bundle) {
                       <p
-                        class="card-text text-warning text-truncate mb-1 fw-bold"
+                        class="card-text text-warning text-truncate mb-1 fw-bold card-title-mobile"
                         style="font-size: 0.7rem"
                       >
                         {{ entry.bundle.name }}
                       </p>
                     } @else {
-                      <p class="card-text text-white text-truncate mb-1" style="font-size: 0.7rem">
+                      <p
+                        class="card-text text-white text-truncate mb-1 card-title-mobile"
+                        style="font-size: 0.7rem"
+                      >
                         {{ entry.brItems?.[0]?.name }}
                       </p>
                     }
-                    <div class="d-flex align-items-center gap-1">
+                    <div class="d-flex align-items-center gap-1 price-container">
                       <img
                         src="https://fortnite-api.com/images/vbuck.png"
                         alt="vbuck"
                         width="12"
                         height="12"
+                        class="vbuck-icon"
                       />
                       @if (entry.regularPrice !== entry.finalPrice) {
                         <span
-                          class="text-secondary text-decoration-line-through me-1"
+                          class="text-secondary text-decoration-line-through me-1 d-none d-sm-inline"
                           style="font-size: 0.65rem"
                           >{{ entry.regularPrice | number }}</span
                         >
                       }
-                      <span class="text-warning fw-bold" style="font-size: 0.7rem">{{
+                      <span class="text-warning fw-bold price-text" style="font-size: 0.7rem">{{
                         entry.finalPrice | number
                       }}</span>
                     </div>
@@ -130,15 +155,16 @@
         @if (section.type === 'tracks') {
           <div class="row g-2 mb-3">
             @for (entry of section.entries; track entry.offerId) {
-              <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+              <div class="col-3 col-sm-4 col-md-3 col-lg-2">
                 <div
                   class="card h-100 border-0 shop-card border-start border-4 border-info"
                   (click)="openModal(entry)"
                 >
-                  <div class="d-flex">
+                  <div class="d-flex track-card-content">
                     <img
                       [src]="entry.tracks![0].albumArt"
                       [alt]="entry.tracks![0].title"
+                      class="track-album-art"
                       style="
                         width: 70px;
                         height: 70px;
@@ -148,13 +174,19 @@
                       "
                     />
                     <div class="card-body p-1 overflow-hidden">
-                      <p class="text-white fw-bold text-truncate mb-0" style="font-size: 0.7rem">
+                      <p
+                        class="text-white fw-bold text-truncate mb-0 track-title"
+                        style="font-size: 0.7rem"
+                      >
                         {{ entry.tracks![0].title }}
                       </p>
-                      <p class="text-secondary text-truncate mb-1" style="font-size: 0.65rem">
+                      <p
+                        class="text-secondary text-truncate mb-1 track-artist"
+                        style="font-size: 0.65rem"
+                      >
                         {{ entry.tracks![0].artist }}
                       </p>
-                      <div class="d-flex gap-1 flex-wrap mb-1">
+                      <div class="d-none d-sm-flex gap-1 flex-wrap mb-1">
                         <span
                           class="badge bg-dark border border-secondary"
                           style="font-size: 0.6rem"
@@ -169,14 +201,15 @@
                           >{{ formatDuration(entry.tracks![0].duration) }}
                         </span>
                       </div>
-                      <div class="d-flex align-items-center gap-1">
+                      <div class="d-flex align-items-center gap-1 price-container">
                         <img
                           src="https://fortnite-api.com/images/vbuck.png"
                           alt="vbuck"
                           width="10"
                           height="10"
+                          class="vbuck-icon"
                         />
-                        <span class="text-warning fw-bold" style="font-size: 0.7rem">{{
+                        <span class="text-warning fw-bold price-text" style="font-size: 0.7rem">{{
                           entry.finalPrice | number
                         }}</span>
                       </div>
@@ -191,7 +224,7 @@
         @if (section.type === 'cars') {
           <div class="row g-2 mb-3">
             @for (entry of section.entries; track entry.offerId) {
-              <div class="col-4 col-sm-3 col-md-2 col-lg-2 col-xl-1">
+              <div class="col-3 col-sm-3 col-md-2 col-lg-2 col-xl-1">
                 <div
                   class="card h-100 border-0 shop-card"
                   style="border-bottom: 3px solid #ff9800"
@@ -204,20 +237,24 @@
                     style="aspect-ratio: 1/1; object-fit: cover"
                   />
                   <div class="card-body p-1">
-                    <p class="text-white text-truncate mb-0" style="font-size: 0.7rem">
+                    <p
+                      class="text-white text-truncate mb-0 card-title-mobile"
+                      style="font-size: 0.7rem"
+                    >
                       {{ entry.cars![0].name }}
                     </p>
-                    <p class="text-secondary mb-1" style="font-size: 0.6rem">
+                    <p class="text-secondary mb-1 d-none d-sm-block" style="font-size: 0.6rem">
                       {{ entry.cars![0].type.displayValue }}
                     </p>
-                    <div class="d-flex align-items-center gap-1">
+                    <div class="d-flex align-items-center gap-1 price-container">
                       <img
                         src="https://fortnite-api.com/images/vbuck.png"
                         alt="vbuck"
                         width="12"
                         height="12"
+                        class="vbuck-icon"
                       />
-                      <span class="text-warning fw-bold" style="font-size: 0.7rem">{{
+                      <span class="text-warning fw-bold price-text" style="font-size: 0.7rem">{{
                         entry.finalPrice | number
                       }}</span>
                     </div>
@@ -481,6 +518,45 @@
           </div>
         </div>
       }
+    </div>
+  </div>
+}
+
+@if (filtersModalOpen()) {
+  <div
+    class="filters-modal-overlay"
+    [class.closing]="filtersModalClosing()"
+    (click)="closeFiltersModal()"
+  >
+    <div
+      class="filters-modal-panel"
+      [class.closing]="filtersModalClosing()"
+      (click)="$event.stopPropagation()"
+    >
+      <div class="filters-modal-header">
+        <h5 class="text-white fw-bold mb-0"><i class="bi bi-funnel-fill me-2"></i>Shop Sections</h5>
+        <button class="filters-close-btn" (click)="closeFiltersModal()">
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </div>
+      <div class="filters-modal-body">
+        @for (section of sections(); track $index) {
+          <button
+            class="filter-section-btn"
+            (click)="scrollToSection(getSectionId(section, $index))"
+          >
+            @if (section.type === 'tracks') {
+              <i class="bi bi-music-note-beamed me-2"></i>
+            } @else if (section.type === 'cars') {
+              <i class="bi bi-car-front-fill me-2"></i>
+            } @else {
+              <i class="bi bi-grid-3x3-gap-fill me-2"></i>
+            }
+            <span>{{ section.title }}</span>
+            <span class="filter-badge">{{ section.entries.length }}</span>
+          </button>
+        }
+      </div>
     </div>
   </div>
 }
