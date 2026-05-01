@@ -215,11 +215,11 @@ export class ShopComponent implements OnInit, OnDestroy {
     });
   }
 
-  getSectionId(section: ShopSection): string {
-    return section.title
+  getSectionId(section: ShopSection, index: number): string {
+    return `${section.title
       .toLowerCase()
       .replace(/\s+/g, '-')
-      .replace(/[^a-z0-9-]/g, '');
+      .replace(/[^a-z0-9-]/g, '')}-${index}`;
   }
 
   scrollToSection(sectionId: string) {

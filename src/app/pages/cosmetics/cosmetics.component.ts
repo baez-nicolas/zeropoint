@@ -172,7 +172,7 @@ export class CosmeticsComponent implements OnInit {
       ...new Set(
         this.allCosmetics()
           .map((c) => c.type?.value)
-          .filter((type) => type && type !== 'pet'),
+          .filter((type) => type && type !== 'pet' && type !== 'banner'),
       ),
     ].sort();
     return [...regularTypes, 'vehicles'];
@@ -269,6 +269,7 @@ export class CosmeticsComponent implements OnInit {
 
     const filteredCosmetics = this.allCosmetics().filter((c) => {
       if (c.type?.value === 'pet') return false;
+      if (c.type?.value === 'banner') return false;
       if (q) {
         const nameMatch = c.name?.toLowerCase().includes(q);
         const setMatch = c.set?.value?.toLowerCase().includes(q);

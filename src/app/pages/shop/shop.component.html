@@ -26,8 +26,8 @@
   @if (shop()) {
     <div class="pills-nav-container">
       <div class="pills-nav">
-        @for (section of sections(); track section.title) {
-          <button class="pill-btn" (click)="scrollToSection(getSectionId(section))">
+        @for (section of sections(); track $index) {
+          <button class="pill-btn" (click)="scrollToSection(getSectionId(section, $index))">
             @if (section.type === 'tracks') {
               <i class="bi bi-music-note-beamed me-1"></i>
             } @else if (section.type === 'cars') {
@@ -42,11 +42,11 @@
       </div>
     </div>
 
-    @for (section of sections(); track section.title) {
+    @for (section of sections(); track $index) {
       <div
         class="section-wrapper"
-        [id]="getSectionId(section)"
-        [class.section-highlighted]="highlightedSection() === getSectionId(section)"
+        [id]="getSectionId(section, $index)"
+        [class.section-highlighted]="highlightedSection() === getSectionId(section, $index)"
       >
         <div class="section-header mb-3 mt-3">
           <h3 class="text-white fw-bold border-bottom border-warning pb-2 mb-0">
@@ -398,13 +398,14 @@
             }
 
             <div class="d-flex flex-wrap gap-2 mb-2">
-              <span class="badge" [style.background]="getRarityColor(selectedEntry()!)">
-                {{ selectedEntry()!.brItems![0].rarity.displayValue }}
-              </span>
               @if (selectedEntry()!.brItems![0].series) {
                 <span class="badge bg-dark border border-secondary">{{
                   selectedEntry()!.brItems![0].series!.value
                 }}</span>
+              } @else {
+                <span class="badge" [style.background]="getRarityColor(selectedEntry()!)">
+                  {{ selectedEntry()!.brItems![0].rarity.displayValue }}
+                </span>
               }
               @if (selectedEntry()!.banner) {
                 <span class="badge bg-danger">{{ selectedEntry()!.banner!.value }}</span>
