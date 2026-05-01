@@ -180,20 +180,29 @@
 .news-card {
   cursor: pointer;
   transition: all 0.3s ease;
+  position: relative;
 
   &:hover {
     transform: translateY(-5px);
     box-shadow: 0 8px 20px rgba(255, 193, 7, 0.3);
     border-color: rgba(255, 193, 7, 0.5) !important;
+    z-index: 10;
   }
 }
 
 .news-scroll-container {
   overflow-x: auto;
-  overflow-y: hidden;
+  overflow-y: visible;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: thin;
   scrollbar-color: #ffc107 #1a1a1a;
+
+  @media (min-width: 768px) {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 30px;
+    padding-right: 30px;
+  }
 
   &::-webkit-scrollbar {
     height: 8px;
@@ -237,10 +246,11 @@
   .card-img-top {
     aspect-ratio: 16 / 9;
     object-fit: cover;
+    object-position: top center;
     width: 100%;
 
     @media (min-width: 768px) {
-      height: 180px;
+      height: 207px;
       aspect-ratio: auto;
     }
   }
@@ -268,10 +278,12 @@
 .shop-card {
   cursor: pointer;
   transition: all 0.3s ease;
+  position: relative;
 
   &:hover {
     transform: translateY(-5px);
     box-shadow: 0 8px 20px rgba(255, 193, 7, 0.3);
+    z-index: 10;
   }
 
   .card-body {
@@ -283,10 +295,17 @@
 
 .shop-scroll-container {
   overflow-x: auto;
-  overflow-y: hidden;
+  overflow-y: visible;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: thin;
   scrollbar-color: #ffc107 #1a1a1a;
+
+  @media (min-width: 768px) {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 30px;
+    padding-right: 30px;
+  }
 
   &::-webkit-scrollbar {
     height: 8px;
@@ -444,6 +463,7 @@
   width: 100%;
   display: block;
   object-fit: cover;
+  object-position: top center;
 }
 
 .modal-info {
@@ -549,10 +569,17 @@
 
 .banner-scroll-container {
   overflow-x: auto;
-  overflow-y: hidden;
+  overflow-y: visible;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: thin;
   scrollbar-color: #ffc107 #1a1a1a;
+
+  @media (min-width: 768px) {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 30px;
+    padding-right: 30px;
+  }
 
   &::-webkit-scrollbar {
     height: 8px;
@@ -603,11 +630,13 @@
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   display: flex;
   flex-direction: column;
+  position: relative;
 
   &:hover {
     transform: translateY(-5px) scale(1.02);
     box-shadow: 0 8px 25px rgba(255, 193, 7, 0.25), 0 0 15px rgba(255, 193, 7, 0.08);
     border-color: rgba(255, 193, 7, 0.25);
+    z-index: 10;
   }
 }
 
@@ -772,10 +801,17 @@
 
 .cosmetic-scroll-container {
   overflow-x: auto;
-  overflow-y: hidden;
+  overflow-y: visible;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: thin;
   scrollbar-color: #ffc107 #1a1a1a;
+
+  @media (min-width: 768px) {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 30px;
+    padding-right: 30px;
+  }
 
   &::-webkit-scrollbar {
     height: 8px;
@@ -832,6 +868,7 @@
     transform: translateY(-5px) scale(1.02);
     box-shadow: 0 8px 25px rgba(255, 193, 7, 0.25), 0 0 15px rgba(255, 193, 7, 0.08);
     border-color: rgba(255, 193, 7, 0.25);
+    z-index: 10;
 
     .cosmetic-img {
       transform: scale(1.1);

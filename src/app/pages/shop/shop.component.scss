@@ -171,6 +171,13 @@
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   border-radius: 8px;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+
+  .card-body {
+    display: flex;
+    flex-direction: column;
+  }
 
   &:hover {
     transform: translateY(-5px) scale(1.02);
@@ -218,6 +225,14 @@
 
     .track-card-content {
       flex-direction: column;
+      display: flex;
+      flex-grow: 1;
+
+      .card-body {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+      }
     }
 
     .track-album-art {
@@ -235,6 +250,17 @@
     .track-artist {
       font-size: 0.55rem !important;
       margin-bottom: 0.25rem !important;
+    }
+  }
+
+  .track-card-content {
+    display: flex;
+    flex-grow: 1;
+
+    .card-body {
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
     }
   }
 }
