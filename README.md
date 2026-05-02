@@ -193,6 +193,6 @@ http://localhost:4200
 
 <div align="center">
 
-**[⬆ Volver arriba](#-zeropoint)**
+**[Volver arriba](#-zeropoint)**
 
 </div>
