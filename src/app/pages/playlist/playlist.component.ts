@@ -198,6 +198,7 @@ export class PlaylistComponent implements OnInit {
   openModal(group: PlaylistGroup) {
     this.selectedPlaylist.set(group);
     this.modalClosing.set(false);
+    document.body.style.overflow = 'hidden';
   }
 
   closeModal() {
@@ -205,6 +206,7 @@ export class PlaylistComponent implements OnInit {
     setTimeout(() => {
       this.selectedPlaylist.set(null);
       this.modalClosing.set(false);
+      document.body.style.overflow = '';
     }, 200);
   }
 
