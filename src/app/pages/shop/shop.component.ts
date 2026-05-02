@@ -262,9 +262,7 @@ export class ShopComponent implements OnInit, OnDestroy {
   }
 
   getShopDate(): string {
-    const d = this.shop()?.date;
-    if (!d) return '';
-    return new Date(d).toLocaleDateString('en-US', {
+    return new Date().toLocaleDateString('en-US', {
       weekday: 'long',
       year: 'numeric',
       month: 'long',
