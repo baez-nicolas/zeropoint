@@ -5,7 +5,7 @@
 ![SCSS](https://img.shields.io/badge/SCSS-CC6699?style=for-the-badge&logo=sass&logoColor=white)
 ![Bootstrap](https://img.shields.io/badge/Bootstrap-563D7C?style=for-the-badge&logo=bootstrap&logoColor=white)
 
-<img src="/img/fortnite5.png" width="800" alt="Banner" />
+<img src="/img/fortnite5.png" width="600" alt="Banner" />
 
 **ZeroPoint** es una aplicación web moderna que te permite explorar todo el universo de Fortnite. Desde la tienda diaria hasta el mapa de Battle Royale, accedé a información actualizada de cosméticos, playlists, noticias y más con una interfaz responsive y optimizada.
 
@@ -177,6 +177,8 @@ http://localhost:4200
 
 - **API:** [Fortnite-API.com](https://fortnite-api.com) - La API más completa de Fortnite
 - **Diseño:** Inspirado en el universo visual de Fortnite
+
+<img src="/img/fortnite4.jpg" width="600" alt="Banner" />
 
 ---
 
