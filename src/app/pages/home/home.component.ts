@@ -128,11 +128,20 @@ export class HomeComponent implements OnInit {
           'kratos',
           'travis scott',
           'green roots billie',
-          'messi',
         ];
         const featured = data.filter((c) => {
           const nameValue = c.name.toLowerCase();
           const isOutfit = c.type.value === 'outfit';
+          const isLegendary = c.rarity?.value === 'legendary';
+
+          if (nameValue === 'the foundation' && isOutfit && isLegendary) {
+            return true;
+          }
+
+          if (nameValue === 'lionel messi' && isOutfit) {
+            return true;
+          }
+
           return isOutfit && featuredNames.some((fn) => nameValue.includes(fn));
         });
         this.featuredCosmetics.set(featured.slice(0, 8));
