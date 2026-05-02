@@ -178,6 +178,8 @@ http://localhost:4200
 - **API:** [Fortnite-API.com](https://fortnite-api.com) - La API más completa de Fortnite
 - **Diseño:** Inspirado en el universo visual de Fortnite
 
+<img src="/img/fortnite4.jpg" width="600" alt="Banner" />
+
 ---
 
 ## 👨‍💻 Autor
@@ -190,8 +192,6 @@ http://localhost:4200
 - Demo: [zero-point-neon.vercel.app](https://zero-point-neon.vercel.app/)
 
 ---
-
-<img src="/img/fortnite4.jpg" width="600" alt="Banner" />
 
 <div align="center">
 
