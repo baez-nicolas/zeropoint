@@ -1,7 +1,7 @@
 <div class="page-container py-4 px-3 px-md-4">
   <div class="page-header mb-4">
     <h2 class="text-white fw-bold mb-0">
-      <i class="bi bi-shield-fill me-2 text-white"></i>Banners
+      <i class="bi bi-shield-fill me-2 text-white d-none d-md-inline"></i>Banners
     </h2>
     <p class="text-secondary mt-1 mb-0">Fortnite Banners for your homebase</p>
   </div>
@@ -41,7 +41,7 @@
 
       @if (hasActiveFilters()) {
         <button class="btn btn-outline-warning btn-sm clear-filters-btn" (click)="clearFilters()">
-          <i class="bi bi-x-circle me-1"></i>Clear filters
+          <i class="bi bi-x-circle me-1 d-none d-md-inline"></i>Clear filters
         </button>
       }
 
@@ -72,7 +72,7 @@
     @if (filtered.length === 0) {
       <div class="empty-state text-center py-5">
         <i class="bi bi-search text-secondary" style="font-size: 3rem"></i>
-        <p class="text-secondary mt-3">No se encontraron banners con ese criterio.</p>
+        <p class="text-secondary mt-3">No banners found matching that criteria.</p>
       </div>
     }
   }
