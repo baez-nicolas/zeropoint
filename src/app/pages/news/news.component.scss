@@ -4,13 +4,13 @@
   align-items: center;
   text-align: center;
 
-  @media (min-width: 768px) and (max-width: 1368px) {
+  @media (min-width: 768px) and (max-width: 1024px) {
     h2 .news-icon {
       display: none !important;
     }
   }
 
-  @media (min-width: 1369px) {
+  @media (min-width: 1025px) {
     h2 .news-icon {
       display: inline !important;
     }
@@ -43,7 +43,7 @@
   .news-description {
     display: none;
 
-    @media (min-width: 1369px) {
+    @media (min-width: 1025px) {
       display: block;
     }
   }

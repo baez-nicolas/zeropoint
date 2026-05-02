@@ -12,7 +12,7 @@
   align-items: center;
   text-align: center;
 
-  @media (min-width: 768px) and (max-width: 1368px) {
+  @media (min-width: 768px) and (max-width: 1024px) {
     h2 .map-icon {
       display: none !important;
     }
@@ -29,12 +29,26 @@
   border: none;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 
-  @media (min-width: 1369px) {
+  @media (min-width: 1025px) {
     display: none !important;
   }
 
   i {
     font-size: 1.2rem;
+  }
+}
+
+.map-stats-tablet {
+  display: none;
+
+  @media (min-width: 768px) and (max-width: 1024px) {
+    display: block;
+  }
+
+  .stat-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
 }
 

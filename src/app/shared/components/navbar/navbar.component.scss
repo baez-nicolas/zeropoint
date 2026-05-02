@@ -7,7 +7,7 @@
   align-items: center;
   justify-content: space-between;
 
-  @media (max-width: 991.98px) {
+  @media (max-width: 1024px) {
     justify-content: flex-start;
   }
 }
@@ -17,7 +17,7 @@
   font-size: 1.5rem;
   cursor: pointer;
 
-  @media (max-width: 991.98px) {
+  @media (max-width: 1024px) {
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
@@ -177,7 +177,27 @@
   }
 }
 
-@media (max-width: 991.98px) {
+.d-tablet-none {
+  @media (max-width: 1024px) {
+    display: block !important;
+  }
+
+  @media (min-width: 1025px) {
+    display: none !important;
+  }
+}
+
+.d-tablet-flex {
+  @media (max-width: 1024px) {
+    display: none !important;
+  }
+
+  @media (min-width: 1025px) {
+    display: flex !important;
+  }
+}
+
+@media (max-width: 1024px) {
   .navbar-container {
     padding: 0.75rem 1rem;
   }

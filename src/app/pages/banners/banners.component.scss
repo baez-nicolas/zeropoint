@@ -10,7 +10,7 @@
       max-width: 100%;
     }
 
-    @media (min-width: 768px) and (max-width: 1368px) {
+    @media (min-width: 768px) and (max-width: 1024px) {
       min-width: 100%;
       max-width: 100%;
     }
@@ -56,7 +56,7 @@
       max-width: 100%;
     }
 
-    @media (min-width: 768px) and (max-width: 1368px) {
+    @media (min-width: 768px) and (max-width: 1024px) {
       min-width: 100%;
       max-width: 100%;
     }
@@ -92,14 +92,14 @@
       margin-top: 0.5rem;
     }
 
-    @media (min-width: 768px) and (max-width: 1368px) {
+    @media (min-width: 768px) and (max-width: 1024px) {
       width: 100%;
       margin-top: 0.5rem;
     }
   }
 
   .banners-count {
-    @media (min-width: 768px) and (max-width: 1368px) {
+    @media (min-width: 768px) and (max-width: 1024px) {
       width: 100%;
       text-align: center;
       margin: 0.5rem 0 0 0 !important;
@@ -408,7 +408,7 @@
   align-items: center;
   text-align: center;
 
-  @media (min-width: 768px) and (max-width: 1368px) {
+  @media (min-width: 768px) and (max-width: 1024px) {
     h2 i {
       display: none !important;
     }
