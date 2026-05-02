@@ -673,8 +673,16 @@
   align-items: center;
   justify-content: center;
   padding: 1rem;
-  height: 112px;
-  flex-shrink: 0;
+
+  @media (min-width: 768px) and (max-width: 1280px) {
+    height: 112px;
+    flex-shrink: 0;
+  }
+
+  @media (min-width: 1281px) {
+    height: 112px;
+    flex-shrink: 0;
+  }
 
   .banner-img {
     width: 80px;
@@ -710,8 +718,16 @@
   display: flex;
   flex-direction: column;
   gap: 3px;
-  height: 50px;
-  flex-shrink: 0;
+
+  @media (min-width: 768px) and (max-width: 1280px) {
+    height: 50px;
+    flex-shrink: 0;
+  }
+
+  @media (min-width: 1281px) {
+    height: 50px;
+    flex-shrink: 0;
+  }
 
   @media (max-width: 900px) {
     padding: 0.4rem 0.5rem 0.3rem;
@@ -923,8 +939,16 @@
     align-items: center;
     justify-content: center;
     padding: 1rem;
-    height: 112px;
-    flex-shrink: 0;
+
+    @media (min-width: 768px) and (max-width: 1280px) {
+      height: 112px;
+      flex-shrink: 0;
+    }
+
+    @media (min-width: 1281px) {
+      height: 112px;
+      flex-shrink: 0;
+    }
 
     .cosmetic-img {
       width: 80px;
@@ -956,8 +980,16 @@
     display: flex;
     flex-direction: column;
     gap: 3px;
-    height: 50px;
-    flex-shrink: 0;
+
+    @media (min-width: 768px) and (max-width: 1280px) {
+      height: 50px;
+      flex-shrink: 0;
+    }
+
+    @media (min-width: 1281px) {
+      height: 50px;
+      flex-shrink: 0;
+    }
 
     @media (max-width: 900px) {
       padding: 0.4rem 0.5rem 0.3rem;
