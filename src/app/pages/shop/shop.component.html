@@ -98,30 +98,34 @@
                     class="card-img-top"
                     style="aspect-ratio: 1/1; object-fit: cover"
                   />
-                  <div class="card-body p-1 d-flex flex-column">
-                    @if (entry.banner) {
-                      <span
-                        class="badge bg-danger mb-1 d-none d-md-block text-truncate"
-                        style="font-size: 0.65rem"
-                        >{{ entry.banner.value }}</span
-                      >
-                    }
-                    @if (entry.bundle) {
-                      <p
-                        class="card-text text-warning text-truncate mb-1 fw-bold card-title-mobile"
-                        style="font-size: 0.7rem"
-                      >
-                        {{ entry.bundle.name }}
-                      </p>
-                    } @else {
-                      <p
-                        class="card-text text-white text-truncate mb-1 card-title-mobile"
-                        style="font-size: 0.7rem"
-                      >
-                        {{ entry.brItems?.[0]?.name }}
-                      </p>
-                    }
-                    <div class="d-flex align-items-center gap-1 price-container mb-1">
+                  <div class="card-body p-1 shop-card-grid">
+                    <div class="card-banner-area">
+                      @if (entry.banner) {
+                        <span
+                          class="badge bg-danger d-none d-md-block text-truncate"
+                          style="font-size: 0.65rem"
+                          >{{ entry.banner.value }}</span
+                        >
+                      }
+                    </div>
+                    <div class="card-title-area">
+                      @if (entry.bundle) {
+                        <p
+                          class="card-text text-warning text-truncate mb-0 fw-bold card-title-mobile"
+                          style="font-size: 0.7rem"
+                        >
+                          {{ entry.bundle.name }}
+                        </p>
+                      } @else {
+                        <p
+                          class="card-text text-white text-truncate mb-0 card-title-mobile"
+                          style="font-size: 0.7rem"
+                        >
+                          {{ entry.brItems?.[0]?.name }}
+                        </p>
+                      }
+                    </div>
+                    <div class="card-price-area d-flex align-items-center gap-1">
                       <img
                         src="https://fortnite-api.com/images/vbuck.png"
                         alt="vbuck"
@@ -129,22 +133,17 @@
                         height="12"
                         class="vbuck-icon"
                       />
-                      @if (entry.regularPrice !== entry.finalPrice) {
-                        <span
-                          class="text-secondary text-decoration-line-through me-1 d-none d-sm-inline"
-                          style="font-size: 0.65rem"
-                          >{{ entry.regularPrice | number }}</span
-                        >
-                      }
                       <span class="text-warning fw-bold price-text" style="font-size: 0.7rem">{{
                         entry.finalPrice | number
                       }}</span>
                     </div>
-                    @if (entry.brItems && entry.brItems.length > 1) {
-                      <span class="badge bg-secondary" style="font-size: 0.6rem"
-                        >+{{ entry.brItems.length - 1 }} items</span
-                      >
-                    }
+                    <div class="card-badge-area">
+                      @if (entry.brItems && entry.brItems.length > 1) {
+                        <span class="badge bg-secondary" style="font-size: 0.6rem"
+                          >+{{ entry.brItems.length - 1 }} items</span
+                        >
+                      }
+                    </div>
                   </div>
                 </div>
               </div>
@@ -236,17 +235,24 @@
                     class="card-img-top"
                     style="aspect-ratio: 1/1; object-fit: cover"
                   />
-                  <div class="card-body p-1">
-                    <p
-                      class="text-white text-truncate mb-0 card-title-mobile"
-                      style="font-size: 0.7rem"
-                    >
-                      {{ entry.cars![0].name }}
-                    </p>
-                    <p class="text-secondary mb-1 d-none d-sm-block" style="font-size: 0.6rem">
-                      {{ entry.cars![0].type.displayValue }}
-                    </p>
-                    <div class="d-flex align-items-center gap-1 price-container">
+                  <div class="card-body p-1 shop-card-grid">
+                    <div class="card-banner-area">
+                      <span
+                        class="text-secondary d-none d-md-block text-truncate"
+                        style="font-size: 0.6rem"
+                      >
+                        {{ entry.cars![0].type.displayValue }}
+                      </span>
+                    </div>
+                    <div class="card-title-area">
+                      <p
+                        class="text-white text-truncate mb-0 card-title-mobile"
+                        style="font-size: 0.7rem"
+                      >
+                        {{ entry.cars![0].name }}
+                      </p>
+                    </div>
+                    <div class="card-price-area d-flex align-items-center gap-1">
                       <img
                         src="https://fortnite-api.com/images/vbuck.png"
                         alt="vbuck"
@@ -258,6 +264,7 @@
                         entry.finalPrice | number
                       }}</span>
                     </div>
+                    <div class="card-badge-area"></div>
                   </div>
                 </div>
               </div>

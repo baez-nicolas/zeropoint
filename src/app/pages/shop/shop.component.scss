@@ -177,11 +177,13 @@
   .card-body {
     display: flex;
     flex-direction: column;
+    flex-grow: 0;
+    flex-shrink: 0;
   }
 
   &:hover {
     transform: translateY(-5px) scale(1.02);
-    box-shadow: 0 8px 25px rgba(255, 193, 7, 0.3), 0 0 15px rgba(255, 193, 7, 0.1);
+    box-shadow: 0 8px 25px rgba(255, 193, 7, 0.15), 0 0 15px rgba(255, 193, 7, 0.05);
     will-change: transform, box-shadow;
   }
 
@@ -263,6 +265,38 @@
       flex-grow: 1;
     }
   }
+}
+
+.shop-card-grid {
+  display: grid;
+  grid-template-rows: 16px 20px 18px 40px;
+  gap: 2px;
+  height: 96px;
+}
+
+.card-banner-area {
+  min-height: 16px;
+  display: flex;
+  align-items: center;
+}
+
+.card-title-area {
+  min-height: 20px;
+  display: flex;
+  align-items: center;
+}
+
+.card-price-area {
+  min-height: 18px;
+  display: flex;
+  align-items: center;
+}
+
+.card-badge-area {
+  min-height: 40px;
+  display: flex;
+  align-items: flex-start;
+  padding-top: 2px;
 }
 
 .scroll-top-btn {
