@@ -5,9 +5,23 @@
 ![SCSS](https://img.shields.io/badge/SCSS-CC6699?style=for-the-badge&logo=sass&logoColor=white)
 ![Bootstrap](https://img.shields.io/badge/Bootstrap-563D7C?style=for-the-badge&logo=bootstrap&logoColor=white)
 
+<img src="/img/fortnite5.png" width="900" alt="Banner" />
+
 **ZeroPoint** es una aplicación web moderna que te permite explorar todo el universo de Fortnite. Desde la tienda diaria hasta el mapa de Battle Royale, accedé a información actualizada de cosméticos, playlists, noticias y más con una interfaz responsive y optimizada.
 
 🌐 **[Ver Demo en Vivo](https://zero-point-neon.vercel.app/)**
+
+---
+
+## 🎥 Video Demostrativo
+
+<div>
+
+<a href="https://www.youtube.com/watch?v=eULG09u-aXQ">
+  <img src="https://img.youtube.com/vi/eULG09u-aXQ/maxresdefault.jpg" alt="Video Preview" width="450">
+</a>
+
+[![Ver video en YouTube](https://img.shields.io/badge/YouTube-Ver_Video-red?style=for-the-badge&logo=youtube)](https://www.youtube.com/watch?v=eULG09u-aXQ)
 
 ---
 
@@ -179,6 +193,6 @@ http://localhost:4200
 
 <div align="center">
 
-**[⬆ Volver arriba](#-zeropoint)**
+**[Volver arriba](#-zeropoint)**
 
 </div>
