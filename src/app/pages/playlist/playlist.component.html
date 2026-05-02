@@ -1,7 +1,7 @@
 <div class="page-container py-4 px-3 px-md-4">
   <div class="page-header mb-4">
     <h2 class="text-white fw-bold mb-0">
-      <i class="bi bi-collection-play me-2 text-white"></i>Playlists
+      <i class="bi bi-collection-play me-2 text-white d-none d-md-inline"></i>Playlists
     </h2>
     <p class="text-secondary mt-1 mb-0">Some of Fortnite's game modes throughout history</p>
   </div>
@@ -41,7 +41,7 @@
 
       @if (hasActiveFilters()) {
         <button class="btn btn-outline-warning btn-sm clear-filters-btn" (click)="clearFilters()">
-          <i class="bi bi-x-circle me-1"></i>Clear filters
+          <i class="bi bi-x-circle me-1 d-none d-md-inline"></i>Clear filters
         </button>
       }
 
@@ -50,11 +50,11 @@
 
     <div class="row g-4">
       @for (group of filtered; track group.baseName) {
-        <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
+        <div class="col-6 col-md-6 col-lg-4 col-xl-3">
           <div class="playlist-card h-100" (click)="openModal(group)">
             <div class="playlist-img-wrap">
               <img [src]="group.images!.showcase" [alt]="group.baseName" class="playlist-img" />
-              <div class="playlist-badges">
+              <div class="playlist-badges d-none d-md-flex">
                 @if (group.isNoBuild) {
                   <span class="badge-nobuild">Zero Build</span>
                 }
@@ -65,14 +65,16 @@
                   <span class="badge-variants">{{ group.variants.length }} modes</span>
                 }
               </div>
-              <div class="playlist-gametype">{{ formatGameType(group.gameType) }}</div>
+              <div class="playlist-gametype d-none d-md-block">
+                {{ formatGameType(group.gameType) }}
+              </div>
             </div>
             <div class="playlist-body">
               <h5 class="playlist-name">{{ group.baseName }}</h5>
               @if (group.description) {
-                <p class="playlist-desc">{{ group.description }}</p>
+                <p class="playlist-desc d-none d-md-block">{{ group.description }}</p>
               }
-              <div class="playlist-meta">
+              <div class="playlist-meta d-none d-md-flex">
                 @for (variant of group.variants; track variant.id) {
                   <span class="meta-chip">
                     <i class="bi bi-people-fill"></i> {{ getTeamLabel(variant) }}

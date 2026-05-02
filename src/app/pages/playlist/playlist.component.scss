@@ -1,9 +1,21 @@
+.page-header {
+  @media (max-width: 767px) {
+    justify-content: center !important;
+    text-align: center;
+  }
+}
+
 .filters-row {
   .search-wrap {
     position: relative;
     flex: 1;
     min-width: 200px;
     max-width: 340px;
+
+    @media (max-width: 576px) {
+      min-width: 100%;
+      max-width: 100%;
+    }
 
     .search-icon {
       position: absolute;
@@ -41,6 +53,11 @@
     min-width: 180px;
     max-width: 220px;
 
+    @media (max-width: 576px) {
+      min-width: 100%;
+      max-width: 100%;
+    }
+
     &:focus {
       border-color: #ffc107;
       box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.15);
@@ -66,6 +83,11 @@
     &:active {
       transform: scale(0.98);
     }
+
+    @media (max-width: 576px) {
+      width: 100%;
+      margin-top: 0.5rem;
+    }
   }
 }
 
@@ -89,6 +111,7 @@
   display: flex;
   flex-direction: column;
   cursor: pointer;
+  height: 100%;
 
   &:hover {
     transform: translateY(-5px) scale(1.02);
@@ -121,6 +144,8 @@
   display: flex;
   flex-wrap: wrap;
   gap: 4px;
+  max-width: calc(100% - 60px);
+  min-height: 24px;
 
   .badge-nobuild {
     background: linear-gradient(135deg, #0d47a1, #1565c0);
@@ -174,6 +199,7 @@
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
+  min-height: 140px;
 }
 
 .playlist-name {
@@ -184,6 +210,7 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  min-height: 24px;
 }
 
 .playlist-subname {
@@ -202,6 +229,8 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
   flex: 1;
+  min-height: 38px;
+  max-height: 38px;
 }
 
 .playlist-meta {
@@ -210,6 +239,7 @@
   gap: 6px;
   margin-top: auto;
   padding-top: 0.5rem;
+  min-height: 32px;
 }
 
 .meta-chip {
@@ -363,8 +393,8 @@
 }
 
 .variants-list {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   gap: 0.75rem;
 }
 
@@ -374,14 +404,16 @@
   border-radius: 10px;
   padding: 0.75rem;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 0.75rem;
+  text-align: center;
+  gap: 0.5rem;
   transition: all 0.2s ease;
 
   &:hover {
     background: rgba(255, 255, 255, 0.06);
     border-color: rgba(255, 193, 7, 0.3);
-    transform: translateX(4px);
+    transform: translateY(-2px);
   }
 }
 
@@ -399,8 +431,7 @@
 }
 
 .variant-info {
-  flex: 1;
-  min-width: 0;
+  width: 100%;
 }
 
 .variant-label {
@@ -414,6 +445,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
+  justify-content: center;
 }
 
 .detail-item {
@@ -468,21 +500,124 @@
   }
 }
 
-@media (max-width: 768px) {
+@media (min-width: 577px) and (max-width: 768px) {
   .modal-panel {
     max-width: 95%;
+    padding: 1rem;
   }
 
   .modal-showcase-img {
     max-width: 200px;
   }
 
-  .variant-card {
-    flex-direction: column;
-    text-align: center;
+  .modal-title {
+    font-size: 1.3rem;
   }
 
-  .variant-details {
+  .variants-list {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .modal-header-section {
+    margin-bottom: 1rem;
+  }
+
+  .modal-variants-section {
+    margin-top: 1rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .filters-row {
+    .search-wrap,
+    .gametype-select {
+      width: 100%;
+    }
+
+    span.small {
+      width: 100%;
+      text-align: center;
+      margin-top: 0.5rem;
+    }
+  }
+
+  .playlist-card {
+    .playlist-img {
+      height: 140px;
+    }
+  }
+
+  .playlist-body {
+    padding: 0.5rem;
+    min-height: 50px;
+  }
+
+  .playlist-name {
+    font-size: 0.85rem;
+    margin: 0;
+    min-height: 20px;
+  }
+
+  .playlist-meta {
+    display: none !important;
+  }
+
+  .playlist-desc {
+    display: none !important;
+  }
+
+  .meta-chip {
+    font-size: 0.65rem;
+    padding: 2px 6px;
     justify-content: center;
+  }
+
+  .modal-panel {
+    max-width: 95%;
+    padding: 1rem;
+  }
+
+  .modal-showcase-img {
+    max-width: 200px;
+  }
+
+  .modal-title {
+    font-size: 1.3rem;
+  }
+
+  .variants-list {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 0.5rem !important;
+  }
+
+  .modal-header-section {
+    margin-bottom: 1rem;
+  }
+
+  .modal-variants-section {
+    margin-top: 1rem;
+  }
+
+  .modal-close-btn {
+    top: 0.5rem;
+    right: 0.5rem;
+  }
+
+  .variant-card {
+    padding: 0.5rem;
+  }
+
+  .variant-icon {
+    width: 32px;
+    height: 32px;
+    font-size: 0.9rem;
+  }
+
+  .variant-label {
+    font-size: 0.75rem;
+  }
+
+  .detail-item {
+    font-size: 0.65rem;
   }
 }
