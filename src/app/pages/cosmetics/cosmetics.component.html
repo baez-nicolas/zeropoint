@@ -1,7 +1,17 @@
 <div class="page-container py-4 px-3 px-md-4">
   <div class="page-header mb-4">
-    <h2 class="text-white fw-bold mb-0"><i class="bi bi-stars me-2 text-white"></i>Cosmetics</h2>
+    <h2 class="text-white fw-bold mb-0">
+      <i class="bi bi-stars me-2 text-white d-none d-md-inline"></i>Cosmetics
+    </h2>
     <p class="text-secondary mt-1 mb-0">All Fortnite Battle Royale Cosmetics</p>
+  </div>
+
+  <div class="d-md-none mobile-info-section mb-3">
+    <div class="text-center">
+      <button class="btn btn-warning w-100" (click)="openFiltersModal()">
+        <i class="bi bi-funnel-fill me-2"></i>Filters
+      </button>
+    </div>
   </div>
 
   @if (loading()) {
@@ -15,7 +25,7 @@
   }
 
   @if (!loading() && !error()) {
-    <div class="filters-block mb-4">
+    <div class="filters-block mb-4 d-none d-md-block">
       <div
         class="filters-row d-flex flex-wrap gap-3 align-items-start"
         [class.mb-2]="selectedType !== 'vehicles'"
@@ -180,7 +190,7 @@
     @if (filtered.length === 0) {
       <div class="empty-state text-center py-5">
         <i class="bi bi-search text-secondary" style="font-size: 3rem"></i>
-        <p class="text-secondary mt-3">No se encontraron cosméticos con ese criterio.</p>
+        <p class="text-secondary mt-3">No cosmetics found matching that criteria.</p>
       </div>
     }
   }
@@ -286,6 +296,140 @@
           <span class="detail-label"><i class="bi bi-clock me-1"></i>Añadido</span>
           <span class="detail-value">{{ selectedCosmetic()!.added | date: 'dd/MM/yyyy' }}</span>
         </div>
+      </div>
+    </div>
+  </div>
+}
+
+@if (filtersModalOpen()) {
+  <div
+    class="filters-modal-overlay"
+    [class.closing]="filtersModalClosing()"
+    (click)="closeFiltersModal()"
+  >
+    <div
+      class="filters-modal-panel"
+      [class.closing]="filtersModalClosing()"
+      (click)="$event.stopPropagation()"
+    >
+      <div class="filters-modal-header">
+        <h5 class="text-white fw-bold mb-0"><i class="bi bi-funnel-fill me-2"></i>Filters</h5>
+        <button class="filters-close-btn" (click)="closeFiltersModal()">
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </div>
+      <div class="filters-modal-body">
+        <div class="modal-filter-group">
+          <label class="modal-filter-label">Search</label>
+          <input
+            type="text"
+            class="form-control modal-filter-input"
+            placeholder="Search by name or set..."
+            [(ngModel)]="search"
+            (ngModelChange)="saveFiltersToStorage()"
+          />
+        </div>
+
+        <div class="modal-filter-group">
+          <label class="modal-filter-label">Type</label>
+          <select
+            class="form-select modal-filter-select"
+            [(ngModel)]="selectedType"
+            (ngModelChange)="onTypeChangeValue($event)"
+          >
+            <option value="all">All types</option>
+            @for (t of types; track t) {
+              <option [value]="t">{{ formatTypeLabel(t) }}</option>
+            }
+          </select>
+        </div>
+
+        @if (selectedType === 'vehicles') {
+          <div class="modal-filter-group" @slideDown>
+            <label class="modal-filter-label"
+              ><i class="bi bi-car-front-fill me-1"></i>Vehicle Type</label
+            >
+            <select
+              class="form-select modal-filter-select"
+              [(ngModel)]="selectedVehicleType"
+              (ngModelChange)="onVehicleTypeChangeValue($event)"
+            >
+              <option value="all">All vehicle types</option>
+              @for (vt of vehicleTypes; track vt) {
+                <option [value]="vt">{{ formatVehicleTypeLabel(vt) }}</option>
+              }
+            </select>
+          </div>
+        }
+
+        <div class="modal-filter-group">
+          <label class="modal-filter-label">Series</label>
+          <select
+            class="form-select modal-filter-select"
+            [(ngModel)]="selectedSeries"
+            (ngModelChange)="onSeriesChangeValue($event)"
+            [disabled]="selectedType === 'vehicles'"
+          >
+            <option value="all">All series</option>
+            <option value="no-series">No Series</option>
+            @for (s of seriesList; track s) {
+              <option [value]="s">{{ formatSeriesLabel(s) }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="modal-filter-row">
+          <div class="modal-filter-group flex-1">
+            <label class="modal-filter-label">Chapter</label>
+            <select
+              class="form-select modal-filter-select"
+              [(ngModel)]="selectedChapter"
+              (ngModelChange)="onChapterChangeValue($event)"
+              [disabled]="selectedType === 'vehicles'"
+            >
+              <option value="all">All</option>
+              @for (ch of chapters; track ch) {
+                <option [value]="ch">Ch. {{ ch }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="modal-filter-group flex-1">
+            <label class="modal-filter-label">Season</label>
+            <select
+              class="form-select modal-filter-select"
+              [(ngModel)]="selectedSeason"
+              (ngModelChange)="onSeasonChangeValue($event)"
+              [disabled]="selectedType === 'vehicles'"
+            >
+              <option value="all">All</option>
+              @for (s of seasons; track s) {
+                <option [value]="s">S. {{ s }}</option>
+              }
+            </select>
+          </div>
+        </div>
+
+        <div class="modal-filter-group">
+          <label class="modal-filter-label">Sort By</label>
+          <select
+            class="form-select modal-filter-select"
+            [(ngModel)]="sortBy"
+            (ngModelChange)="onSortChangeValue($event)"
+          >
+            <option value="default">Default</option>
+            <option value="newest">Newest</option>
+          </select>
+        </div>
+
+        @if (hasActiveFilters()) {
+          <button class="btn btn-outline-warning w-100 mt-2" (click)="clearFilters()">
+            <i class="bi bi-x-circle me-2"></i>Clear filters
+          </button>
+        }
+      </div>
+      <div class="filters-modal-footer">
+        <button class="btn btn-warning w-100" (click)="closeFiltersModal()">Apply Filters</button>
       </div>
     </div>
   </div>

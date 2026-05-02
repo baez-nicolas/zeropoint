@@ -95,6 +95,8 @@ export class CosmeticsComponent implements OnInit {
 
   selectedCosmetic = signal<Cosmetic | VehicleCosmetic | null>(null);
   modalClosing = signal(false);
+  filtersModalOpen = signal(false);
+  filtersModalClosing = signal(false);
 
   readonly LIMIT = COSMETIC_ITEM_LIMIT;
 
@@ -472,6 +474,19 @@ export class CosmeticsComponent implements OnInit {
       this.selectedCosmetic.set(null);
       this.modalClosing.set(false);
     }, 200);
+  }
+
+  openFiltersModal() {
+    this.filtersModalOpen.set(true);
+    this.filtersModalClosing.set(false);
+  }
+
+  closeFiltersModal() {
+    this.filtersModalClosing.set(true);
+    setTimeout(() => {
+      this.filtersModalOpen.set(false);
+      this.filtersModalClosing.set(false);
+    }, 300);
   }
 
   scrollToTop() {
