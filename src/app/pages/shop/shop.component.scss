@@ -1,3 +1,19 @@
+.mobile-tablet-filters {
+  display: block;
+
+  @media (min-width: 901px) {
+    display: none !important;
+  }
+}
+
+.desktop-filters {
+  display: none;
+
+  @media (min-width: 901px) {
+    display: block !important;
+  }
+}
+
 .pills-nav-container {
   background: linear-gradient(180deg, #0d0d0d 0%, #0d0d0d 90%, transparent 100%);
   padding: 1rem 0 1.5rem 0;
@@ -589,12 +605,39 @@
 }
 
 .page-header {
-  @media (max-width: 767.98px) {
-    justify-content: center !important;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
 
-    h2 {
-      width: 100%;
-      text-align: center;
+  @media (min-width: 901px) {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  h2 {
+    @media (min-width: 768px) and (max-width: 900px) {
+      .shop-icon {
+        display: none !important;
+      }
+    }
+
+    @media (min-width: 901px) {
+      .shop-icon {
+        display: inline !important;
+      }
+    }
+  }
+
+  .shop-badges-desktop {
+    display: none;
+
+    @media (min-width: 901px) {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      align-items: center;
     }
   }
 }

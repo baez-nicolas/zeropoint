@@ -1,7 +1,13 @@
 .page-header {
-  @media (max-width: 767px) {
-    justify-content: center !important;
-    text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+
+  @media (min-width: 768px) and (max-width: 900px) {
+    h2 i {
+      display: none !important;
+    }
   }
 }
 
@@ -13,6 +19,11 @@
     max-width: 340px;
 
     @media (max-width: 576px) {
+      min-width: 100%;
+      max-width: 100%;
+    }
+
+    @media (min-width: 768px) and (max-width: 900px) {
       min-width: 100%;
       max-width: 100%;
     }
@@ -58,6 +69,11 @@
       max-width: 100%;
     }
 
+    @media (min-width: 768px) and (max-width: 900px) {
+      min-width: 100%;
+      max-width: 100%;
+    }
+
     &:focus {
       border-color: #ffc107;
       box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.15);
@@ -87,6 +103,20 @@
     @media (max-width: 576px) {
       width: 100%;
       margin-top: 0.5rem;
+    }
+
+    @media (min-width: 768px) and (max-width: 900px) {
+      width: 100%;
+      margin-top: 0.5rem;
+    }
+  }
+
+  .playlists-count {
+    @media (min-width: 768px) and (max-width: 900px) {
+      width: 100%;
+      text-align: center;
+      margin: 0.5rem 0 0 0 !important;
+      display: block;
     }
   }
 }
@@ -231,6 +261,14 @@
   flex: 1;
   min-height: 38px;
   max-height: 38px;
+
+  &.playlist-description {
+    display: none;
+
+    @media (min-width: 901px) {
+      display: -webkit-box;
+    }
+  }
 }
 
 .playlist-meta {
@@ -619,5 +657,21 @@
 
   .detail-item {
     font-size: 0.65rem;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 900px) {
+  .playlist-body {
+    padding: 0.75rem;
+    min-height: 70px;
+  }
+
+  .playlist-name {
+    font-size: 0.9rem;
+    min-height: 22px;
+  }
+
+  .playlist-card .playlist-img {
+    height: 160px;
   }
 }

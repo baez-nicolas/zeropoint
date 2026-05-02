@@ -6,7 +6,7 @@
     <p class="text-secondary mt-1 mb-0">All Fortnite Battle Royale Cosmetics</p>
   </div>
 
-  <div class="d-md-none mobile-info-section mb-3">
+  <div class="mobile-tablet-filters mb-3">
     <div class="text-center">
       <button class="btn btn-warning w-100" (click)="openFiltersModal()">
         <i class="bi bi-funnel-fill me-2"></i>Filters
@@ -25,7 +25,7 @@
   }
 
   @if (!loading() && !error()) {
-    <div class="filters-block mb-4 d-none d-md-block">
+    <div class="filters-block mb-4 desktop-filters">
       <div
         class="filters-row d-flex flex-wrap gap-3 align-items-start"
         [class.mb-2]="selectedType !== 'vehicles'"
@@ -423,8 +423,11 @@
         </div>
 
         @if (hasActiveFilters()) {
-          <button class="btn btn-outline-warning w-100 mt-2" (click)="clearFilters()">
-            <i class="bi bi-x-circle me-2"></i>Clear filters
+          <button
+            class="btn btn-outline-warning w-100 mt-2 modal-clear-filters-btn"
+            (click)="clearFilters()"
+          >
+            Clear filters
           </button>
         }
       </div>

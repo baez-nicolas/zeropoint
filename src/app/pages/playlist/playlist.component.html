@@ -41,11 +41,13 @@
 
       @if (hasActiveFilters()) {
         <button class="btn btn-outline-warning btn-sm clear-filters-btn" (click)="clearFilters()">
-          <i class="bi bi-x-circle me-1 d-none d-md-inline"></i>Clear filters
+          Clear filters
         </button>
       }
 
-      <span class="text-secondary small ms-auto">{{ filtered.length }} playlists</span>
+      <span class="text-secondary small ms-auto playlists-count"
+        >{{ filtered.length }} playlists</span
+      >
     </div>
 
     <div class="row g-4">
@@ -72,7 +74,7 @@
             <div class="playlist-body">
               <h5 class="playlist-name">{{ group.baseName }}</h5>
               @if (group.description) {
-                <p class="playlist-desc d-none d-md-block">{{ group.description }}</p>
+                <p class="playlist-desc playlist-description">{{ group.description }}</p>
               }
               <div class="playlist-meta d-none d-md-flex">
                 @for (variant of group.variants; track variant.id) {

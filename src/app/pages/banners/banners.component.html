@@ -41,11 +41,11 @@
 
       @if (hasActiveFilters()) {
         <button class="btn btn-outline-warning btn-sm clear-filters-btn" (click)="clearFilters()">
-          <i class="bi bi-x-circle me-1 d-none d-md-inline"></i>Clear filters
+          Clear filters
         </button>
       }
 
-      <span class="text-secondary small ms-auto">{{ filtered.length }} banners</span>
+      <span class="text-secondary small ms-auto banners-count">{{ filtered.length }} banners</span>
     </div>
 
     <div class="row g-3">

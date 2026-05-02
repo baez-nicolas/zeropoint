@@ -1,10 +1,18 @@
 .page-header {
-  @media (max-width: 767.98px) {
-    justify-content: center !important;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
 
-    h2 {
-      width: 100%;
-      text-align: center;
+  @media (min-width: 768px) and (max-width: 900px) {
+    h2 .news-icon {
+      display: none !important;
+    }
+  }
+
+  @media (min-width: 901px) {
+    h2 .news-icon {
+      display: inline !important;
     }
   }
 }
@@ -29,6 +37,14 @@
     @media (max-width: 767.98px) {
       font-size: 0.9rem;
       line-height: 1.2;
+    }
+  }
+
+  .news-description {
+    display: none;
+
+    @media (min-width: 901px) {
+      display: block;
     }
   }
 }

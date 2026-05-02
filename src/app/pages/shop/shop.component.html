@@ -1,10 +1,9 @@
 <div class="page-container py-4 px-3 px-md-4">
   <div class="page-header mb-4">
     <h2 class="text-white fw-bold mb-0">
-      <i class="bi bi-shop me-2 d-none d-md-inline"></i
-      ><span class="d-block d-md-inline text-center text-md-start w-100 w-md-auto">Item Shop</span>
+      <i class="bi bi-shop me-2 shop-icon"></i><span class="shop-title">Item Shop</span>
     </h2>
-    <div class="d-none d-md-flex flex-wrap gap-2 align-items-center">
+    <div class="shop-badges-desktop">
       @if (shop()) {
         <span class="badge bg-secondary fs-6">{{ getShopDate() }}</span>
         @if (countdown()) {
@@ -16,7 +15,7 @@
     </div>
   </div>
 
-  <div class="d-md-none mobile-info-section mb-3">
+  <div class="mobile-tablet-filters mb-3">
     @if (shop()) {
       <div class="text-center">
         <div class="badge bg-secondary fs-6 mb-2 d-block">{{ getShopDate() }}</div>
@@ -43,7 +42,7 @@
   }
 
   @if (shop()) {
-    <div class="pills-nav-container d-none d-md-block">
+    <div class="pills-nav-container desktop-filters">
       <div class="pills-nav">
         @for (section of sections(); track $index) {
           <button class="pill-btn" (click)="scrollToSection(getSectionId(section, $index))">

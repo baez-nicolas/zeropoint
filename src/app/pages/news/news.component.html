@@ -1,10 +1,7 @@
 <div class="page-container py-4 px-3 px-md-4">
   <div class="page-header mb-4">
     <h2 class="text-white fw-bold mb-0">
-      <i class="bi bi-newspaper me-2 d-none d-md-inline"></i
-      ><span class="d-block d-md-inline text-center text-md-start w-100 w-md-auto"
-        >Fortnite News</span
-      >
+      <i class="bi bi-newspaper me-2 news-icon"></i><span class="news-title">Fortnite News</span>
     </h2>
   </div>
 
@@ -44,7 +41,7 @@
                 <img [src]="motd.tileImage" [alt]="motd.title" class="card-img-top news-img" />
                 <div class="card-body">
                   <h5 class="card-title text-warning">{{ motd.title }}</h5>
-                  <p class="card-text text-secondary small d-none d-md-block">{{ motd.body }}</p>
+                  <p class="card-text text-secondary small news-description">{{ motd.body }}</p>
                 </div>
               </div>
             </div>
@@ -64,7 +61,7 @@
               <img [src]="msg.image" [alt]="msg.title" class="card-img-top news-img" />
               <div class="card-body">
                 <h5 class="card-title text-warning">{{ msg.title }}</h5>
-                <p class="card-text text-secondary small d-none d-md-block">{{ msg.body }}</p>
+                <p class="card-text text-secondary small news-description">{{ msg.body }}</p>
               </div>
             </div>
           </div>
