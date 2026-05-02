@@ -230,8 +230,8 @@
                   (click)="openModal(entry)"
                 >
                   <img
-                    [src]="entry.cars![0].images.large ?? entry.cars![0].images.small"
-                    [alt]="entry.cars![0].name"
+                    [src]="getCarImage(entry)"
+                    [alt]="getCarName(entry)"
                     class="card-img-top"
                     style="aspect-ratio: 1/1; object-fit: cover"
                   />
@@ -241,7 +241,7 @@
                         class="text-secondary d-none d-md-block text-truncate"
                         style="font-size: 0.6rem"
                       >
-                        {{ entry.cars![0].type.displayValue }}
+                        {{ getCarType(entry) }}
                       </span>
                     </div>
                     <div class="card-title-area">
@@ -249,7 +249,7 @@
                         class="text-white text-truncate mb-0 card-title-mobile"
                         style="font-size: 0.7rem"
                       >
-                        {{ entry.cars![0].name }}
+                        {{ getCarName(entry) }}
                       </p>
                     </div>
                     <div class="card-price-area d-flex align-items-center gap-1">
@@ -287,7 +287,7 @@
     <div class="modal-panel" [class.closing]="modalClosing()" (click)="$event.stopPropagation()">
       <button class="modal-close-btn" (click)="closeModal()"><i class="bi bi-x-lg"></i></button>
 
-      @if (selectedEntry()!.tracks?.length) {
+      @if (selectedEntry()!.tracks?.length && !selectedEntry()!.brItems?.length) {
         <div class="modal-track">
           <img
             [src]="selectedEntry()!.tracks![0].albumArt"
@@ -379,24 +379,67 @@
           <div class="modal-img-wrap">
             <img
               [src]="
-                selectedEntry()!.cars![0].images.large ?? selectedEntry()!.cars![0].images.small
+                getMainCar(selectedEntry()!)?.images?.large ??
+                getMainCar(selectedEntry()!)?.images?.small ??
+                ''
               "
-              [alt]="selectedEntry()!.cars![0].name"
+              [alt]="getMainCar(selectedEntry()!)?.name ?? ''"
               class="modal-main-img"
             />
           </div>
           <div class="modal-info">
-            <p class="modal-type-label">
-              <i class="bi bi-car-front-fill me-1"></i
-              >{{ selectedEntry()!.cars![0].type.displayValue }}
-            </p>
-            <h4 class="text-white fw-bold mb-1">{{ selectedEntry()!.cars![0].name }}</h4>
-            @if (selectedEntry()!.cars![0].description) {
-              <p class="text-secondary small mb-3">{{ selectedEntry()!.cars![0].description }}</p>
+            @if (isVehicleBundle(selectedEntry()!)) {
+              <p class="modal-type-label"><i class="bi bi-box-seam me-1"></i>Vehicle Bundle</p>
+            } @else {
+              <p class="modal-type-label">
+                <i class="bi bi-car-front-fill me-1"></i
+                >{{ getMainCar(selectedEntry()!)?.type?.displayValue ?? 'Vehicle' }}
+              </p>
             }
-            <span class="badge mb-3" style="background: #ff9800; color: #000">{{
-              selectedEntry()!.cars![0].rarity.displayValue
-            }}</span>
+            <h4 class="text-white fw-bold mb-1">{{ getMainCar(selectedEntry()!)?.name }}</h4>
+            @if (getMainCar(selectedEntry()!)?.description) {
+              <p class="text-secondary small mb-3">
+                {{ getMainCar(selectedEntry()!)?.description }}
+              </p>
+            }
+
+            <div class="d-flex flex-wrap gap-2 mb-2">
+              @if (getMainCar(selectedEntry()!)?.series) {
+                <span class="badge bg-dark border border-secondary">{{
+                  getMainCar(selectedEntry()!)!.series!.value
+                }}</span>
+              } @else if (getMainCar(selectedEntry()!)?.rarity) {
+                <span class="badge" style="background: #ff9800; color: #000">{{
+                  getMainCar(selectedEntry()!)!.rarity.displayValue
+                }}</span>
+              }
+            </div>
+
+            @if (selectedEntry()!.cars!.length > 1) {
+              <p class="text-white small fw-bold mb-1">
+                Includes {{ selectedEntry()!.cars!.length }} items:
+              </p>
+              <div class="modal-items-list mb-2">
+                @for (car of selectedEntry()!.cars!; track car.id) {
+                  <div class="modal-item-row">
+                    <img
+                      [src]="car.images.small ?? car.images.large"
+                      [alt]="car.name"
+                      width="36"
+                      height="36"
+                      style="border-radius: 4px; object-fit: cover"
+                    />
+                    <div>
+                      <p class="text-white mb-0 small fw-bold">{{ car.name }}</p>
+                      <p class="text-secondary mb-0" style="font-size: 0.7rem">
+                        {{ car.type.displayValue }}
+                      </p>
+                    </div>
+                  </div>
+                }
+              </div>
+            }
+
             <div class="modal-price mt-2">
               <img
                 src="https://fortnite-api.com/images/vbuck.png"
@@ -471,9 +514,11 @@
               </p>
             }
 
-            @if (selectedEntry()!.brItems!.length > 1) {
+            @if (selectedEntry()!.brItems!.length > 1 || selectedEntry()!.tracks?.length) {
               <p class="text-white small fw-bold mb-1">
-                Includes {{ selectedEntry()!.brItems!.length }} items:
+                Includes
+                {{ selectedEntry()!.brItems!.length + (selectedEntry()!.tracks?.length ?? 0) }}
+                items:
               </p>
               <div class="modal-items-list mb-2">
                 @for (item of selectedEntry()!.brItems!; track item.id) {
@@ -492,6 +537,23 @@
                       </p>
                     </div>
                   </div>
+                }
+                @if (selectedEntry()!.tracks?.length) {
+                  @for (track of selectedEntry()!.tracks!; track track.id) {
+                    <div class="modal-item-row">
+                      <img
+                        [src]="track.albumArt"
+                        [alt]="track.title"
+                        width="36"
+                        height="36"
+                        style="border-radius: 4px; object-fit: cover"
+                      />
+                      <div>
+                        <p class="text-white mb-0 small fw-bold">{{ track.title }}</p>
+                        <p class="text-secondary mb-0" style="font-size: 0.7rem">Jam Track</p>
+                      </div>
+                    </div>
+                  }
                 }
               </div>
             }

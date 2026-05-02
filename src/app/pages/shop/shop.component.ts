@@ -66,9 +66,51 @@ export class ShopComponent implements OnInit, OnDestroy {
     if (trackEntries.length)
       sections.push({ title: 'Jam Tracks', entries: trackEntries, type: 'tracks' });
 
-    const carEntries = entries
-      .filter((e) => e.cars?.length)
-      .sort((a, b) => b.finalPrice - a.finalPrice);
+    const allCarEntries = entries.filter((e) => e.cars?.length);
+
+    const bundledVehicleIds = new Set<string>();
+    allCarEntries
+      .filter((e) => e.cars!.some((c) => c.type.value === 'body'))
+      .forEach((e) => {
+        e.cars!.forEach((c) => {
+          if (c.type.value !== 'body') {
+            bundledVehicleIds.add(c.id);
+          }
+        });
+      });
+
+    const carEntries = allCarEntries
+      .filter((e) => {
+        const hasBody = e.cars!.some((c) => c.type.value === 'body');
+        if (hasBody) return true;
+
+        const isStandalone = e.cars!.every((c) => !bundledVehicleIds.has(c.id));
+        return isStandalone;
+      })
+      .sort((a, b) => {
+        const typeOrder: Record<string, number> = {
+          body: 1,
+          wheel: 2,
+          turbo: 3,
+          drifttrail: 4,
+        };
+
+        const getMainType = (entry: ShopEntry) => {
+          const bodyItem = entry.cars!.find((c) => c.type.value === 'body');
+          if (bodyItem) return 'body';
+          return entry.cars![0].type.value;
+        };
+
+        const typeA = getMainType(a);
+        const typeB = getMainType(b);
+
+        const orderA = typeOrder[typeA] || 999;
+        const orderB = typeOrder[typeB] || 999;
+
+        if (orderA !== orderB) return orderA - orderB;
+
+        return b.finalPrice - a.finalPrice;
+      });
     if (carEntries.length)
       sections.push({ title: 'Vehicle Cosmetics', entries: carEntries, type: 'cars' });
 
@@ -235,6 +277,39 @@ export class ShopComponent implements OnInit, OnDestroy {
       .toLowerCase()
       .replace(/\s+/g, '-')
       .replace(/[^a-z0-9-]/g, '')}-${index}`;
+  }
+
+  getCarImage(entry: ShopEntry): string {
+    if (!entry.cars?.length) return '';
+    const body = entry.cars.find((c) => c.type.value === 'body');
+    if (body) {
+      return body.images.large ?? body.images.small ?? '';
+    }
+    return entry.cars[0].images.large ?? entry.cars[0].images.small ?? '';
+  }
+
+  getCarName(entry: ShopEntry): string {
+    if (!entry.cars?.length) return '';
+    const body = entry.cars.find((c) => c.type.value === 'body');
+    if (body) return body.name;
+    return entry.cars[0].name;
+  }
+
+  getCarType(entry: ShopEntry): string {
+    if (!entry.cars?.length) return '';
+    const body = entry.cars.find((c) => c.type.value === 'body');
+    if (body) return body.type.displayValue;
+    return entry.cars[0].type.displayValue;
+  }
+
+  getMainCar(entry: ShopEntry) {
+    if (!entry.cars?.length) return null;
+    const body = entry.cars.find((c) => c.type.value === 'body');
+    return body ?? entry.cars[0];
+  }
+
+  isVehicleBundle(entry: ShopEntry): boolean {
+    return entry.cars?.some((c) => c.type.value === 'body') ?? false;
   }
 
   scrollToSection(sectionId: string) {

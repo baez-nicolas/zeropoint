@@ -36,6 +36,7 @@ export interface ShopCarItem {
   type: { value: string; displayValue: string };
   rarity: { value: string; displayValue: string };
   images: { small?: string; large?: string };
+  series?: { value: string; colors: string[] };
 }
 
 export interface ShopEntryLayout {
