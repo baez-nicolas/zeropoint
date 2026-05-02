@@ -171,7 +171,7 @@ http://localhost:4200
 - **Bundle Size:** Optimizado con tree-shaking
 - **Animations:** CSS animations para mejor rendimiento
 
-<img src="/img/fortnite2.png" width="600" alt="Banner" />
+<img src="/img/fortnite4.jpg" width="600" alt="Banner" />
 
 ---
 
