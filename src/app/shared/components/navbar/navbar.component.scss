@@ -24,6 +24,22 @@
   }
 }
 
+.navbar-brand-full {
+  display: inline-block;
+
+  @media (min-width: 1025px) and (max-width: 1280px) and (max-height: 800px) {
+    display: none;
+  }
+}
+
+.navbar-brand-short {
+  display: none;
+
+  @media (min-width: 1025px) and (max-width: 1280px) and (max-height: 800px) {
+    display: inline-block;
+  }
+}
+
 .desktop-nav {
   flex-direction: row;
   gap: 0.25rem;

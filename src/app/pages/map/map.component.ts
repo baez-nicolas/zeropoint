@@ -22,7 +22,12 @@ export class MapComponent implements OnInit, OnDestroy {
   mapModalOpen = signal(false);
   mapModalClosing = signal(false);
   mapZoomLevel = signal(1);
+  isDragging = signal(false);
   private animationTimeout?: number;
+  private startX = 0;
+  private startY = 0;
+  private scrollLeft = 0;
+  private scrollTop = 0;
 
   constructor(
     private mapService: MapService,
@@ -95,7 +100,7 @@ export class MapComponent implements OnInit, OnDestroy {
       this.mapModalOpen.set(false);
       this.mapModalClosing.set(false);
       this.mapZoomLevel.set(1);
-    }, 300);
+    }, 150);
   }
 
   zoomIn() {
@@ -114,5 +119,33 @@ export class MapComponent implements OnInit, OnDestroy {
 
   resetZoom() {
     this.mapZoomLevel.set(1);
+  }
+
+  onMapMouseDown(event: MouseEvent, container: HTMLElement) {
+    event.preventDefault();
+    this.isDragging.set(true);
+    this.startX = event.clientX;
+    this.startY = event.clientY;
+    this.scrollLeft = container.scrollLeft;
+    this.scrollTop = container.scrollTop;
+  }
+
+  onMapMouseMove(event: MouseEvent, container: HTMLElement) {
+    if (!this.isDragging()) return;
+    event.preventDefault();
+
+    const x = event.clientX - this.startX;
+    const y = event.clientY - this.startY;
+
+    container.scrollLeft = this.scrollLeft - x;
+    container.scrollTop = this.scrollTop - y;
+  }
+
+  onMapMouseUp(container: HTMLElement) {
+    this.isDragging.set(false);
+  }
+
+  onMapMouseLeave(container: HTMLElement) {
+    this.isDragging.set(false);
   }
 }
