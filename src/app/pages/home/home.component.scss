@@ -673,11 +673,14 @@
   align-items: center;
   justify-content: center;
   padding: 1rem;
-  min-height: 112px;
+  height: 112px;
+  flex-shrink: 0;
 
   .banner-img {
     width: 80px;
     height: 80px;
+    max-width: 80px;
+    max-height: 80px;
     object-fit: contain;
     display: block;
     transition: transform 0.3s ease;
@@ -707,7 +710,8 @@
   display: flex;
   flex-direction: column;
   gap: 3px;
-  min-height: 45px;
+  height: 50px;
+  flex-shrink: 0;
 
   @media (max-width: 900px) {
     padding: 0.4rem 0.5rem 0.3rem;
@@ -919,11 +923,14 @@
     align-items: center;
     justify-content: center;
     padding: 1rem;
-    min-height: 112px;
+    height: 112px;
+    flex-shrink: 0;
 
     .cosmetic-img {
       width: 80px;
       height: 80px;
+      max-width: 80px;
+      max-height: 80px;
       object-fit: contain;
       display: block;
       transition: transform 0.3s ease;
@@ -949,7 +956,8 @@
     display: flex;
     flex-direction: column;
     gap: 3px;
-    min-height: 45px;
+    height: 50px;
+    flex-shrink: 0;
 
     @media (max-width: 900px) {
       padding: 0.4rem 0.5rem 0.3rem;
