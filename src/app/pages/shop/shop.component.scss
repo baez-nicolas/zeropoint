@@ -1,7 +1,7 @@
 .mobile-tablet-filters {
   display: block;
 
-  @media (min-width: 901px) {
+  @media (min-width: 1369px) {
     display: none !important;
   }
 }
@@ -9,7 +9,7 @@
 .desktop-filters {
   display: none;
 
-  @media (min-width: 901px) {
+  @media (min-width: 1369px) {
     display: block !important;
   }
 }
@@ -610,20 +610,20 @@
   align-items: center;
   text-align: center;
 
-  @media (min-width: 901px) {
+  @media (min-width: 1369px) {
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
   }
 
   h2 {
-    @media (min-width: 768px) and (max-width: 900px) {
+    @media (min-width: 768px) and (max-width: 1368px) {
       .shop-icon {
         display: none !important;
       }
     }
 
-    @media (min-width: 901px) {
+    @media (min-width: 1369px) {
       .shop-icon {
         display: inline !important;
       }
@@ -633,7 +633,7 @@
   .shop-badges-desktop {
     display: none;
 
-    @media (min-width: 901px) {
+    @media (min-width: 1369px) {
       display: flex;
       flex-wrap: wrap;
       gap: 0.5rem;

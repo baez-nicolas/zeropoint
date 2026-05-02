@@ -12,7 +12,7 @@
   align-items: center;
   text-align: center;
 
-  @media (min-width: 768px) and (max-width: 900px) {
+  @media (min-width: 768px) and (max-width: 1368px) {
     h2 .map-icon {
       display: none !important;
     }
@@ -29,7 +29,7 @@
   border: none;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 
-  @media (min-width: 901px) {
+  @media (min-width: 1369px) {
     display: none !important;
   }
 
