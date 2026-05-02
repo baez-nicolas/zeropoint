@@ -171,8 +171,6 @@ http://localhost:4200
 - **Bundle Size:** Optimizado con tree-shaking
 - **Animations:** CSS animations para mejor rendimiento
 
-<img src="/img/fortnite4.jpg" width="600" alt="Banner" />
-
 ---
 
 ## 🙏 Créditos
@@ -192,6 +190,8 @@ http://localhost:4200
 - Demo: [zero-point-neon.vercel.app](https://zero-point-neon.vercel.app/)
 
 ---
+
+<img src="/img/fortnite4.jpg" width="600" alt="Banner" />
 
 <div align="center">
 
