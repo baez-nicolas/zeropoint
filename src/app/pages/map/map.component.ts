@@ -17,6 +17,11 @@ export class MapComponent implements OnInit, OnDestroy {
   error = signal(false);
   selectedPoi = signal<MapPoi | null>(null);
   animatingPoiId = signal<string | null>(null);
+  poiModalOpen = signal(false);
+  poiModalClosing = signal(false);
+  mapModalOpen = signal(false);
+  mapModalClosing = signal(false);
+  mapZoomLevel = signal(1);
   private animationTimeout?: number;
 
   constructor(
@@ -58,5 +63,56 @@ export class MapComponent implements OnInit, OnDestroy {
     this.animationTimeout = window.setTimeout(() => {
       this.animatingPoiId.set(null);
     }, 1000);
+  }
+
+  selectPoiMobile(poi: MapPoi) {
+    this.selectPoi(poi);
+    this.openPoiModal();
+  }
+
+  openPoiModal() {
+    this.poiModalOpen.set(true);
+    this.poiModalClosing.set(false);
+  }
+
+  closePoiModal() {
+    this.poiModalClosing.set(true);
+    setTimeout(() => {
+      this.poiModalOpen.set(false);
+      this.poiModalClosing.set(false);
+    }, 300);
+  }
+
+  openMapModal() {
+    this.mapModalOpen.set(true);
+    this.mapModalClosing.set(false);
+    this.mapZoomLevel.set(1);
+  }
+
+  closeMapModal() {
+    this.mapModalClosing.set(true);
+    setTimeout(() => {
+      this.mapModalOpen.set(false);
+      this.mapModalClosing.set(false);
+      this.mapZoomLevel.set(1);
+    }, 300);
+  }
+
+  zoomIn() {
+    const current = this.mapZoomLevel();
+    if (current < 3) {
+      this.mapZoomLevel.set(current + 0.5);
+    }
+  }
+
+  zoomOut() {
+    const current = this.mapZoomLevel();
+    if (current > 1) {
+      this.mapZoomLevel.set(current - 0.5);
+    }
+  }
+
+  resetZoom() {
+    this.mapZoomLevel.set(1);
   }
 }
