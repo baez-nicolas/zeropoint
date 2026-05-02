@@ -190,10 +190,10 @@
   }
 
   .news-description {
-    display: none;
+    display: none !important;
 
     @media (min-width: 1025px) {
-      display: block;
+      display: block !important;
     }
   }
 }
