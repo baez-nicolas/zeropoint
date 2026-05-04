@@ -23,6 +23,7 @@ export class ShopComponent implements OnInit, OnDestroy {
   loading = signal(true);
   error = signal(false);
   showScrollTop = signal(false);
+  scrollDirection = signal<'up' | 'down'>('up');
   selectedEntry = signal<ShopEntry | null>(null);
   modalClosing = signal(false);
   countdown = signal<string>('');
@@ -32,6 +33,7 @@ export class ShopComponent implements OnInit, OnDestroy {
 
   private countdownInterval?: ReturnType<typeof setInterval>;
   private highlightTimeout?: ReturnType<typeof setTimeout>;
+  private lastScrollTop = 0;
 
   sections = computed(() => {
     if (!this.shop()) return [];
@@ -144,6 +146,8 @@ export class ShopComponent implements OnInit, OnDestroy {
         this.showScrollTop.set(window.scrollY > 400);
       });
     }
+
+    this.setupScrollListener();
 
     this.shopService.getShop().subscribe({
       next: (data) => {
@@ -343,7 +347,25 @@ export class ShopComponent implements OnInit, OnDestroy {
   }
 
   scrollToTop() {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (this.scrollDirection() === 'down') {
+      window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' });
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }
+
+  private setupScrollListener() {
+    window.addEventListener('scroll', () => {
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+      if (scrollTop > this.lastScrollTop) {
+        this.scrollDirection.set('down');
+      } else if (scrollTop < this.lastScrollTop) {
+        this.scrollDirection.set('up');
+      }
+
+      this.lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+    });
   }
 
   private updateCountdown() {

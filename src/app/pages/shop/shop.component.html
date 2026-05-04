@@ -301,8 +301,12 @@
   }
 
   @if (showScrollTop()) {
-    <button class="scroll-top-btn" (click)="scrollToTop()" aria-label="Scroll to top">
-      <i class="bi bi-arrow-up"></i>
+    <button
+      class="scroll-top-btn"
+      (click)="scrollToTop()"
+      [attr.aria-label]="scrollDirection() === 'down' ? 'Scroll to bottom' : 'Scroll to top'"
+    >
+      <i [class]="scrollDirection() === 'down' ? 'bi bi-arrow-down' : 'bi bi-arrow-up'"></i>
     </button>
   }
 </div>

@@ -97,6 +97,8 @@ export class CosmeticsComponent implements OnInit {
   modalClosing = signal(false);
   filtersModalOpen = signal(false);
   filtersModalClosing = signal(false);
+  scrollDirection = signal<'up' | 'down'>('up');
+  private lastScrollTop = 0;
 
   readonly LIMIT = COSMETIC_ITEM_LIMIT;
 
@@ -167,6 +169,8 @@ export class CosmeticsComponent implements OnInit {
     window.addEventListener('scroll', () => {
       this.showScrollTop.set(window.scrollY > 400);
     });
+
+    this.setupScrollListener();
   }
 
   get types(): string[] {
@@ -490,7 +494,25 @@ export class CosmeticsComponent implements OnInit {
   }
 
   scrollToTop() {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (this.scrollDirection() === 'down') {
+      window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' });
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }
+
+  private setupScrollListener() {
+    window.addEventListener('scroll', () => {
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+      if (scrollTop > this.lastScrollTop) {
+        this.scrollDirection.set('down');
+      } else if (scrollTop < this.lastScrollTop) {
+        this.scrollDirection.set('up');
+      }
+
+      this.lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+    });
   }
 
   clearFilters() {
