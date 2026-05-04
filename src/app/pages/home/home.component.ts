@@ -127,14 +127,17 @@ export class HomeComponent implements OnInit {
 
     this.cosmeticService.getCosmetics().subscribe({
       next: (data) => {
-        const featuredNames = [
+        const featuredOrder = [
+          'lionel messi',
           'midoriya',
           'optimus prime',
-          'ben tennyson',
           'kratos',
-          'travis scott',
+          'ben tennyson',
+          'john wick',
+          'the foundation',
           'green roots billie',
         ];
+
         const featured = data.filter((c) => {
           const nameValue = c.name.toLowerCase();
           const isOutfit = c.type.value === 'outfit';
@@ -148,9 +151,18 @@ export class HomeComponent implements OnInit {
             return true;
           }
 
-          return isOutfit && featuredNames.some((fn) => nameValue.includes(fn));
+          return isOutfit && featuredOrder.some((fn) => nameValue.includes(fn));
         });
-        this.featuredCosmetics.set(featured.slice(0, 8));
+
+        const sorted = featured.sort((a, b) => {
+          const aName = a.name.toLowerCase();
+          const bName = b.name.toLowerCase();
+          const aIndex = featuredOrder.findIndex((fn) => aName.includes(fn) || aName === fn);
+          const bIndex = featuredOrder.findIndex((fn) => bName.includes(fn) || bName === fn);
+          return aIndex - bIndex;
+        });
+
+        this.featuredCosmetics.set(sorted.slice(0, 8));
         cosmeticsLoaded = true;
         checkAllLoaded();
       },
