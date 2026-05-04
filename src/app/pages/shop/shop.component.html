@@ -175,33 +175,56 @@
                       "
                     />
                     <div class="card-body p-1 overflow-hidden">
-                      <p
-                        class="text-white fw-bold text-truncate mb-0 track-title"
-                        style="font-size: 0.7rem"
-                      >
-                        {{ entry.tracks![0].title }}
-                      </p>
-                      <p
-                        class="text-secondary text-truncate mb-1 track-artist"
-                        style="font-size: 0.65rem"
-                      >
-                        {{ entry.tracks![0].artist }}
-                      </p>
-                      <div class="d-none d-sm-flex gap-1 flex-wrap mb-1">
-                        <span
-                          class="badge bg-dark border border-secondary"
-                          style="font-size: 0.6rem"
+                      @if (isJamTrackBundle(entry)) {
+                        <p
+                          class="text-white fw-bold text-truncate mb-0 track-title"
+                          style="font-size: 0.7rem"
                         >
-                          <i class="bi bi-music-note me-1"></i>{{ entry.tracks![0].bpm }}
-                        </span>
-                        <span
-                          class="badge bg-dark border border-secondary"
-                          style="font-size: 0.6rem"
+                          {{ entry.bundle?.name ?? 'Jam Track Bundle' }}
+                        </p>
+                        <p
+                          class="text-secondary text-truncate mb-1 track-artist"
+                          style="font-size: 0.65rem"
                         >
-                          <i class="bi bi-clock me-1"></i
-                          >{{ formatDuration(entry.tracks![0].duration) }}
-                        </span>
-                      </div>
+                          {{ entry.tracks!.length }} Tracks
+                        </p>
+                      } @else {
+                        <p
+                          class="text-white fw-bold text-truncate mb-0 track-title"
+                          style="font-size: 0.7rem"
+                        >
+                          {{ entry.tracks![0].title }}
+                        </p>
+                        <p
+                          class="text-secondary text-truncate mb-1 track-artist"
+                          style="font-size: 0.65rem"
+                        >
+                          {{ entry.tracks![0].artist }}
+                        </p>
+                      }
+                      @if (isJamTrackBundle(entry)) {
+                        <div class="d-none d-sm-flex gap-1 flex-wrap mb-1">
+                          <span class="badge bg-danger text-white" style="font-size: 0.6rem">
+                            <i class="bi bi-collection-play me-1"></i>Jam Track Bundle
+                          </span>
+                        </div>
+                      } @else {
+                        <div class="d-none d-sm-flex gap-1 flex-wrap mb-1">
+                          <span
+                            class="badge bg-dark border border-secondary"
+                            style="font-size: 0.6rem"
+                          >
+                            <i class="bi bi-music-note me-1"></i>{{ entry.tracks![0].bpm }}
+                          </span>
+                          <span
+                            class="badge bg-dark border border-secondary"
+                            style="font-size: 0.6rem"
+                          >
+                            <i class="bi bi-clock me-1"></i
+                            >{{ formatDuration(entry.tracks![0].duration) }}
+                          </span>
+                        </div>
+                      }
                       <div class="d-flex align-items-center gap-1 price-container">
                         <img
                           src="https://fortnite-api.com/images/vbuck.png"
@@ -297,70 +320,118 @@
             class="track-art"
           />
           <div class="modal-info">
-            <p class="modal-type-label"><i class="bi bi-music-note-beamed me-1"></i>Jam Track</p>
-            <h4 class="text-white fw-bold mb-0">{{ selectedEntry()!.tracks![0].title }}</h4>
-            <p class="text-secondary mb-2">{{ selectedEntry()!.tracks![0].artist }}</p>
-            @if (selectedEntry()!.tracks![0].album) {
-              <p class="text-secondary small mb-2">
-                <i class="bi bi-disc me-1"></i>{{ selectedEntry()!.tracks![0].album }}
+            @if (isJamTrackBundle(selectedEntry()!)) {
+              <p class="modal-type-label">
+                <i class="bi bi-collection-play me-1"></i>Jam Track Bundle
               </p>
-            }
-            <div class="d-flex gap-2 flex-wrap mb-3">
-              <span class="badge bg-dark border border-secondary"
-                ><i class="bi bi-calendar me-1"></i
-                >{{ selectedEntry()!.tracks![0].releaseYear }}</span
-              >
-              <span class="badge bg-dark border border-secondary"
-                ><i class="bi bi-music-note me-1"></i
-                >{{ selectedEntry()!.tracks![0].bpm }} BPM</span
-              >
-              <span class="badge bg-dark border border-secondary"
-                ><i class="bi bi-clock me-1"></i
-                >{{ formatDuration(selectedEntry()!.tracks![0].duration) }}</span
-              >
-            </div>
-            <p class="text-white small fw-bold mb-2">Difficulty</p>
-            <div class="difficulty-grid">
-              @for (
-                inst of [
-                  {
-                    label: 'Vocals',
-                    icon: 'bi-mic',
-                    val: selectedEntry()!.tracks![0].difficulty?.['vocals'] ?? 0,
-                  },
-                  {
-                    label: 'Guitar',
-                    icon: 'bi-music-note-list',
-                    val: selectedEntry()!.tracks![0].difficulty?.['guitar'] ?? 0,
-                  },
-                  {
-                    label: 'Bass',
-                    icon: 'bi-broadcast',
-                    val: selectedEntry()!.tracks![0].difficulty?.['bass'] ?? 0,
-                  },
-                  {
-                    label: 'Drums',
-                    icon: 'bi-vinyl',
-                    val: selectedEntry()!.tracks![0].difficulty?.['drums'] ?? 0,
-                  },
-                ];
-                track inst.label
-              ) {
-                <div class="diff-row">
-                  <span class="diff-label"
-                    ><i class="bi {{ inst.icon }} me-1"></i>{{ inst.label }}</span
-                  >
-                  <div class="diff-bar-track">
-                    @for (star of getDifficultyStars(inst.val); track star) {
-                      <div class="diff-bar-fill"></div>
-                    }
-                    @for (empty of getDifficultyStars(7 - inst.val); track empty) {
-                      <div class="diff-bar-empty"></div>
-                    }
+              <h4 class="text-white fw-bold mb-2">Jam Track Bundle</h4>
+              <span class="badge bg-danger text-white mb-3">
+                <i class="bi bi-music-note-list me-1"></i
+                >{{ selectedEntry()!.tracks!.length }} Tracks Included
+              </span>
+
+              <p class="text-white small fw-bold mb-1">
+                Includes {{ selectedEntry()!.tracks!.length }} tracks:
+              </p>
+              <div class="modal-items-list mb-3">
+                @for (track of selectedEntry()!.tracks!; track track.id) {
+                  <div class="modal-item-row">
+                    <img
+                      [src]="track.albumArt"
+                      [alt]="track.title"
+                      width="40"
+                      height="40"
+                      style="border-radius: 4px; object-fit: cover"
+                    />
+                    <div class="flex-grow-1">
+                      <p class="text-white mb-0 small fw-bold">{{ track.title }}</p>
+                      <p class="text-secondary mb-0" style="font-size: 0.7rem">
+                        {{ track.artist }}
+                      </p>
+                    </div>
+                    <div class="d-flex gap-1">
+                      <span
+                        class="badge bg-dark border border-secondary"
+                        style="font-size: 0.55rem"
+                      >
+                        <i class="bi bi-music-note"></i> {{ track.bpm }}
+                      </span>
+                      <span
+                        class="badge bg-dark border border-secondary"
+                        style="font-size: 0.55rem"
+                      >
+                        <i class="bi bi-clock"></i> {{ formatDuration(track.duration) }}
+                      </span>
+                    </div>
                   </div>
-                </div>
+                }
+              </div>
+            } @else {
+              <p class="modal-type-label"><i class="bi bi-music-note-beamed me-1"></i>Jam Track</p>
+              <h4 class="text-white fw-bold mb-0">{{ selectedEntry()!.tracks![0].title }}</h4>
+              <p class="text-secondary mb-2">{{ selectedEntry()!.tracks![0].artist }}</p>
+              @if (selectedEntry()!.tracks![0].album) {
+                <p class="text-secondary small mb-2">
+                  <i class="bi bi-disc me-1"></i>{{ selectedEntry()!.tracks![0].album }}
+                </p>
               }
-            </div>
+              <div class="d-flex gap-2 flex-wrap mb-3">
+                <span class="badge bg-dark border border-secondary"
+                  ><i class="bi bi-calendar me-1"></i
+                  >{{ selectedEntry()!.tracks![0].releaseYear }}</span
+                >
+                <span class="badge bg-dark border border-secondary"
+                  ><i class="bi bi-music-note me-1"></i
+                  >{{ selectedEntry()!.tracks![0].bpm }} BPM</span
+                >
+                <span class="badge bg-dark border border-secondary"
+                  ><i class="bi bi-clock me-1"></i
+                  >{{ formatDuration(selectedEntry()!.tracks![0].duration) }}</span
+                >
+              </div>
+              <p class="text-white small fw-bold mb-2">Difficulty</p>
+              <div class="difficulty-grid">
+                @for (
+                  inst of [
+                    {
+                      label: 'Vocals',
+                      icon: 'bi-mic',
+                      val: selectedEntry()!.tracks![0].difficulty?.['vocals'] ?? 0,
+                    },
+                    {
+                      label: 'Guitar',
+                      icon: 'bi-music-note-list',
+                      val: selectedEntry()!.tracks![0].difficulty?.['guitar'] ?? 0,
+                    },
+                    {
+                      label: 'Bass',
+                      icon: 'bi-broadcast',
+                      val: selectedEntry()!.tracks![0].difficulty?.['bass'] ?? 0,
+                    },
+                    {
+                      label: 'Drums',
+                      icon: 'bi-vinyl',
+                      val: selectedEntry()!.tracks![0].difficulty?.['drums'] ?? 0,
+                    },
+                  ];
+                  track inst.label
+                ) {
+                  <div class="diff-row">
+                    <span class="diff-label"
+                      ><i class="bi {{ inst.icon }} me-1"></i>{{ inst.label }}</span
+                    >
+                    <div class="diff-bar-track">
+                      @for (star of getDifficultyStars(inst.val); track star) {
+                        <div class="diff-bar-fill"></div>
+                      }
+                      @for (empty of getDifficultyStars(7 - inst.val); track empty) {
+                        <div class="diff-bar-empty"></div>
+                      }
+                    </div>
+                  </div>
+                }
+              </div>
+            }
             <div class="modal-price mt-3">
               <img
                 src="https://fortnite-api.com/images/vbuck.png"

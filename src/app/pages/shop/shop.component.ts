@@ -60,11 +60,21 @@ export class ShopComponent implements OnInit, OnDestroy {
       sections.push({ title: layoutName, entries: sorted, type: 'br' });
     });
 
-    const trackEntries = entries
-      .filter((e) => e.tracks?.length && e.finalPrice <= 500)
+    const jamTrackPacks = entries
+      .filter((e) => e.tracks?.length && !e.brItems && !e.cars)
       .sort((a, b) => b.finalPrice - a.finalPrice);
-    if (trackEntries.length)
-      sections.push({ title: 'Jam Tracks', entries: trackEntries, type: 'tracks' });
+
+    const individualTracks = entries
+      .filter(
+        (e) =>
+          e.tracks?.length && e.finalPrice <= 500 && !(e.tracks?.length && !e.brItems && !e.cars),
+      )
+      .sort((a, b) => b.finalPrice - a.finalPrice);
+
+    const allTrackEntries = [...jamTrackPacks, ...individualTracks];
+
+    if (allTrackEntries.length)
+      sections.push({ title: 'Jam Tracks', entries: allTrackEntries, type: 'tracks' });
 
     const allCarEntries = entries.filter((e) => e.cars?.length);
 
@@ -253,6 +263,10 @@ export class ShopComponent implements OnInit, OnDestroy {
 
   getDifficultyStars(value: number): number[] {
     return Array.from({ length: Math.min(value, 7) }, (_, i) => i);
+  }
+
+  isJamTrackBundle(entry: ShopEntry): boolean {
+    return (entry.tracks?.length ?? 0) > 1 && !entry.brItems && !entry.cars;
   }
 
   formatDuration(seconds: number): string {
