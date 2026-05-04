@@ -92,7 +92,13 @@ export class HomeComponent implements OnInit {
     this.shopService.getShop().subscribe({
       next: (data) => {
         const items = data.entries
-          .filter((e) => e.brItems?.length && e.newDisplayAsset?.renderImages?.[0]?.image)
+          .filter(
+            (e) =>
+              e.brItems?.length &&
+              e.brItems.some((item) => item.type.value === 'outfit') &&
+              e.newDisplayAsset?.renderImages?.[0]?.image,
+          )
+          .sort((a, b) => b.finalPrice - a.finalPrice)
           .slice(0, 6);
         this.featuredItems.set(items);
         shopLoaded = true;

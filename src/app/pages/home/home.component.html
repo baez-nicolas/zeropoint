@@ -272,7 +272,11 @@
             <span class="badge" [style.background]="getRarityColor(selectedShopItem()!)">
               {{ selectedShopItem()!.brItems![0].rarity.displayValue }}
             </span>
-            @if (selectedShopItem()!.brItems![0].series) {
+            @if (
+              selectedShopItem()!.brItems![0].series &&
+              selectedShopItem()!.brItems![0].series!.value !==
+                selectedShopItem()!.brItems![0].rarity.displayValue
+            ) {
               <span class="badge bg-dark border border-secondary">{{
                 selectedShopItem()!.brItems![0].series!.value
               }}</span>
