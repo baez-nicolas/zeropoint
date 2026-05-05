@@ -7,7 +7,7 @@
 
 <img src="/img/fortnite5.png" width="600" alt="Banner" />
 
-**ZeroPoint** es una aplicación web moderna que te permite explorar todo el universo de Fortnite. Desde la tienda diaria hasta el mapa de Battle Royale, accedé a información actualizada de cosméticos, playlists, noticias y más con una interfaz responsive y optimizada.
+**ZeroPoint** es una aplicación web moderna actualizable en tiempo real que te permite explorar todo el universo de Fortnite. Desde la tienda diaria hasta el mapa de Battle Royale, accedé a información actualizada de cosméticos, playlists, noticias y más con una interfaz responsive y optimizada.
 
 🌐 **[Ver Demo en Vivo](https://zero-point-neon.vercel.app/)**
 
