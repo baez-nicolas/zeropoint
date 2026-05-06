@@ -99,30 +99,7 @@ export class ShopComponent implements OnInit, OnDestroy {
         const isStandalone = e.cars!.every((c) => !bundledVehicleIds.has(c.id));
         return isStandalone;
       })
-      .sort((a, b) => {
-        const typeOrder: Record<string, number> = {
-          body: 1,
-          wheel: 2,
-          turbo: 3,
-          drifttrail: 4,
-        };
-
-        const getMainType = (entry: ShopEntry) => {
-          const bodyItem = entry.cars!.find((c) => c.type.value === 'body');
-          if (bodyItem) return 'body';
-          return entry.cars![0].type.value;
-        };
-
-        const typeA = getMainType(a);
-        const typeB = getMainType(b);
-
-        const orderA = typeOrder[typeA] || 999;
-        const orderB = typeOrder[typeB] || 999;
-
-        if (orderA !== orderB) return orderA - orderB;
-
-        return b.finalPrice - a.finalPrice;
-      });
+      .sort((a, b) => b.finalPrice - a.finalPrice);
     if (carEntries.length)
       sections.push({ title: 'Vehicle Cosmetics', entries: carEntries, type: 'cars' });
 
@@ -301,6 +278,9 @@ export class ShopComponent implements OnInit, OnDestroy {
     if (body) {
       return body.images.large ?? body.images.small ?? '';
     }
+    // Si no hay body, usar el newDisplayAsset que muestra el auto principal del pack
+    const displayAsset = entry.newDisplayAsset?.renderImages?.[0]?.image;
+    if (displayAsset) return displayAsset;
     return entry.cars[0].images.large ?? entry.cars[0].images.small ?? '';
   }
 
@@ -308,13 +288,16 @@ export class ShopComponent implements OnInit, OnDestroy {
     if (!entry.cars?.length) return '';
     const body = entry.cars.find((c) => c.type.value === 'body');
     if (body) return body.name;
+    // Si no hay body y es un bundle, usar el nombre del bundle
+    if (entry.bundle?.name) return entry.bundle.name;
     return entry.cars[0].name;
   }
 
   getCarType(entry: ShopEntry): string {
     if (!entry.cars?.length) return '';
     const body = entry.cars.find((c) => c.type.value === 'body');
-    if (body) return body.type.displayValue;
+    if (body) return 'Vehicle Bundle';
+    if (entry.bundle) return 'Vehicle Bundle';
     return entry.cars[0].type.displayValue;
   }
 

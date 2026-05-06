@@ -447,6 +447,11 @@
                 selectedEntry()!.finalPrice | number
               }}</span>
             </div>
+            @if (selectedEntry()!.outDate) {
+              <p class="text-secondary small mt-1 mb-0">
+                <i class="bi bi-clock me-1"></i>{{ getOutDateLabel(selectedEntry()!.outDate) }}
+              </p>
+            }
           </div>
         </div>
       }
@@ -455,12 +460,8 @@
         <div class="modal-br">
           <div class="modal-img-wrap">
             <img
-              [src]="
-                getMainCar(selectedEntry()!)?.images?.large ??
-                getMainCar(selectedEntry()!)?.images?.small ??
-                ''
-              "
-              [alt]="getMainCar(selectedEntry()!)?.name ?? ''"
+              [src]="getCarImage(selectedEntry()!)"
+              [alt]="getCarName(selectedEntry()!)"
               class="modal-main-img"
             />
           </div>
@@ -469,8 +470,7 @@
               <p class="modal-type-label"><i class="bi bi-box-seam me-1"></i>Vehicle Bundle</p>
             } @else {
               <p class="modal-type-label">
-                <i class="bi bi-car-front-fill me-1"></i
-                >{{ getMainCar(selectedEntry()!)?.type?.displayValue ?? 'Vehicle' }}
+                <i class="bi bi-car-front-fill me-1"></i>Vehicle Bundle
               </p>
             }
             <h4 class="text-white fw-bold mb-1">{{ getMainCar(selectedEntry()!)?.name }}</h4>
